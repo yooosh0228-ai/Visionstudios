@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="key" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EAECEA" stop-opacity="0.22"/><stop offset="0.5" stop-color="#EAECEA" stop-opacity="0.02"/><stop offset="1" stop-color="#EAECEA" stop-opacity="0"/></linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E7B98A"/><stop offset="0.45" stop-color="#B57A4B"/><stop offset="1" stop-color="#2A1B12"/></linearGradient>
+    <linearGradient id="coat" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2F6E55"/><stop offset="0.6" stop-color="#153327"/><stop offset="1" stop-color="#0B0E0F"/></linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="#1A1F20"/>
+  <rect x="470" width="330" height="450" fill="#101415"/>
+  <polygon points="0,0 420,0 260,450 0,450" fill="url(#key)"/>
+  <path d="M250 450 q10 -120 150 -140 q140 20 150 140 z" fill="url(#coat)"/>
+  <path d="M372 250 h56 v70 q-28 18 -56 0 z" fill="#8A5634"/>
+  <ellipse cx="400" cy="200" rx="66" ry="84" fill="url(#skin)"/>
+  <path d="M332 186 q-8 -110 76 -108 q82 4 60 118 q-10 -58 -60 -70 q-50 10 -76 60 z" fill="#0B0E0F"/>
+  <path d="M340 120 q60 -40 120 6" fill="none" stroke="#D8A33C" stroke-width="2" opacity="0.5"/>
+  <rect x="352" y="196" width="26" height="4" rx="2" fill="#2A1B12" opacity="0.7"/>
+  <rect x="418" y="196" width="22" height="4" rx="2" fill="#0B0E0F" opacity="0.8"/>
+  <g font-family="Poppins, Arial, sans-serif" fill="#EAECEA"><rect x="60" y="60" width="120" height="3" fill="#35B37E"/><rect x="60" y="76" width="84" height="3" fill="#8A928F"/></g>
+  <rect x="620" y="370" width="120" height="3" fill="#8A928F"/>
+</svg>

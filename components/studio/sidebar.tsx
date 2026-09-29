@@ -142,9 +142,15 @@ export function StudioSidebar({
           collapsed && "flex-col"
         )}
       >
-        <span className="relative flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-md bg-primary text-[11px] font-bold text-primary-foreground">
-          {logo ?? title.slice(0, 1).toUpperCase()}
-        </span>
+        {logo ? (
+          <span className="flex h-6 shrink-0 items-center text-foreground">
+            {logo}
+          </span>
+        ) : (
+          <span className="relative flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-md bg-primary text-[11px] font-bold text-primary-foreground">
+            {title.slice(0, 1).toUpperCase()}
+          </span>
+        )}
         {!collapsed ? (
           <span className="min-w-0 flex-1 truncate text-sm font-semibold">
             {title}

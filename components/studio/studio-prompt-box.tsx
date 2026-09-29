@@ -140,6 +140,10 @@ function PillSelect({
   const current = options.find((option) => option.value === value)
   return (
     <Select
+      // A new option set (surface or model switch) gets a fresh Select: a
+      // previously opened popup keeps its old items registered and would
+      // otherwise answer the new value with the list's first entry.
+      key={options.map((option) => option.value).join("|")}
       value={value}
       onValueChange={(next) => next != null && onValueChange(String(next))}
     >

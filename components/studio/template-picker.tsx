@@ -3,10 +3,12 @@
 
 import type { KeyboardEvent, ReactNode } from "react"
 import {
-  BatteryFull,
-  Calendar,
-  House,
-  WandSparkles,
+  Aperture,
+  Clapperboard,
+  Coffee,
+  Megaphone,
+  Music,
+  Smartphone,
   type LucideIcon,
 } from "lucide-react"
 
@@ -20,13 +22,20 @@ import { cn } from "@/lib/utils"
  * `ExamplePresets`.
  */
 
-// PLACEHOLDER ASSETS — demo art in /presets/*.svg. An adapted app replaces
-// every template with bespoke, app-specific examples and real preview media.
-const THUMBS = [
-  "/presets/placeholder-1.svg",
-  "/presets/placeholder-2.svg",
-  "/presets/placeholder-3.svg",
-  "/presets/placeholder-4.svg",
+const ART = {
+  productSpot: "/presets/product-spot.svg",
+  verticalReel: "/presets/vertical-reel.svg",
+  editorialPortrait: "/presets/editorial-portrait.svg",
+  campaignKeyVisual: "/presets/campaign-key-visual.svg",
+  eventAftermovie: "/presets/event-aftermovie.svg",
+  brandStillLife: "/presets/brand-still-life.svg",
+} as const
+
+/** Shared by the hero until the user has three finished outputs of their own. */
+export const HERO_ART = [
+  ART.editorialPortrait,
+  ART.productSpot,
+  ART.eventAftermovie,
 ] as const
 
 export interface TemplateItem {
@@ -45,51 +54,91 @@ export interface TemplateItem {
   settings?: Record<string, unknown>
 }
 
-// PLACEHOLDER content — replace when adapting.
+/** 402 Vision Studios briefs: each one loads a production-ready prompt and the
+    model/settings it was written for. The user can still switch model after. */
 export const TEMPLATES: TemplateItem[] = [
   {
-    id: "product-hero",
-    title: "Product hero shot",
-    subtitle: "Studio lighting, larger than life",
+    id: "product-spot",
+    title: "Product spot",
+    subtitle: "Hero reveal for a client's product",
     category: "commercial",
     kind: "video",
-    images: [THUMBS[0], THUMBS[1], THUMBS[2]],
-    icon: BatteryFull,
+    images: [ART.productSpot, ART.brandStillLife, ART.campaignKeyVisual],
+    icon: Clapperboard,
     prompt:
-      "Cinematic product hero shot on a dark studio backdrop, slow orbit, soft rim light, dust particles catching the light.",
+      "Commercial product reveal: a glass bottle rises onto a dark stone plinth, slow 180-degree orbit, hard rim light in warm amber, fine dust drifting through a single top spotlight, shallow depth of field, premium and quiet.",
+    modelId: "seedance-2.5",
+    settings: {
+      aspectRatio: "16:9",
+      duration: 8,
+      resolution: "720p",
+      generateAudio: true,
+    },
   },
   {
-    id: "ugc-review",
-    title: "UGC review",
-    subtitle: "Handheld, creator-style",
-    category: "ugc",
+    id: "vertical-reel",
+    title: "Vertical reel",
+    subtitle: "9:16 opener for Instagram and TikTok",
+    category: "social",
     kind: "video",
-    images: [THUMBS[1], THUMBS[3], THUMBS[0]],
-    icon: WandSparkles,
+    images: [ART.verticalReel, ART.eventAftermovie, ART.productSpot],
+    icon: Smartphone,
     prompt:
-      "Handheld creator-style review filmed on a phone in a sunny kitchen, natural light, casual framing, subtle camera shake.",
+      "Vertical social opener: handheld walk along a seafront boulevard at golden hour, city skyline in silhouette, waves catching the sun, quick whip pan into a close-up of the subject smiling at camera, energetic and natural.",
+    modelId: "kling-3-pro",
+    settings: { aspectRatio: "9:16", duration: 5, sound: true },
   },
   {
-    id: "editorial-still",
-    title: "Editorial still",
-    subtitle: "Magazine-grade key visual",
-    category: "commercial",
+    id: "editorial-portrait",
+    title: "Editorial portrait",
+    subtitle: "Magazine-grade talent still",
+    category: "photo",
     kind: "image",
-    images: [THUMBS[2], THUMBS[0], THUMBS[1]],
-    icon: Calendar,
+    images: [ART.editorialPortrait, ART.brandStillLife, ART.campaignKeyVisual],
+    icon: Aperture,
     prompt:
-      "Editorial fashion still, 85mm, shallow depth of field, muted palette, single hard light from the left.",
+      "Editorial portrait of a musician in a deep green coat against a charcoal wall, single hard key light from the left, 85mm lens, shallow depth of field, rich skin tones, calm confident gaze, film grain.",
+    modelId: "soul-cinema",
+    settings: { aspectRatio: "3:4", resolution: "1080p" },
   },
   {
-    id: "lifestyle-home",
-    title: "Lifestyle at home",
-    subtitle: "Warm three-shot story",
-    category: "ugc",
+    id: "campaign-key-visual",
+    title: "Campaign key visual",
+    subtitle: "Poster art with room for type",
+    category: "brand",
     kind: "image",
-    images: [THUMBS[3], THUMBS[2], THUMBS[0]],
-    icon: House,
+    images: [ART.campaignKeyVisual, ART.productSpot, ART.verticalReel],
+    icon: Megaphone,
     prompt:
-      "Warm lifestyle photo of a couple at home in the evening, lamp light, film grain, candid moment.",
+      "Campaign key visual for a summer festival: bold flat amber background, a large green sun setting over stylised dark waves on the right, clean empty space on the left for headline typography, graphic poster style.",
+    modelId: "ideogram-4",
+    settings: { aspectRatio: "4:3", resolution: "2k" },
+  },
+  {
+    id: "event-aftermovie",
+    title: "Event aftermovie",
+    subtitle: "Concert energy in one shot",
+    category: "events",
+    kind: "video",
+    images: [ART.eventAftermovie, ART.verticalReel, ART.editorialPortrait],
+    icon: Music,
+    prompt:
+      "Aftermovie shot at a night concert: crane move rising over a crowd with raised hands, green and amber stage beams cutting through haze, confetti in slow motion, cinematic contrast.",
+    modelId: "seedance-2-fast",
+    settings: { aspectRatio: "16:9", duration: 6, generateAudio: true },
+  },
+  {
+    id: "brand-still-life",
+    title: "Brand still life",
+    subtitle: "Menu, café and packaging shots",
+    category: "photo",
+    kind: "image",
+    images: [ART.brandStillLife, ART.productSpot, ART.editorialPortrait],
+    icon: Coffee,
+    prompt:
+      "Still life for a local café brand: ceramic cup of coffee with steam on a warm wooden table, a folded menu card beside it, soft window light from the right, deep green wall behind, appetising and natural.",
+    modelId: "soul-2",
+    settings: { aspectRatio: "4:3" },
   },
 ]
 

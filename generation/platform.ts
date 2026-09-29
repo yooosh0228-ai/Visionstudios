@@ -4,6 +4,9 @@ import type { UploadTicket } from "./upload-contract"
 
 const UPLOAD_PATH = "/files/generate-upload-url"
 const MODEL_ID = /^[a-z0-9][a-z0-9._/-]*$/i
+/** Per-request timeout. A submit that times out is ambiguous (the platform may
+    have queued it), so callers report it and never retry the POST. */
+const TIMEOUT_MS = 60_000
 
 export class PlatformError extends Error {
   readonly status: number
@@ -36,12 +39,13 @@ export type GenerationStatus = {
     carries its reason alone, so it cannot lose the answers standing beside it. */
 export type StatusResult =
   | { requestId: string; status: GenerationStatus }
-  | { requestId: string; error: string }
+  | { requestId: string; error: string; retryable: boolean }
 
 export type PlatformClientOptions = {
   apiKey: string
   baseUrl: string
   fetch?: typeof fetch
+  timeoutMs?: number
 }
 
 export function isModelId(model: string): boolean {
@@ -52,6 +56,7 @@ export function createPlatformClient(options: PlatformClientOptions) {
   const baseUrl = options.baseUrl.replace(/\/$/, "")
   const fetchImpl = options.fetch ?? fetch
   const auth = toAuthorizationHeader(options.apiKey)
+  const timeoutMs = options.timeoutMs ?? TIMEOUT_MS
 
   async function send(
     method: "GET" | "POST",
@@ -67,6 +72,7 @@ export function createPlatformClient(options: PlatformClientOptions) {
         ...(body ? { "Content-Type": "application/json" } : {}),
       },
       ...(body ? { body: JSON.stringify(body) } : {}),
+      signal: AbortSignal.timeout(timeoutMs),
     })
 
     const payload = await readJson(response)

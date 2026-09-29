@@ -5,8 +5,10 @@ import type { ComponentProps } from "react"
 import { Compass, Folder } from "lucide-react"
 
 import { StudioPromptBox } from "@/components/studio/studio-prompt-box"
+import { BrandMark } from "@/components/studio/brand-mark"
 import {
   ExamplePresets,
+  HERO_ART,
   TEMPLATES,
   type TemplateItem,
 } from "@/components/studio/template-picker"
@@ -62,16 +64,13 @@ import { useRuns } from "@/lib/studio/use-runs"
  * Explore / My Projects section, and the UserGenerations feed.
  */
 
-// PLACEHOLDER ASSETS — replaced by the app's real outputs as soon as there are three.
-const HERO_FALLBACKS = [
-  "/presets/placeholder-2.svg",
-  "/presets/placeholder-1.svg",
-  "/presets/placeholder-3.svg",
-] as const
+// Studio art until the user has three finished outputs of their own.
+const HERO_FALLBACKS = HERO_ART
 
+// Señal green glow over Tinta, per the 402 Vision Studios palette.
 const HERO_GLOW =
-  "radial-gradient(60% 80% at 50% 0%, rgba(160,164,170,0.14) 0%, rgba(160,164,170,0.05) 42%, transparent 72%)"
-const HERO_DOTS = "radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px)"
+  "radial-gradient(60% 80% at 50% 0%, rgba(53,179,126,0.16) 0%, rgba(53,179,126,0.05) 42%, transparent 72%)"
+const HERO_DOTS = "radial-gradient(rgba(234,236,234,0.18) 1px, transparent 1px)"
 const HERO_DOTS_MASK =
   "radial-gradient(55% 70% at 50% 0%, #000 0%, rgba(0,0,0,0.35) 45%, transparent 75%)"
 
@@ -139,7 +138,10 @@ function HomeState({
           className="flex w-full min-w-0 flex-col items-center gap-8"
         >
           <div className="flex flex-col items-center gap-5">
-            <HeroComposition images={images} alt="Recent Studio outputs" />
+            <HeroComposition
+              images={images}
+              alt="Recent 402 Vision Studios work"
+            />
             <h1 className="max-w-[640px] text-center text-q-accent-lg-bold uppercase">
               {title}
             </h1>
@@ -234,7 +236,7 @@ function FeedState({
                 ? "No generations yet"
                 : `No generations in ${title}`,
             description:
-              "Describe an idea below, then generate the first result.",
+              "Write a shot or pick a brief on Home, then generate the first take.",
           }}
         />
       </div>
@@ -265,8 +267,8 @@ export interface StudioTemplateProps {
 }
 
 export function StudioTemplate({
-  title = "Studio",
-  headline = "Turn any idea into images and video",
+  title = "402 Vision Studios",
+  headline = "From brief to first take in one prompt",
 }: StudioTemplateProps) {
   const [view, setView] = useState<StudioView>({ kind: "home" })
   const [collapsed, setCollapsed] = useState(false)
@@ -384,16 +386,23 @@ export function StudioTemplate({
     (model.requirePrompt && !prompt.trim())
 
   const handleGenerate = useCallback(() => {
-    if (!canGenerate || generating || !prepared.plane) return
+    if (!canGenerate || generating || runs.submitting || !prepared.plane) return
     setLocalError(null)
     if (!keyConfigured) {
       setKeyOpen(true)
       return
     }
     const projectId = view.kind === "project" ? view.projectId : undefined
-    void runs.submit(prepared.plane, projectId).then((record) => {
-      if (record && view.kind === "home") setView({ kind: "all" })
-      if (record && projectId) projectsStore.touch(projectId)
+    void runs.submit(prepared.plane, projectId).then(({ record, failure }) => {
+      if (failure?.code === "missing_key") {
+        setKeyConfigured(false)
+        setKeyOpen(true)
+      } else if (failure?.code === "invalid_key") {
+        setKeyOpen(true)
+      }
+      if (!record) return
+      if (view.kind === "home") setView({ kind: "all" })
+      if (projectId) projectsStore.touch(projectId)
     })
   }, [
     canGenerate,
@@ -487,8 +496,10 @@ export function StudioTemplate({
     onCancel: handleCancel,
     generating,
     canceling,
-    generateDisabled: !canGenerate,
-    disabledReason: prepared.error ?? undefined,
+    generateDisabled: !canGenerate || runs.submitting,
+    disabledReason: runs.submitting
+      ? "Submitting to Higgsfield…"
+      : (prepared.error ?? undefined),
     error:
       localError ??
       runs.error ??
@@ -500,6 +511,7 @@ export function StudioTemplate({
     <div className="flex h-dvh overflow-hidden bg-background">
       <StudioSidebar
         title={title}
+        logo={<BrandMark className="w-7" />}
         view={view}
         onViewChange={setView}
         projects={projects}

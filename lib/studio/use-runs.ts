@@ -1,8 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import { cancelGeneration, submitGeneration } from "@/generation/actions"
+import type { ActionFailure } from "@/generation/errors"
 import { getModel } from "@/generation/catalog"
 import type { GenerationPlane } from "@/generation/catalog"
 import type { GenerationStatus } from "@/generation/platform"
@@ -24,6 +25,10 @@ export function useRuns() {
   const [records, setRecords] = useState<RunRecord[]>([])
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  /** Synchronous single-flight lock: state updates land too late to stop a
+      double click from sending two submits. */
+  const inFlight = useRef(false)
 
   const update = useCallback((id: string, patch: Partial<RunRecord>) => {
     setRecords((current) =>
@@ -70,11 +75,22 @@ export function useRuns() {
     async (
       plane: GenerationPlane,
       projectId?: string
-    ): Promise<RunRecord | null> => {
+    ): Promise<
+      | { record: RunRecord; failure: null }
+      | { record: null; failure: ActionFailure | null }
+    > => {
+      if (inFlight.current) return { record: null, failure: null }
+      inFlight.current = true
+      setSubmitting(true)
       setError(null)
       const model = getModel(plane.model)
       try {
-        const queued = await submitGeneration(plane)
+        const result = await submitGeneration(plane, crypto.randomUUID())
+        if (!result.ok) {
+          setError(result.message)
+          return { record: null, failure: result }
+        }
+        const { queued } = result
         const record: RunRecord = {
           id: queued.requestId,
           requestId: queued.requestId,
@@ -89,27 +105,52 @@ export function useRuns() {
           urls: [],
           createdAt: Date.now(),
         }
-        setRecords((current) => [record, ...current])
+        setRecords((current) =>
+          current.some((r) => r.id === record.id)
+            ? current
+            : [record, ...current]
+        )
         watch(record)
-        return record
-      } catch (caught) {
-        setError(caught instanceof Error ? caught.message : String(caught))
-        return null
+        return { record, failure: null }
+      } catch {
+        // The server action itself failed (network drop, server restart): the
+        // POST may or may not have reached Higgsfield, so never resend it.
+        const failure: ActionFailure = {
+          ok: false,
+          code: "unconfirmed",
+          message:
+            "Could not confirm the submission. It may still have been queued, so check your Higgsfield history before generating again.",
+        }
+        setError(failure.message)
+        return { record: null, failure }
+      } finally {
+        inFlight.current = false
+        setSubmitting(false)
       }
     },
     [watch]
   )
 
   const cancel = useCallback(
-    async (id: string) => {
+    async (id: string): Promise<ActionFailure | null> => {
       const record = records.find((r) => r.id === id)
-      if (!record || record.status !== "running") return
+      if (!record || record.status !== "running") return null
+      let result: Awaited<ReturnType<typeof cancelGeneration>>
       try {
-        await cancelGeneration({ requestIds: [record.requestId] })
-        update(id, { status: "failed", error: "Canceled" })
-      } catch (caught) {
-        setError(caught instanceof Error ? caught.message : String(caught))
+        result = await cancelGeneration({ requestIds: [record.requestId] })
+      } catch {
+        result = {
+          ok: false,
+          code: "platform",
+          message: "Could not reach the studio server to cancel. Try again.",
+        }
       }
+      if (result.ok) {
+        update(id, { status: "failed", error: "Canceled" })
+        return null
+      }
+      setError(result.message)
+      return result
     },
     [records, update]
   )
@@ -120,7 +161,17 @@ export function useRuns() {
 
   const running = records.filter((r) => r.status === "running")
 
-  return { records, running, loaded, error, submit, cancel, remove, setError }
+  return {
+    records,
+    running,
+    loaded,
+    error,
+    submitting,
+    submit,
+    cancel,
+    remove,
+    setError,
+  }
 }
 
 function settle(status: GenerationStatus): Partial<RunRecord> {

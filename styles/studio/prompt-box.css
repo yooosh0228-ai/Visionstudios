@@ -336,7 +336,7 @@
   letter-spacing: var(--hf-type-letter-spacing-slight);
 }
 
-/* ── Generate (the branded lime CTA) ───────────────────────────────────────── */
+/* ── Generate (the branded Señal CTA) ───────────────────────────────────────── */
 @utility q-prompt-box-generate {
   position: relative;
   display: flex;
@@ -351,11 +351,11 @@
   padding: var(--hf-space-500) var(--hf-space-500) var(--hf-space-600);
   overflow: clip;
   border-radius: var(--hf-radius-300);
-  /* Branded CTA fill — no gradient token exists for this marketing lime sheen. */
+  /* Branded CTA fill: 402 Señal green with a lighter sheen toward the base. */
   background-image:
-    linear-gradient(191deg, rgba(255, 255, 20, 0) 12.7%, rgb(255, 255, 20) 75.8%),
-    linear-gradient(90deg, rgb(209, 254, 23) 0%, rgb(209, 254, 23) 100%);
-  color: var(--hf-color-text-inverse);
+    linear-gradient(191deg, rgba(92, 214, 160, 0) 12.7%, rgb(92, 214, 160) 75.8%),
+    linear-gradient(90deg, rgb(53, 179, 126) 0%, rgb(53, 179, 126) 100%);
+  color: #141819;
   cursor: pointer;
   outline: none;
   box-shadow:

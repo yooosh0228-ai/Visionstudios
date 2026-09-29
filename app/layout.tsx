@@ -1,19 +1,21 @@
 import type { Metadata, Viewport } from "next"
-import { IBM_Plex_Mono, Inter, Space_Grotesk } from "next/font/google"
+import { IBM_Plex_Mono, IBM_Plex_Sans, Poppins } from "next/font/google"
 
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
 
-// The three Quanta families; globals.css maps them onto --hf-type-family-*-base.
-const spaceGrotesk = Space_Grotesk({
+// 402 Vision Studios type; styles/theme.css maps them onto --hf-type-family-*-base.
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  weight: ["500", "600", "700"],
+  variable: "--font-poppins",
   display: "swap",
 })
-const inter = Inter({
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600"],
+  variable: "--font-ibm-plex-sans",
   display: "swap",
 })
 const plexMono = IBM_Plex_Mono({
@@ -23,13 +25,14 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 })
 
-// Replace with the product's own identity when adapting the scaffold.
 export const metadata: Metadata = {
-  title: "Studio",
-  description: "Generate images and video with Higgsfield models.",
+  title: "402 Vision Studios · Studio",
+  description:
+    "402 Vision Studios' generation studio: write a brief, pick a model and produce images and video with Higgsfield.",
+  applicationName: "402 Vision Studios",
 }
 
-export const viewport: Viewport = { themeColor: "#131416" }
+export const viewport: Viewport = { themeColor: "#141819" }
 
 export default function RootLayout({
   children,
@@ -40,8 +43,8 @@ export default function RootLayout({
       data-theme="default-dark"
       className={cn(
         "dark font-sans antialiased",
-        spaceGrotesk.variable,
-        inter.variable,
+        poppins.variable,
+        plexSans.variable,
         plexMono.variable
       )}
     >
