@@ -6,6 +6,15 @@ import { syncModels, watchModels } from "./scripts/sync-models.mjs"
 syncModels()
 if (process.env.NODE_ENV === "development") watchModels()
 
-const nextConfig: NextConfig = { agentRules: false }
+const nextConfig: NextConfig = {
+  agentRules: false,
+  experimental: {
+    // The Turbopack build cache stores the values of every env var read while
+    // building. On Netlify that wrote HF_API_KEY into `.next/cache` and the
+    // secrets scanner (rightly) failed the deploy. Server keys must only exist
+    // at runtime, so the persistent build cache stays off.
+    turbopackFileSystemCacheForBuild: false,
+  },
+}
 
 export default nextConfig
