@@ -14,7 +14,8 @@ registerHooks({
   },
 });
 
-const { describeFailure, isRetryable } = await import("../generation/errors.ts");
+const errorsModule = await import("../generation/errors.ts");
+const { describeFailure, isRetryable } = errorsModule;
 const { createSubmissionGuard, isSubmissionId } = await import("../generation/submissions.ts");
 const { MissingCredentialsError } = await import("../generation/credentials.ts");
 const { PlatformError, createPlatformClient } = await import("../generation/platform.ts");
@@ -100,4 +101,15 @@ test("cancel reaches the platform cancel endpoint", async () => {
   });
   await client.cancel("abc");
   assert.deepEqual(seen, { url: "https://api.higgsfield.ai/requests/abc/cancel", method: "POST" });
+});
+
+test("billing failures are actionable and never retried as platform outages", () => {
+  const { fail } = errorsModule;
+  for (const code of ["not_signed_in", "insufficient_credits", "unpriced"]) {
+    const failure = fail(code, "mensaje");
+    assert.equal(failure.ok, false);
+    assert.equal(failure.code, code);
+  }
+  for (const code of ["not_signed_in", "insufficient_credits", "unpriced"])
+    assert.equal(isRetryable(code), true, code);
 });

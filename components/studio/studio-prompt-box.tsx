@@ -516,7 +516,7 @@ export function StudioPromptBox({
   onMediaRemove,
   onMediaRoleChange,
   library,
-  placeholder = "Describe the scene you imagine...",
+  placeholder = "Describe la escena que imaginas...",
   prompt,
   onPromptChange,
   cost,
@@ -646,7 +646,7 @@ export function StudioPromptBox({
         disabled={canceling || (!generating && generateDisabled)}
         title={!generating && generateDisabled ? disabledReason : undefined}
       >
-        {canceling ? "Cancelling…" : generating ? "Cancel" : "Generate"}
+        {canceling ? "Cancelando…" : generating ? "Cancelar" : "Generar"}
       </PromptBox.Generate>
     </PromptBox.Root>
   )

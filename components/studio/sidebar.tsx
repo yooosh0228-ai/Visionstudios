@@ -5,7 +5,7 @@ import type { ReactNode } from "react"
 import {
   House,
   Images,
-  KeyRound,
+  CircleUserRound,
   PanelLeftClose,
   PanelLeftOpen,
   Plus,
@@ -40,8 +40,10 @@ export interface StudioSidebarProps {
   onDeleteProject: (projectId: string) => void | Promise<void>
   collapsed: boolean
   onCollapsedChange: (collapsed: boolean) => void
-  keyConfigured: boolean
-  onOpenKey: () => void
+  accountLabel: string
+  accountMeta?: string
+  accountOk: boolean
+  onOpenAccount: () => void
 }
 
 function Row({
@@ -126,8 +128,10 @@ export function StudioSidebar({
   onDeleteProject,
   collapsed,
   onCollapsedChange,
-  keyConfigured,
-  onOpenKey,
+  accountLabel,
+  accountMeta,
+  accountOk,
+  onOpenAccount,
 }: StudioSidebarProps) {
   return (
     <aside
@@ -158,7 +162,7 @@ export function StudioSidebar({
         ) : null}
         <button
           type="button"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "Expandir barra lateral" : "Contraer barra lateral"}
           className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-white/8 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           onClick={() => onCollapsedChange(!collapsed)}
         >
@@ -177,16 +181,16 @@ export function StudioSidebar({
             selected={view.kind === "home"}
             onClick={() => onViewChange({ kind: "home" })}
             start={<IconTile as={House} gradient="blue" />}
-            title="Home"
-            ariaLabel="Home"
+            title="Inicio"
+            ariaLabel="Inicio"
           />
           <Row
             collapsed={collapsed}
             selected={view.kind === "all"}
             onClick={() => onViewChange({ kind: "all" })}
             start={<IconTile as={Images} gradient="purple" />}
-            title="All Generations"
-            ariaLabel="All Generations"
+            title="Todas las generaciones"
+            ariaLabel="Todas las generaciones"
           />
         </div>
 
@@ -199,7 +203,7 @@ export function StudioSidebar({
           >
             {!collapsed ? (
               <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                Projects
+                Proyectos
               </span>
             ) : null}
             <ProjectCreateModal
@@ -207,7 +211,7 @@ export function StudioSidebar({
               trigger={
                 <button
                   type="button"
-                  aria-label="New project"
+                  aria-label="Nuevo proyecto"
                   className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-white/8 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                   <Plus className="size-4" />
@@ -252,7 +256,7 @@ export function StudioSidebar({
           ))}
           {projects.length === 0 && !collapsed ? (
             <p className="px-1.5 py-1 text-xs text-muted-foreground">
-              No projects yet.
+              Aún no hay proyectos.
             </p>
           ) : null}
         </div>
@@ -261,21 +265,22 @@ export function StudioSidebar({
       <div className="pt-2">
         <Row
           collapsed={collapsed}
-          onClick={onOpenKey}
-          ariaLabel={keyConfigured ? "Manage API key" : "Connect API key"}
+          onClick={onOpenAccount}
+          ariaLabel="Mi cuenta"
           start={
             <span className="relative flex size-6 items-center justify-center rounded-md border border-white/10 bg-white/5 text-muted-foreground">
-              <KeyRound className="size-3.5" />
+              <CircleUserRound className="size-3.5" />
               <span
                 className={cn(
                   "absolute -top-0.5 -right-0.5 size-2 rounded-full ring-2 ring-sidebar",
-                  keyConfigured ? "bg-primary" : "bg-destructive"
+                  accountOk ? "bg-primary" : "bg-destructive"
                 )}
                 aria-hidden
               />
             </span>
           }
-          title={keyConfigured ? "API key saved" : "Connect API key"}
+          title={accountLabel}
+          {...(accountMeta ? { meta: accountMeta } : {})}
         />
       </div>
     </aside>

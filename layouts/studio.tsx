@@ -13,7 +13,7 @@ import {
   type TemplateItem,
 } from "@/components/studio/template-picker"
 import { HeroComposition } from "@/components/studio/hero-composition"
-import { KeyDialog } from "@/components/studio/key-dialog"
+import { AccountDialog } from "@/components/studio/account-dialog"
 import {
   MyProjects,
   type MyProjectsProject,
@@ -22,7 +22,9 @@ import { StudioSidebar, type StudioView } from "@/components/studio/sidebar"
 import { UserGenerations } from "@/components/studio/user-generations"
 import type { GalleryItem } from "@/components/studio/gallery/gallery-types"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { hasPlatformCredentials } from "@/generation/actions"
+import { reconcileMyGenerations } from "@/generation/actions"
+import { affordability, formatCredits } from "@/generation/billing"
+import { useAccount } from "@/generation/stores/account"
 import { MODELS, getModel, parseSettings } from "@/generation/catalog"
 import type {
   GenerationPlane,
@@ -232,7 +234,7 @@ function FeedState({
           emptyState={{
             images,
             title:
-              title === "All Generations"
+              title === "Todas las generaciones"
                 ? "No generations yet"
                 : `No generations in ${title}`,
             description:
@@ -268,14 +270,13 @@ export interface StudioTemplateProps {
 
 export function StudioTemplate({
   title = "402 Vision Studios",
-  headline = "From brief to first take in one prompt",
+  headline = "De la idea al primer corte en un solo prompt",
 }: StudioTemplateProps) {
   const [view, setView] = useState<StudioView>({ kind: "home" })
   const [collapsed, setCollapsed] = useState(false)
   const [prompt, setPrompt] = useState("")
   const [media, setMedia] = useState<MediaItem[]>([])
-  const [keyOpen, setKeyOpen] = useState(false)
-  const [keyConfigured, setKeyConfigured] = useState(false)
+  const [accountOpen, setAccountOpen] = useState(false)
   const [canceling, setCanceling] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
 
@@ -287,6 +288,8 @@ export function StudioTemplate({
   const projectsStore = useProjects()
   const uploads = useUploads((s) => s.items)
   const runs = useRuns()
+  const account = useAccount((s) => s.account)
+  const prices = useAccount((s) => s.prices)
 
   const surfaces = useMemo(
     () =>
@@ -330,9 +333,37 @@ export function StudioTemplate({
     }
   }, [inputMode, media, model, prompt, settings])
 
+  // Al abrir: liquida lo que quedó en cola mientras la pestaña estaba cerrada.
   useEffect(() => {
-    void hasPlatformCredentials().then(setKeyConfigured)
+    void reconcileMyGenerations().then((credits) => {
+      if (credits !== null) useAccount.getState().setCredits(credits)
+    })
   }, [])
+
+  const isOwner = account?.isOwner ?? false
+  const credits = account?.credits ?? 0
+  const price = useMemo(
+    () =>
+      affordability({
+        isOwner,
+        credits,
+        price: prices[model.id],
+        settings: prepared.plane?.settings ?? settings,
+      }),
+    [credits, isOwner, model.id, prepared.plane, prices, settings]
+  )
+  const priceMessage =
+    price.state === "unpriced"
+      ? "Este modelo todavía no tiene precio. Escoge otro."
+      : price.state === "short"
+        ? `Te faltan ${formatCredits(price.missing)} créditos. Recarga para continuar.`
+        : undefined
+  const costLabel =
+    price.state === "free"
+      ? "Dueño"
+      : price.state === "ok" || price.state === "short"
+        ? `${formatCredits(price.cost)} cr.`
+        : undefined
 
   const galleryItems = useMemo(
     () => runs.records.flatMap(runToGalleryItems),
@@ -388,18 +419,15 @@ export function StudioTemplate({
   const handleGenerate = useCallback(() => {
     if (!canGenerate || generating || runs.submitting || !prepared.plane) return
     setLocalError(null)
-    if (!keyConfigured) {
-      setKeyOpen(true)
+    if (price.state === "short") {
+      setAccountOpen(true)
       return
     }
+    if (price.state === "unpriced") return
     const projectId = view.kind === "project" ? view.projectId : undefined
     void runs.submit(prepared.plane, projectId).then(({ record, failure }) => {
-      if (failure?.code === "missing_key") {
-        setKeyConfigured(false)
-        setKeyOpen(true)
-      } else if (failure?.code === "invalid_key") {
-        setKeyOpen(true)
-      }
+      if (failure?.code === "not_signed_in") window.location.reload()
+      else if (failure?.code === "insufficient_credits") setAccountOpen(true)
       if (!record) return
       if (view.kind === "home") setView({ kind: "all" })
       if (projectId) projectsStore.touch(projectId)
@@ -407,7 +435,7 @@ export function StudioTemplate({
   }, [
     canGenerate,
     generating,
-    keyConfigured,
+    price,
     prepared.plane,
     projectsStore,
     runs,
@@ -496,14 +524,20 @@ export function StudioTemplate({
     onCancel: handleCancel,
     generating,
     canceling,
-    generateDisabled: !canGenerate || runs.submitting,
+    cost: costLabel,
+    generateDisabled:
+      !canGenerate ||
+      runs.submitting ||
+      price.state === "unpriced" ||
+      price.state === "short",
     disabledReason: runs.submitting
-      ? "Submitting to Higgsfield…"
-      : (prepared.error ?? undefined),
+      ? "Enviando a Higgsfield…"
+      : (priceMessage ?? prepared.error ?? undefined),
     error:
       localError ??
       runs.error ??
       (!missingRequiredInput && media.length > 0 ? prepared.error : null) ??
+      priceMessage ??
       undefined,
   }
 
@@ -526,8 +560,14 @@ export function StudioTemplate({
         }}
         collapsed={collapsed}
         onCollapsedChange={setCollapsed}
-        keyConfigured={keyConfigured}
-        onOpenKey={() => setKeyOpen(true)}
+        accountLabel={account?.email ?? "Mi cuenta"}
+        {...(isOwner
+          ? { accountMeta: "Dueño" }
+          : account
+            ? { accountMeta: `${formatCredits(credits)} cr.` }
+            : {})}
+        accountOk={isOwner || credits > 0}
+        onOpenAccount={() => setAccountOpen(true)}
       />
       <main className="relative flex min-w-0 flex-1 flex-col">
         {view.kind === "home" ? (
@@ -550,18 +590,13 @@ export function StudioTemplate({
           <FeedState
             items={visibleItems}
             previewItems={galleryItems}
-            title={selectedProject?.name ?? "All Generations"}
+            title={selectedProject?.name ?? "Todas las generaciones"}
             dock={dock}
             onDelete={(item) => runs.remove(item.runId)}
           />
         )}
       </main>
-      <KeyDialog
-        open={keyOpen}
-        onOpenChange={setKeyOpen}
-        configured={keyConfigured}
-        onChange={setKeyConfigured}
-      />
+      <AccountDialog open={accountOpen} onOpenChange={setAccountOpen} />
     </div>
   )
 }

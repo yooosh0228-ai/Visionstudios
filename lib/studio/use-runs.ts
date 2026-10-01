@@ -8,6 +8,7 @@ import { getModel } from "@/generation/catalog"
 import type { GenerationPlane } from "@/generation/catalog"
 import type { GenerationStatus } from "@/generation/platform"
 import { stopWatching, watchRequest } from "@/generation/poll"
+import { useAccount } from "@/generation/stores/account"
 
 import {
   aspectFromSettings,
@@ -41,7 +42,10 @@ export function useRuns() {
       watchRequest(record.requestId, {
         deadline: record.createdAt + 15 * 60_000,
       })
-        .then((status) => update(record.id, settle(status)))
+        .then((status) => {
+          update(record.id, settle(status))
+          void useAccount.getState().refresh()
+        })
         .catch((caught: unknown) => {
           update(record.id, {
             status: "failed",
@@ -86,6 +90,8 @@ export function useRuns() {
       const model = getModel(plane.model)
       try {
         const result = await submitGeneration(plane, crypto.randomUUID())
+        if (typeof result.balance === "number")
+          useAccount.getState().setCredits(result.balance)
         if (!result.ok) {
           setError(result.message)
           return { record: null, failure: result }
@@ -119,7 +125,7 @@ export function useRuns() {
           ok: false,
           code: "unconfirmed",
           message:
-            "Could not confirm the submission. It may still have been queued, so check your Higgsfield history before generating again.",
+            "No pudimos confirmar el envío. Puede que sí se haya generado: escríbenos antes de intentarlo otra vez y lo revisamos.",
         }
         setError(failure.message)
         return { record: null, failure }
@@ -142,11 +148,12 @@ export function useRuns() {
         result = {
           ok: false,
           code: "platform",
-          message: "Could not reach the studio server to cancel. Try again.",
+          message: "No se pudo contactar al estudio para cancelar. Intenta de nuevo.",
         }
       }
       if (result.ok) {
-        update(id, { status: "failed", error: "Canceled" })
+        update(id, { status: "failed", error: "Cancelada" })
+        void useAccount.getState().refresh()
         return null
       }
       setError(result.message)
