@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { LogIn } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -63,6 +64,17 @@ export function LoginScreen({ error }: { error?: string | undefined }) {
             {failed}
           </p>
         ) : null}
+        <p className="text-xs text-muted-foreground">
+          Al continuar aceptas las{" "}
+          <Link href="/terminos" className="underline">
+            Condiciones
+          </Link>{" "}
+          y la{" "}
+          <Link href="/privacidad" className="underline">
+            Política de Privacidad
+          </Link>
+          .
+        </p>
       </div>
     </main>
   )
