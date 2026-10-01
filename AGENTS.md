@@ -24,8 +24,10 @@ end. Rendering the shipped examples is not completion.
 ## Runtime boundaries — preserve these
 
 - `generation/actions.ts` and `app/api/upload/route.ts` are the server boundaries.
-  The platform key lives in an httpOnly cookie (`generation/credentials.ts`);
-  `HF_API_BASE_URL` is read server-side only. Authenticated platform calls stay
+  The platform key lives only in the server env (`HF_API_KEY`); users sign in
+  with Google (Supabase) and pay with credits (`generation/billing.ts`, the
+  Supabase `begin_generation` / `refund_generation` functions). `HF_API_BASE_URL`
+  is read server-side only. Authenticated platform calls stay
   on the server.
 - Generate and Cancel both reach the platform (`submitGeneration`,
   `cancelGeneration`). Do not replace cancel with "stop polling".
@@ -39,7 +41,7 @@ end. Rendering the shipped examples is not completion.
   is unverified and report that limitation. Verify every installed model appears
   in its image/video picker after adaptation.
 - Reference uploads request a signed URL through `app/api/upload/route.ts`
-  using the saved platform key. The browser PUTs the file with every returned
+  using the server platform key, for a signed-in user only. The browser PUTs the file with every returned
   upload header and no credentials. Record the public URL only after success;
   never log signed URLs. No separate storage token is needed.
 - History and projects are browser-local (`lib/studio/history.ts`,

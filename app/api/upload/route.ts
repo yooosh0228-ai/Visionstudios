@@ -1,17 +1,13 @@
-import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 
-import {
-  decodeCredentials,
-  PLATFORM_KEY_COOKIE,
-} from "@/generation/credentials"
 import { createPlatformClient, PlatformError } from "@/generation/platform"
+import { getSession } from "@/generation/session"
 import { requireUploadContentType } from "@/generation/upload-contract"
 
 export async function POST(request: Request): Promise<NextResponse> {
   const origin = request.headers.get("origin")
   if (origin && origin !== new URL(request.url).origin)
-    return failure(403, "Cross-origin upload requests are not allowed.")
+    return failure(403, "No se permiten subidas desde otro origen.")
 
   let contentType: string
   try {
@@ -25,28 +21,22 @@ export async function POST(request: Request): Promise<NextResponse> {
     return failure(
       400,
       error instanceof SyntaxError
-        ? "Invalid upload request."
-        : "Unsupported file type. Use JPEG, PNG, WebP, GIF, MP4, or WAV."
+        ? "Solicitud de subida inválida."
+        : "Tipo de archivo no permitido. Usa JPEG, PNG, WebP, GIF, MP4 o WAV."
     )
   }
 
-  const jar = await cookies()
-  const credentials = decodeCredentials(jar.get(PLATFORM_KEY_COOKIE)?.value)
-  if (!credentials)
-    return failure(
-      401,
-      "Connect your Higgsfield API key in the sidebar before uploading."
-    )
+  const session = await getSession()
+  if (!session)
+    return failure(401, "Entra a tu cuenta antes de subir referencias.")
+  const apiKey = process.env.HF_API_KEY
   const baseUrl = process.env.HF_API_BASE_URL
-  if (!baseUrl)
-    return failure(
-      503,
-      "Uploads are not configured. Set HF_API_BASE_URL on the server."
-    )
+  if (!apiKey || !baseUrl)
+    return failure(503, "El estudio no está conectado a Higgsfield todavía.")
 
   try {
     const ticket = await createPlatformClient({
-      ...credentials,
+      apiKey,
       baseUrl,
     }).createUpload(contentType)
     return NextResponse.json(ticket, {
@@ -55,19 +45,14 @@ export async function POST(request: Request): Promise<NextResponse> {
   } catch (error) {
     const status = error instanceof PlatformError ? error.status : 502
     console.error("[upload] Could not prepare reference upload", { status })
-    if (status === 401 || status === 403)
-      return failure(
-        status,
-        "Higgsfield rejected your API key. Update it in the sidebar and try again."
-      )
     if (status === 429)
       return failure(
         429,
-        "Higgsfield upload rate limit reached. Wait a moment and try again."
+        "Higgsfield recibió muchas subidas. Espera un momento e intenta de nuevo."
       )
     return failure(
       502,
-      "Could not prepare reference upload with Higgsfield. Try again."
+      "No se pudo preparar la subida con Higgsfield. Intenta de nuevo."
     )
   }
 }

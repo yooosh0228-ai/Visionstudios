@@ -14,6 +14,9 @@ export type FailureCode =
   | "not_found"
   | "unconfirmed"
   | "platform"
+  | "not_signed_in"
+  | "insufficient_credits"
+  | "unpriced"
 
 export type ActionFailure = { ok: false; code: FailureCode; message: string }
 
@@ -22,44 +25,47 @@ export function describeFailure(
   context: "submit" | "status" | "cancel" | "upload" = "submit"
 ): ActionFailure {
   if (error instanceof MissingCredentialsError)
-    return fail("missing_key", "Connect your Higgsfield API key to generate.")
+    return fail(
+      "missing_key",
+      "El estudio no está conectado a Higgsfield todavía. Avísale al administrador."
+    )
 
   if (error instanceof PlatformError) {
     const detail = platformDetail(error.body)
     if (error.status === 401 || error.status === 403)
       return fail(
         "invalid_key",
-        "Higgsfield rejected this API key. Replace it from the sidebar with a key from open.higgsfield.ai."
+        "Higgsfield rechazó la llave del estudio. Avísale al administrador."
       )
     if (error.status === 429)
       return fail(
         "rate_limited",
-        "Higgsfield rate limit reached. Wait a moment, then try again."
+        "Higgsfield está recibiendo muchas solicitudes. Espera un momento y vuelve a intentar."
       )
     if (error.status === 404)
       return fail(
         "not_found",
         detail ??
           (context === "submit"
-            ? "Higgsfield does not recognise this model endpoint."
-            : "Higgsfield no longer knows this request.")
+            ? "Higgsfield no reconoce este modelo."
+            : "Higgsfield ya no conoce esta solicitud.")
       )
     if (error.status >= 400 && error.status < 500) {
       if (context === "cancel")
         return fail(
           "invalid_input",
           detail ??
-            "This generation has already started processing and can no longer be canceled."
+            "Esta generación ya empezó a procesarse y no se puede cancelar."
         )
       return fail(
         "invalid_input",
-        detail ?? `Higgsfield refused the request (${error.status}).`
+        detail ?? `Higgsfield rechazó la solicitud (${error.status}).`
       )
     }
     return fail(
       "platform",
       detail ??
-        `Higgsfield is having trouble (${error.status}). Try again shortly.`
+        `Higgsfield está teniendo problemas (${error.status}). Intenta de nuevo en un momento.`
     )
   }
 
@@ -67,16 +73,16 @@ export function describeFailure(
     if (context === "submit")
       return fail(
         "unconfirmed",
-        "Could not confirm the submission with Higgsfield. It may still have been queued, so check your Higgsfield history before generating again."
+        "No pudimos confirmar el envío a Higgsfield. Puede que sí se haya generado: escríbenos antes de intentarlo otra vez y lo revisamos."
       )
-    return fail("platform", "Could not reach Higgsfield. Check the connection.")
+    return fail("platform", "No se pudo conectar con Higgsfield. Revisa tu conexión.")
   }
 
-  // Validation from the catalog (parseSettings / toPlatform) and credential
-  // parsing throw plain errors with user-facing messages.
+  // Validation from the catalog (parseSettings / toPlatform) throws plain
+  // errors with user-facing messages.
   if (error instanceof Error && error.message)
     return fail("invalid_input", error.message)
-  return fail("platform", "Something went wrong talking to Higgsfield.")
+  return fail("platform", "Algo salió mal al hablar con Higgsfield.")
 }
 
 /** Failures worth polling through: the run may still finish on the platform. */
@@ -84,7 +90,7 @@ export function isRetryable(code: FailureCode): boolean {
   return code !== "not_found" && code !== "invalid_input"
 }
 
-function fail(code: FailureCode, message: string): ActionFailure {
+export function fail(code: FailureCode, message: string): ActionFailure {
   return { ok: false, code, message }
 }
 
