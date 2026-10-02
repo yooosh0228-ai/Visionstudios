@@ -23,7 +23,7 @@ import { UserGenerations } from "@/components/studio/user-generations"
 import type { GalleryItem } from "@/components/studio/gallery/gallery-types"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { reconcileMyGenerations } from "@/generation/actions"
-import { affordability, formatCredits } from "@/generation/billing"
+import { affordability, formatCredits, priceUnit } from "@/generation/billing"
 import { useAccount } from "@/generation/stores/account"
 import { MODELS, getModel, parseSettings } from "@/generation/catalog"
 import type {
@@ -349,8 +349,9 @@ export function StudioTemplate({
         credits,
         price: prices[model.id],
         settings: prepared.plane?.settings ?? settings,
+        unit: priceUnit(model),
       }),
-    [credits, isOwner, model.id, prepared.plane, prices, settings]
+    [credits, isOwner, model, prepared.plane, prices, settings]
   )
   const priceMessage =
     price.state === "unpriced"

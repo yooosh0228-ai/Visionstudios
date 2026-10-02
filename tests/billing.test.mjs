@@ -8,6 +8,7 @@ import {
   parseCreditAmount,
   parseOwnerEmails,
   parsePriceInput,
+  priceUnit,
 } from "../generation/billing.ts";
 
 test("owner emails are matched without caring about case or spaces", () => {
@@ -72,4 +73,40 @@ test("prices can be set, cleared and are bounded", () => {
   assert.throws(() => parsePriceInput("-1"), /negativo/);
   assert.throws(() => parsePriceInput("x"), /válido/);
   assert.throws(() => parsePriceInput("20000"), /máximo/);
+});
+
+test("video models are charged per second so a longer clip costs more", () => {
+  assert.equal(generationCost(10, { duration: 5 }, "second"), 50);
+  assert.equal(generationCost(10, { duration: 30 }, "second"), 300);
+  assert.equal(generationCost(32.5, { duration: 5 }, "second"), 162.5);
+  // sin duración válida no se puede cotizar: nunca se cobra de menos
+  assert.equal(generationCost(10, {}, "second"), null);
+  for (const bad of [0, -5, Number.NaN, "5", null, 9999])
+    assert.equal(generationCost(10, { duration: bad }, "second"), null, String(bad));
+  assert.equal(generationCost(null, { duration: 5 }, "second"), null);
+});
+
+test("per-generation models ignore duration and image models multiply by count", () => {
+  assert.equal(generationCost(75, { duration: 10 }, "generation"), 75);
+  assert.equal(generationCost(75, {}, "generation"), 75);
+  assert.equal(generationCost(5, { batchSize: "4" }, "image"), 20);
+});
+
+test("each model gets the price unit Higgsfield bills it in", () => {
+  const video = { surface: "video", settings: { duration: {}, resolution: {} } };
+  assert.equal(priceUnit({ id: "kling-3-pro", ...video }), "second");
+  assert.equal(priceUnit({ id: "dop", ...video }), "generation");
+  assert.equal(priceUnit({ id: "seedance-2.5-edit", surface: "video", settings: { resolution: {} } }), "generation");
+  assert.equal(priceUnit({ id: "soul-2", surface: "image", settings: {} }), "image");
+});
+
+test("affordability charges a clip by its duration", () => {
+  const input = { isOwner: false, credits: 300, price: 70, unit: "second" };
+  assert.deepEqual(affordability({ ...input, settings: { duration: 4 } }), { state: "ok", cost: 280 });
+  assert.deepEqual(affordability({ ...input, settings: { duration: 10 } }), {
+    state: "short",
+    cost: 700,
+    missing: 400,
+  });
+  assert.deepEqual(affordability({ ...input, settings: {} }), { state: "unpriced" });
 });
