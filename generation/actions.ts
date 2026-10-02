@@ -4,7 +4,7 @@ import { createSupabaseAdmin } from "@/lib/supabase/admin"
 
 import { getModel, parseSettings } from "./catalog"
 import type { GenerationPlane } from "./catalog/types"
-import { generationCost } from "./billing"
+import { generationCost, priceUnit } from "./billing"
 import { MissingCredentialsError } from "./credentials"
 import { describeFailure, fail, isRetryable } from "./errors"
 import type { ActionFailure } from "./errors"
@@ -69,7 +69,8 @@ async function chargeAndSubmit(
   if (!session.isOwner) {
     const computed = generationCost(
       await readPrice(admin, plane.model),
-      plane.settings
+      plane.settings,
+      priceUnit(getModel(plane.model))
     )
     if (computed === null)
       return fail(

@@ -12,7 +12,8 @@ import {
   setModelPrice,
 } from "@/generation/admin-actions"
 import type { AdminResult } from "@/generation/admin-actions"
-import { formatCredits } from "@/generation/billing"
+import { PRICE_UNIT_LABEL, formatCredits } from "@/generation/billing"
+import type { PriceUnit } from "@/generation/billing"
 
 export type AdminAccount = {
   userId: string
@@ -24,6 +25,7 @@ export type AdminModel = {
   id: string
   label: string
   surface: string
+  unit: PriceUnit
   price: number | null
 }
 export type AdminMovement = {
@@ -190,6 +192,9 @@ function ModelRow({ model }: { model: AdminModel }) {
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />
+          <span className="text-xs text-muted-foreground">
+            créditos {PRICE_UNIT_LABEL[model.unit]}
+          </span>
           <Button type="submit" size="sm" variant="outline" disabled={pending}>
             Guardar
           </Button>
@@ -318,7 +323,7 @@ export function AdminPanel({
 
       <Section
         title="Precios por modelo"
-        hint={`Precio en créditos por generación. Ponlo según la configuración más cara del modelo (duración o resolución máximas) para no cobrar de menos; Soul se multiplica por el número de imágenes. ${
+        hint={`Precio en créditos en la unidad que indica cada fila: por segundo de video (se multiplica por la duración que pida el cliente), por imagen (se multiplica por la cantidad) o por generación. Ponlo según la configuración más cara del modelo (resolución, audio) para no cobrar de menos. ${
           unpriced > 0
             ? `${unpriced} de ${models.length} modelos aún no tienen precio y los clientes no los pueden usar.`
             : ""
