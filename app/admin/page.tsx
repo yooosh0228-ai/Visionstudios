@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 
 import { AdminPanel } from "@/components/admin/admin-panel"
 import { MODELS } from "@/generation/catalog"
+import { SERVICE_PRICE_IDS, SERVICE_PRICE_LABELS } from "@/servicios/catalog"
 import { getSession } from "@/generation/session"
 import type { Session } from "@/generation/session"
 import { createSupabaseAdmin } from "@/lib/supabase/admin"
@@ -58,12 +59,20 @@ export default async function AdminPage() {
         credits: Number(row.credits),
         createdAt: String(row.created_at),
       }))}
-      models={MODELS.map((model) => ({
-        id: model.id,
-        label: model.label,
-        surface: model.surface,
-        price: priceByModel.get(model.id) ?? null,
-      }))}
+      models={[
+        ...SERVICE_PRICE_IDS.map((id) => ({
+          id,
+          label: SERVICE_PRICE_LABELS[id] ?? id,
+          surface: "servicio",
+          price: priceByModel.get(id) ?? null,
+        })),
+        ...MODELS.map((model) => ({
+          id: model.id,
+          label: model.label,
+          surface: model.surface,
+          price: priceByModel.get(model.id) ?? null,
+        })),
+      ]}
       movements={(ledger.data ?? []).map((row) => ({
         id: Number(row.id),
         email: who(row.user_id),

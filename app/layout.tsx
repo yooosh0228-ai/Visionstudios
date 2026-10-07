@@ -26,10 +26,10 @@ const plexMono = IBM_Plex_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "402 Vision Studios · Studio",
+  title: "Vision Studios · Estudio",
   description:
-    "402 Vision Studios' generation studio: write a brief, pick a model and produce images and video with Higgsfield.",
-  applicationName: "402 Vision Studios",
+    "El estudio de Vision Studios: imágenes y video para tu marca, y agentes especialistas que trabajan para tu negocio.",
+  applicationName: "Vision Studios",
 }
 
 export const viewport: Viewport = { themeColor: "#141819" }
