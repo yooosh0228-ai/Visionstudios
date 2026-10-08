@@ -7,7 +7,9 @@ export function NoModels() {
   return (
     <main className="flex min-h-dvh items-center justify-center p-6 text-center">
       <div className="flex max-w-xl flex-col items-center gap-3">
-        <h1 className="text-q-headline-md-semi-bold">No models installed</h1>
+        <h1 className="text-q-headline-md-semi-bold">
+          No hay modelos instalados
+        </h1>
         <p className="text-sm text-muted-foreground">
           Add one and the dev server picks it up. Every model is one file in{" "}
           <code>generation/catalog/models/</code>.

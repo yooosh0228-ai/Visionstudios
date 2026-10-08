@@ -45,12 +45,14 @@ export function SettingsDialog({
       <DialogContent size="sm">
         <DialogHeader>
           <DialogTitle>{model.label} settings</DialogTitle>
-          <DialogDescription>Applied to the next generation.</DialogDescription>
+          <DialogDescription>
+            Se aplica a la próxima generación.
+          </DialogDescription>
         </DialogHeader>
         <DialogBody>
           {entries.length === 0 ? (
             <p className="text-q-body-sm-regular text-q-text-secondary">
-              This model has no settings.
+              Este modelo no tiene ajustes.
             </p>
           ) : (
             <div className="flex flex-col gap-1">

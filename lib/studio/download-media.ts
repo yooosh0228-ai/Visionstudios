@@ -43,7 +43,8 @@ export async function downloadMedia(
 
   try {
     const response = await fetch(url)
-    if (!response.ok) throw new Error(`Download failed with ${response.status}`)
+    if (!response.ok)
+      throw new Error(`No se pudo descargar (${response.status})`)
 
     const blob = await response.blob()
     const objectUrl = URL.createObjectURL(blob)

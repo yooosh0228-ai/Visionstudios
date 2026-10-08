@@ -17,11 +17,11 @@ export function DensityControl({
   return (
     <div
       className="flex w-32 shrink-0 items-center gap-2 text-muted-foreground"
-      title="Tile size"
+      title="Tamaño de las miniaturas"
     >
       <Grid3x3 className="size-3.5 shrink-0" aria-hidden />
       <Slider
-        aria-label="Tile density"
+        aria-label="Tamaño de las miniaturas"
         min={0}
         max={DENSITY_ROW_HEIGHTS.length - 1}
         step={1}

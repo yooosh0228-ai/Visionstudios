@@ -43,8 +43,8 @@ export function AccountDialog({
       <DialogContent size="sm">
         <DialogHeader>
           <DialogTitle>
-            <Wallet className="mr-2 size-5 shrink-0 text-q-icon-secondary" />{" "}
-            Mi cuenta
+            <Wallet className="mr-2 size-5 shrink-0 text-q-icon-secondary" /> Mi
+            cuenta
           </DialogTitle>
         </DialogHeader>
         <DialogBody>

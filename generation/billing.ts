@@ -4,7 +4,7 @@
  * modelo lo fija el dueño en /admin.
  */
 
-export const DEFAULT_TOPUP_URL = "https://instagram.com/402visionstudios"
+export const DEFAULT_TOPUP_URL = "https://ig.me/m/visionstudios.rd"
 
 /** Correos de dueño: variable OWNER_EMAILS separada por comas, sin distinguir mayúsculas. */
 export function parseOwnerEmails(raw: string | undefined): string[] {

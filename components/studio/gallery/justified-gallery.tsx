@@ -32,7 +32,7 @@ export interface JustifiedGalleryProps {
 
 export function JustifiedGallery({
   items,
-  title = "Your generations",
+  title = "Tus generaciones",
   grouped = false,
   hasMore,
   loadingMore,
@@ -53,13 +53,13 @@ export function JustifiedGallery({
       <header className="flex shrink-0 items-center justify-between gap-4 px-0.5">
         <div className="flex min-w-0 items-center gap-2">
           {title != null ? (
-            <h1 className="text-q-headline-sm-semi-bold whitespace-nowrap">
+            <h1 className="truncate text-lg font-semibold sm:text-q-headline-sm-semi-bold">
               {title}
             </h1>
           ) : null}
           {gallery.loadingMore ? (
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Loader2 className="size-3 animate-spin" /> Loading
+              <Loader2 className="size-3 animate-spin" /> Cargando
             </span>
           ) : null}
         </div>

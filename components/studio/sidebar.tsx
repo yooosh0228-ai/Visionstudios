@@ -68,7 +68,7 @@ function Row({
   const row = (
     <div
       className={cn(
-        "group relative flex h-9 items-center gap-2.5 rounded-lg px-1.5 text-sm transition-colors",
+        "group relative flex h-9 items-center gap-2.5 rounded-lg px-1.5 text-sm transition-colors pointer-coarse:h-11",
         selected
           ? "bg-white/8 text-foreground"
           : "text-muted-foreground hover:bg-white/5 hover:text-foreground",
@@ -93,14 +93,14 @@ function Row({
               className={cn(
                 "pointer-events-none relative text-xs text-muted-foreground tabular-nums",
                 action &&
-                  "group-focus-within:hidden group-hover:hidden group-has-[[data-popup-open]]:hidden"
+                  "group-focus-within:hidden group-hover:hidden group-has-[[data-popup-open]]:hidden pointer-coarse:hidden"
               )}
             >
               {meta}
             </span>
           ) : null}
           {action ? (
-            <span className="relative z-[2] hidden group-focus-within:inline-flex group-hover:inline-flex has-[[data-popup-open]]:inline-flex">
+            <span className="relative z-[2] hidden group-focus-within:inline-flex group-hover:inline-flex has-[[data-popup-open]]:inline-flex pointer-coarse:inline-flex">
               {action}
             </span>
           ) : null}
@@ -162,7 +162,9 @@ export function StudioSidebar({
         ) : null}
         <button
           type="button"
-          aria-label={collapsed ? "Expandir barra lateral" : "Contraer barra lateral"}
+          aria-label={
+            collapsed ? "Expandir barra lateral" : "Contraer barra lateral"
+          }
           className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-white/8 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           onClick={() => onCollapsedChange(!collapsed)}
         >
@@ -244,7 +246,7 @@ export function StudioSidebar({
                 </span>
               }
               title={project.name}
-              meta={project.generationCount.toLocaleString("en-US")}
+              meta={project.generationCount.toLocaleString("es-DO")}
               action={
                 <ProjectActions
                   projectName={project.name}

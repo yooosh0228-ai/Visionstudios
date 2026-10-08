@@ -199,7 +199,7 @@ function MediaPreview({ item }: { item: MediaItem }) {
     // eslint-disable-next-line @next/next/no-img-element -- User uploads bypass the image proxy.
     <img
       src={item.url}
-      alt={item.name ?? "Reference image"}
+      alt={item.name ?? "Imagen de referencia"}
       className="size-full object-cover"
     />
   )
@@ -225,7 +225,7 @@ function AudioChip({ item, label }: { item: MediaItem; label: string }) {
         {playing ? <Pause className="size-3" /> : <Play className="size-3" />}
       </button>
       <span className="min-w-0 truncate text-q-caption-sm-medium">
-        {failed ? "Cannot play" : label}
+        {failed ? "No se puede reproducir" : label}
       </span>
       <audio
         ref={audio}
@@ -244,7 +244,7 @@ function AudioChip({ item, label }: { item: MediaItem; label: string }) {
 }
 
 const controlClass =
-  "absolute z-10 flex size-5 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm sm:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 data-[popup-open]:opacity-100"
+  "absolute z-10 flex size-5 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm sm:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 data-[popup-open]:opacity-100 pointer-coarse:opacity-100"
 
 function mediaSlots(model: ModelEntry, inputMode?: string): MediaRole[] {
   const limits = inputRoles(model, inputMode)
@@ -302,8 +302,8 @@ function ReferencePicker({
       trigger={
         <PromptBox.Pill
           iconOnly
-          aria-label="Add references"
-          title="Add references"
+          aria-label="Añadir referencias"
+          title="Añadir referencias"
           disabled={!remaining}
           className="disabled:opacity-40"
           start={<Plus />}
@@ -357,7 +357,7 @@ function MediaInputs({
           render={
             <button
               type="button"
-              aria-label={`Role for ${item.name ?? "image"}`}
+              aria-label={`Papel de ${item.name ?? "la imagen"}`}
               className={`${controlClass} -top-1 -left-1`}
             >
               <Ellipsis className="size-3" />
@@ -370,7 +370,7 @@ function MediaInputs({
               key={role}
               onClick={() => onMediaRoleChange(item.id, role)}
             >
-              {role === "reference" ? "Reference image" : ROLE_LABEL[role]}
+              {role === "reference" ? "Imagen de referencia" : ROLE_LABEL[role]}
               {item.role === role ? <Check className="ml-auto size-3" /> : null}
             </DropdownMenuItem>
           ))}
@@ -381,7 +381,7 @@ function MediaInputs({
   const remove = (item: MediaItem) => (
     <button
       type="button"
-      aria-label={`Remove ${item.name ?? ROLE_LABEL[item.role]}`}
+      aria-label={`Quitar ${item.name ?? ROLE_LABEL[item.role]}`}
       className={`${controlClass} -top-1 -right-1`}
       onClick={() => onMediaRemove(item.id)}
     >
@@ -417,12 +417,12 @@ function MediaInputs({
                     src={item?.url}
                     mediaType={ROLE_KIND[role]}
                     alt={item?.name ?? label}
-                    aria-label={`${item ? "Replace" : "Add"} ${label.toLowerCase()}`}
+                    aria-label={`${item ? "Cambiar" : "Añadir"} ${label.toLowerCase()}`}
                   />
                 ) : (
                   <button
                     type="button"
-                    aria-label={`${item ? "Replace" : "Add"} ${label.toLowerCase()}`}
+                    aria-label={`${item ? "Cambiar" : "Añadir"} ${label.toLowerCase()}`}
                     className="flex h-12 items-center gap-2 rounded-xl border border-white/10 bg-white/5 pr-3 text-q-caption-sm-medium"
                   >
                     <span className="flex size-12 items-center justify-center overflow-hidden rounded-xl">
@@ -453,7 +453,7 @@ function MediaInputs({
           .filter(
             (entry) => (entry.kind ?? ROLE_KIND[entry.role]) === kind
           ).length
-        const label = `${kind === "image" ? "Image" : kind === "video" ? "Video" : "Audio"} ${ordinal}`
+        const label = `${kind === "image" ? "Imagen" : kind === "video" ? "Video" : "Audio"} ${ordinal}`
         return (
           <div
             key={item.id}
@@ -479,8 +479,8 @@ function MediaInputs({
       {!tilesOnly && media.length > 1 ? (
         <button
           type="button"
-          aria-label="Clear attachments"
-          title="Clear attachments"
+          aria-label="Quitar adjuntos"
+          title="Quitar adjuntos"
           className="flex size-7 items-center justify-center rounded-full text-q-icon-secondary hover:bg-white/5 hover:text-q-icon-primary"
           onClick={() => media.forEach((item) => onMediaRemove(item.id))}
         >
@@ -494,7 +494,7 @@ function MediaInputs({
   ) : (
     <div
       className="flex max-h-36 flex-wrap items-center gap-2 overflow-y-auto p-1"
-      aria-label="Attached media"
+      aria-label="Archivos adjuntos"
     >
       {content}
     </div>
@@ -542,7 +542,7 @@ export function StudioPromptBox({
             onClick={() => onSurfaceChange(value)}
             start={value === "video" ? <Clapperboard /> : <ImageIcon />}
           >
-            {value === "video" ? "Video" : "Image"}
+            {value === "video" ? "Video" : "Imagen"}
           </PromptBox.Mode>
         ))}
       </PromptBox.ModeRail>
@@ -590,7 +590,7 @@ export function StudioPromptBox({
             {...{ model, inputMode, media, onMediaAdd, library }}
           />
           <PillSelect
-            label="Model"
+            label="Modelo"
             value={model.id}
             onValueChange={onModelChange}
             options={models.map((entry) => ({
@@ -621,7 +621,7 @@ export function StudioPromptBox({
             trigger={
               <PromptBox.Pill
                 iconOnly
-                aria-label="All settings"
+                aria-label="Todos los ajustes"
                 start={<SlidersHorizontal />}
               />
             }

@@ -39,8 +39,8 @@ test("mixed picker routes files by kind and never fills the source slot", () => 
   const next = mediaInputs.mergeReferences([], selected, seedance25Edit.roles);
   assert.deepEqual(next.map((item) => item.role), ["reference", "reference", "video", "video", "audio"]);
   assert.equal(mediaInputs.mergeReferences(next, selected, seedance25Edit.roles).length, 5);
-  assert.throws(() => mediaInputs.mergeReferences([], items("video", 11), seedance25.roles), /maximum/i);
-  assert.throws(() => mediaInputs.mergeReferences([], items("audio", 1), { reference: 3 }), /not supported/i);
+  assert.throws(() => mediaInputs.mergeReferences([], items("video", 11), seedance25.roles), /máximo/i);
+  assert.throws(() => mediaInputs.mergeReferences([], items("audio", 1), { reference: 3 }), /no acepta/i);
 });
 
 test("mixed routing respects each installed model's declared kinds and caps", () => {
@@ -48,20 +48,20 @@ test("mixed routing respects each installed model's declared kinds and caps", ()
     for (const [kind, role] of Object.entries(mediaInputs.REFERENCE_ROLE)) {
       const max = model.roles[role] ?? 0;
       if (!max) {
-        assert.throws(() => mediaInputs.mergeReferences([], items(role, 1, kind), model.roles), /not supported/i, model.id);
+        assert.throws(() => mediaInputs.mergeReferences([], items(role, 1, kind), model.roles), /no acepta/i, model.id);
         continue;
       }
       const added = mediaInputs.mergeReferences([], items(role, max, kind), model.roles);
       assert.equal(added.length, max, `${model.id}: ${kind}`);
       assert.ok(added.every((item) => item.role === role));
-      assert.throws(() => mediaInputs.mergeReferences([], items(role, max + 1, kind), model.roles), /maximum/i, model.id);
+      assert.throws(() => mediaInputs.mergeReferences([], items(role, max + 1, kind), model.roles), /máximo/i, model.id);
     }
   }
 });
 
 test("mixed selection is atomic when one kind exceeds its capacity", () => {
   const current = items("video", 10);
-  assert.throws(() => mediaInputs.mergeReferences(current, [...items("reference", 1), { ...items("video", 1)[0], id: "extra", url: "https://cdn.example.com/extra" }], seedance25.roles), /maximum/i);
+  assert.throws(() => mediaInputs.mergeReferences(current, [...items("reference", 1), { ...items("video", 1)[0], id: "extra", url: "https://cdn.example.com/extra" }], seedance25.roles), /máximo/i);
   assert.equal(current.length, 10);
 });
 
@@ -79,8 +79,8 @@ test("image role assignment demotes the previous frame without discarding files"
   const next = mediaInputs.changeImageRole(seedance25, current, "reference-0", "start");
   assert.deepEqual(next.map((item) => [item.id, item.role]), [["start-0", "reference"], ["reference-0", "start"]]);
   assert.deepEqual(current.map((item) => item.role), ["start", "reference"]);
-  assert.throws(() => mediaInputs.changeImageRole(seedance25Edit, items("reference", 1), "reference-0", "start"), /not supported/i);
-  assert.throws(() => mediaInputs.changeImageRole(seedance25, items("video", 1), "video-0", "start"), /image/i);
+  assert.throws(() => mediaInputs.changeImageRole(seedance25Edit, items("reference", 1), "reference-0", "start"), /no acepta/i);
+  assert.throws(() => mediaInputs.changeImageRole(seedance25, items("video", 1), "video-0", "start"), /imágenes/i);
 });
 
 test("registry metadata excludes nested input mode IDs and labels", () => {
@@ -99,7 +99,7 @@ test("Seedance preserves all supported image, video, and audio references", () =
   assert.equal(request.body.audio_urls.length, 10);
 });
 test("Seedance rejects mixed frame and reference inputs instead of dropping references", () => {
-  assert.throws(() => toPlatform(plane(seedance25, { start: items("start", 1), audio: items("audio", 1) })), /frames.*references|references.*frames/i);
+  assert.throws(() => toPlatform(plane(seedance25, { start: items("start", 1), audio: items("audio", 1) })), /cuadro.*referencias|frames.*references|references.*frames/i);
 });
 test("end frame requires a start frame", () => {
   assert.throws(() => toPlatform(plane(seedance25, { end: items("end", 1) })), /start frame/i);
@@ -113,7 +113,7 @@ test("frames map to the image endpoint with both frame fields", () => {
 });
 test("role caps are enforced for each Seedance version", () => {
   for (const [model, role, cap] of [[seedance25, "reference", 30], [seedance25, "video", 10], [seedance25, "audio", 10], [seedance2, "reference", 9], [seedance2, "video", 3], [seedance2, "audio", 3]]) {
-    assert.throws(() => toPlatform(plane(model, { [role]: items(role, cap + 1) })), /maximum|up to|limit/i);
+    assert.throws(() => toPlatform(plane(model, { [role]: items(role, cap + 1) })), /máximo|maximum|up to|limit/i);
   }
 });
 test("wrong media kinds cannot be submitted in a reference array", () => {
@@ -131,8 +131,8 @@ test("Edit and Extend keep source video separate from ten reference videos", () 
 });
 test("Edit and Extend require source video and nonempty prompt", () => {
   for (const model of [seedance25Edit, seedance25Extend]) {
-    assert.throws(() => toPlatform(plane(model)), /source video/i);
-    assert.throws(() => toPlatform(plane(model, { source: items("source", 1) }, { prompt: { text: "  " } })), /prompt/i);
+    assert.throws(() => toPlatform(plane(model)), /video de origen|source video/i);
+    assert.throws(() => toPlatform(plane(model, { source: items("source", 1) }, { prompt: { text: "  " } })), /descripción|prompt/i);
   }
 });
 test("optional empty prompt is omitted with references", () => {
@@ -140,7 +140,7 @@ test("optional empty prompt is omitted with references", () => {
   assert.ok(!("prompt" in body));
 });
 test("text-to-video requires a prompt", () => {
-  assert.throws(() => toPlatform(plane(seedance25, {}, { prompt: { text: "" } })), /prompt/i);
+  assert.throws(() => toPlatform(plane(seedance25, {}, { prompt: { text: "" } })), /descripción|prompt/i);
 });
 test("Seedance 2.5 sends schema-defined bitrate_mode, not output_format", () => {
   const { body } = toPlatform(plane(seedance25));
@@ -153,7 +153,7 @@ test("grouping retains every attachment rather than truncating", () => {
 test("adding media deduplicates references, enforces capacity, and replaces single slots", () => {
   const current = items("video", 2);
   assert.equal(mediaInputs.mergeMedia(current, "video", items("video", 3), 3).length, 3);
-  assert.throws(() => mediaInputs.mergeMedia(current, "video", items("video", 4), 3), /maximum/i);
+  assert.throws(() => mediaInputs.mergeMedia(current, "video", items("video", 4), 3), /máximo/i);
   const replacement = { ...items("start", 1)[0], id: "new", url: "https://cdn.example.com/new" };
   assert.deepEqual(mediaInputs.mergeMedia(items("start", 1), "start", [replacement], 1), [replacement]);
   assert.throws(() => mediaInputs.mergeMedia([], "audio", items("video", 1), 3), /audio/i);
@@ -163,11 +163,11 @@ test("audio is classified as audio, unsupported MIME types are rejected", () => 
   assert.equal(uploadContract.mediaKindFromMime("audio/x-wav"), "audio");
   assert.equal(uploadContract.mediaKindFromMime("video/mp4"), "video");
   assert.equal(uploadContract.mediaKindFromMime("image/png"), "image");
-  assert.throws(() => uploadContract.mediaKindFromMime("text/html"), /Unsupported/);
+  assert.throws(() => uploadContract.mediaKindFromMime("text/html"), /no se puede usar/);
 });
 test("reference mode rejects empty input and never ignores incompatible media", () => {
-  assert.throws(() => toPlatform(plane(seedance25, {}, { inputMode: "references" })), /reference/i);
-  assert.throws(() => toPlatform(plane(seedance25, { start: items("start", 1) }, { inputMode: "references" })), /not supported/i);
-  assert.throws(() => toPlatform(plane(seedance25, { audio: items("audio", 1) }, { inputMode: "frames" })), /not supported/i);
+  assert.throws(() => toPlatform(plane(seedance25, {}, { inputMode: "references" })), /referencia|reference/i);
+  assert.throws(() => toPlatform(plane(seedance25, { start: items("start", 1) }, { inputMode: "references" })), /no acepta/i);
+  assert.throws(() => toPlatform(plane(seedance25, { audio: items("audio", 1) }, { inputMode: "frames" })), /no acepta/i);
   assert.throws(() => toPlatform(plane(seedance25, {}, { inputMode: "unknown" })), /input mode/i);
 });
