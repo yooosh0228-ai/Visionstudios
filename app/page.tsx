@@ -10,10 +10,6 @@ import { LoginScreen } from "@/components/studio/login-screen"
 import { NoModels } from "@/components/studio/no-models"
 
 export const metadata: Metadata = {
-  title: "Estudio · Vision Studios",
-  description:
-    "Crea imágenes y video para tu negocio desde el navegador. Entra con Google y paga solo lo que generas.",
-  applicationName: "Estudio Vision",
   appleWebApp: { capable: true, title: "Estudio", statusBarStyle: "black" },
   formatDetection: { telephone: false },
 }

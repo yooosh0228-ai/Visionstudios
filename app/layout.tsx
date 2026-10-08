@@ -36,10 +36,10 @@ const plexMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "Estudio · Vision Studios",
+  title: "Vision Studios · Estudio",
   description:
-    "Crea imágenes y video para tu negocio desde el navegador. Entra con Google y paga solo lo que generas.",
-  applicationName: "Estudio Vision",
+    "El estudio de Vision Studios: imágenes y video para tu marca, y agentes especialistas que trabajan para tu negocio.",
+  applicationName: "Vision Studios",
 }
 
 export const viewport: Viewport = { themeColor: "#141819" }
