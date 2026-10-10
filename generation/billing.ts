@@ -35,16 +35,63 @@ export function roundCredits(value: number): number {
 }
 
 /**
- * Costo en créditos de una generación: precio del modelo × cantidad de salidas.
- * Devuelve null cuando el modelo no tiene precio (los clientes no lo pueden usar).
- * El precio del modelo debe corresponder a su configuración más cara
- * (duración o resolución máximas), así nunca se cobra de menos.
+ * En qué unidad está el precio de un modelo, igual que en la lista de precios
+ * de Higgsfield: por imagen, por segundo de video o por generación completa.
+ */
+export type PriceUnit = "image" | "second" | "generation"
+
+/** Modelos que Higgsfield cobra por generación sin importar la duración. */
+const PER_GENERATION_MODELS: ReadonlySet<string> = new Set(["dop"])
+
+export function priceUnit(model: {
+  id: string
+  surface: "image" | "video"
+  settings: Record<string, unknown>
+}): PriceUnit {
+  if (model.surface === "image") return "image"
+  // Sin duración elegible (editar, control de movimiento) el costo real depende
+  // del largo del video de origen: el precio solo puede ser por generación.
+  if (PER_GENERATION_MODELS.has(model.id) || !("duration" in model.settings))
+    return "generation"
+  return "second"
+}
+
+export const PRICE_UNIT_LABEL: Record<PriceUnit, string> = {
+  image: "por imagen",
+  second: "por segundo",
+  generation: "por generación",
+}
+
+/** Duración pedida en segundos; null si la configuración no trae una válida. */
+export function durationSeconds(settings: Record<string, unknown>): number | null {
+  const n = settings.duration
+  return typeof n === "number" && Number.isFinite(n) && n > 0 && n <= 600
+    ? n
+    : null
+}
+
+/**
+ * Costo en créditos de una generación:
+ * - "image" (por defecto): precio × cantidad de imágenes.
+ * - "second": precio × segundos de duración, para que un clip largo cueste más
+ *   que uno corto, igual que le cuesta a Higgsfield.
+ * - "generation": el precio tal cual.
+ * Devuelve null cuando el modelo no tiene precio (los clientes no lo pueden usar)
+ * o falta la duración de un modelo cobrado por segundo. El precio debe
+ * corresponder a la configuración más cara del modelo (resolución, audio), así
+ * nunca se cobra de menos.
  */
 export function generationCost(
   price: number | null | undefined,
-  settings: Record<string, unknown>
+  settings: Record<string, unknown>,
+  unit: PriceUnit = "image"
 ): number | null {
   if (price == null || !Number.isFinite(price) || price < 0) return null
+  if (unit === "generation") return roundCredits(price)
+  if (unit === "second") {
+    const seconds = durationSeconds(settings)
+    return seconds === null ? null : roundCredits(price * seconds)
+  }
   return roundCredits(price * outputCount(settings))
 }
 
@@ -66,9 +113,10 @@ export function affordability(input: {
   credits: number
   price: number | null | undefined
   settings: Record<string, unknown>
+  unit?: PriceUnit
 }): Affordability {
   if (input.isOwner) return { state: "free" }
-  const cost = generationCost(input.price, input.settings)
+  const cost = generationCost(input.price, input.settings, input.unit)
   if (cost === null) return { state: "unpriced" }
   if (input.credits < cost)
     return { state: "short", cost, missing: roundCredits(cost - input.credits) }

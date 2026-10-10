@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { AdminPanel } from "@/components/admin/admin-panel"
+import { priceUnit } from "@/generation/billing"
 import { MODELS } from "@/generation/catalog"
 import { getSession } from "@/generation/session"
 import type { Session } from "@/generation/session"
@@ -62,6 +63,7 @@ export default async function AdminPage() {
         id: model.id,
         label: model.label,
         surface: model.surface,
+        unit: priceUnit(model),
         price: priceByModel.get(model.id) ?? null,
       }))}
       movements={(ledger.data ?? []).map((row) => ({
