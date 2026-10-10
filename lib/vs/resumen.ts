@@ -38,19 +38,25 @@ export function cobrosConCuenta(
   }))
 }
 
+/** El mes (AAAA-MM) de un momento, contado en hora de Santo Domingo. */
+function mesRD(iso: string): string {
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? iso.slice(0, 7) : hoyRD(d).slice(0, 7)
+}
+
 export function resumenDe(p: Panel, hoy = hoyRD()) {
   const mes = hoy.slice(0, 7)
   const confirmadosMes = p.pagos.filter(
     (x) =>
       x.estado === "confirmado" &&
       x.tipo === "cobro" &&
-      (x.revisadoAt ?? x.createdAt).slice(0, 7) === mes
+      mesRD(x.revisadoAt ?? x.createdAt) === mes
   )
   const creditosMes = p.pagos.filter(
     (x) =>
       x.estado === "confirmado" &&
       x.tipo === "creditos" &&
-      (x.revisadoAt ?? x.createdAt).slice(0, 7) === mes
+      mesRD(x.revisadoAt ?? x.createdAt) === mes
   )
   const cobros = cobrosConCuenta(p, hoy)
   const abiertos = cobros.filter((c) => !c.cancelado && c.cuenta.saldo > 0)

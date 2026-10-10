@@ -6,8 +6,15 @@ import { createSupabaseServer } from "@/lib/supabase/server"
 /** Solo rutas internas: nunca se redirige a otro sitio. */
 function destinoSeguro(valor: string | undefined): string {
   if (!valor) return "/cuenta"
-  const ruta = decodeURIComponent(valor)
-  return ruta.startsWith("/") && !ruta.startsWith("//") && !ruta.includes("\\") ? ruta : "/cuenta"
+  let ruta: string
+  try {
+    ruta = decodeURIComponent(valor)
+  } catch {
+    return "/cuenta"
+  }
+  return ruta.startsWith("/") && !ruta.startsWith("//") && !ruta.includes("\\")
+    ? ruta
+    : "/cuenta"
 }
 
 /**

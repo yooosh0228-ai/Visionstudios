@@ -180,7 +180,7 @@ create table if not exists public.vs_pagos (
   created_at timestamptz not null default now(),
   revisado_at timestamptz,
   check (tipo <> 'cobro' or cobro_id is not null),
-  check (tipo <> 'creditos' or (user_id is not null and creditos is not null))
+  check (tipo <> 'creditos' or creditos is not null)
 );
 create index if not exists vs_pagos_estado_idx on public.vs_pagos (estado, created_at desc);
 create index if not exists vs_pagos_cobro_idx on public.vs_pagos (cobro_id);
@@ -229,6 +229,7 @@ begin
   if not found then raise exception 'pago_inexistente'; end if;
   if v_pago.tipo <> 'creditos' then raise exception 'no_es_creditos'; end if;
   if v_pago.estado <> 'pendiente' then raise exception 'ya_revisado'; end if;
+  if v_pago.user_id is null then raise exception 'no_account'; end if;
   v_saldo := public.admin_adjust(v_pago.user_id, v_pago.creditos, 'topup',
     coalesce(nullif(p_nota, ''), 'Recarga por transferencia ' || v_pago.referencia));
   update public.vs_pagos set estado = 'confirmado', revisado_at = now() where id = p_pago;

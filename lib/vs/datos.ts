@@ -21,10 +21,13 @@ import type {
 } from "./types"
 
 type Fila = Record<string, unknown>
-const s = (v: unknown) => (typeof v === "string" ? v : v === null || v === undefined ? "" : String(v))
+const s = (v: unknown) =>
+  typeof v === "string" ? v : v === null || v === undefined ? "" : String(v)
 const sn = (v: unknown) => (typeof v === "string" && v !== "" ? v : null)
-const n = (v: unknown) => (v === null || v === undefined || v === "" ? 0 : Number(v))
-const nn = (v: unknown) => (v === null || v === undefined || v === "" ? null : Number(v))
+const n = (v: unknown) =>
+  v === null || v === undefined || v === "" ? 0 : Number(v)
+const nn = (v: unknown) =>
+  v === null || v === undefined || v === "" ? null : Number(v)
 const arr = (v: unknown) => (Array.isArray(v) ? v.map(String) : [])
 
 export function aTrabajo(r: Fila): Trabajo {
@@ -33,7 +36,12 @@ export function aTrabajo(r: Fila): Trabajo {
   const fondoLocal = sn(r.fondo_local)
   const fondoRemoto = sn(r.fondo_remoto)
   const cifras = Array.isArray(r.cifras)
-    ? (r.cifras as unknown[]).filter(Array.isArray).map((p) => [s((p as unknown[])[0]), s((p as unknown[])[1])] as [string, string])
+    ? (r.cifras as unknown[])
+        .filter(Array.isArray)
+        .map(
+          (p) =>
+            [s((p as unknown[])[0]), s((p as unknown[])[1])] as [string, string]
+        )
     : []
   const pantallas = Array.isArray(r.pantallas)
     ? (r.pantallas as unknown[])
@@ -45,7 +53,10 @@ export function aTrabajo(r: Fila): Trabajo {
           ...(p.leyenda ? { leyenda: s(p.leyenda) } : {}),
         }))
     : []
-  const lienzo = r.lienzo === "marca" || r.lienzo === "estudio" || r.lienzo === "web" ? r.lienzo : null
+  const lienzo =
+    r.lienzo === "marca" || r.lienzo === "estudio" || r.lienzo === "web"
+      ? r.lienzo
+      : null
   return {
     id: s(r.id),
     tipo: r.tipo === "video" || r.tipo === "marca" ? r.tipo : "app",
@@ -58,9 +69,15 @@ export function aTrabajo(r: Fila): Trabajo {
     cifras,
     vivo: sn(r.vivo),
     notaVivo: sn(r.nota_vivo),
-    video: videoLocal || videoRemoto ? { local: videoLocal, remoto: videoRemoto } : null,
+    video:
+      videoLocal || videoRemoto
+        ? { local: videoLocal, remoto: videoRemoto }
+        : null,
     poster: sn(r.poster),
-    fondo: fondoLocal || fondoRemoto ? { local: fondoLocal, remoto: fondoRemoto } : null,
+    fondo:
+      fondoLocal || fondoRemoto
+        ? { local: fondoLocal, remoto: fondoRemoto }
+        : null,
     lienzo,
     sonido: r.sonido === true,
     destacado: r.destacado === true,
@@ -221,18 +238,36 @@ export function aApp(r: Fila): AppRegistro {
 const db = () => createSupabaseAdmin()
 
 export async function leerAjustes(): Promise<Ajustes> {
-  const { data } = await db().from("vs_ajustes").select("datos").eq("id", 1).maybeSingle()
+  const { data } = await db()
+    .from("vs_ajustes")
+    .select("datos")
+    .eq("id", 1)
+    .maybeSingle()
   return normalizarAjustes(data?.datos)
 }
 
 /** Lo que ve cualquiera en la portada. Si la base falla, la portada sigue en pie. */
-export async function sitioPublico(): Promise<{ ajustes: Ajustes; trabajos: Trabajo[]; ofertas: Oferta[] }> {
+export async function sitioPublico(): Promise<{
+  ajustes: Ajustes
+  trabajos: Trabajo[]
+  ofertas: Oferta[]
+}> {
   try {
     const cliente = db()
     const [ajustes, trabajos, ofertas] = await Promise.all([
       cliente.from("vs_ajustes").select("datos").eq("id", 1).maybeSingle(),
-      cliente.from("vs_trabajos").select("*").eq("visible", true).order("orden").order("created_at"),
-      cliente.from("vs_ofertas").select("*").eq("publico", true).eq("activo", true).order("orden"),
+      cliente
+        .from("vs_trabajos")
+        .select("*")
+        .eq("visible", true)
+        .order("orden")
+        .order("created_at"),
+      cliente
+        .from("vs_ofertas")
+        .select("*")
+        .eq("publico", true)
+        .eq("activo", true)
+        .order("orden"),
     ])
     return {
       ajustes: normalizarAjustes(ajustes.data?.datos),
@@ -263,17 +298,27 @@ export async function leerPanel(): Promise<Panel> {
   const [aj, cl, pr, py, en, co, pa, of, tr, ap] = await Promise.all([
     c.from("vs_ajustes").select("datos").eq("id", 1).maybeSingle(),
     c.from("vs_clientes").select("*").order("created_at", { ascending: false }),
-    c.from("vs_prospectos").select("*").order("fecha_proxima", { ascending: true, nullsFirst: false }),
-    c.from("vs_proyectos").select("*").order("updated_at", { ascending: false }),
-    c.from("vs_entregables").select("*").order("created_at", { ascending: false }),
+    c
+      .from("vs_prospectos")
+      .select("*")
+      .order("fecha_proxima", { ascending: true, nullsFirst: false }),
+    c
+      .from("vs_proyectos")
+      .select("*")
+      .order("updated_at", { ascending: false }),
+    c
+      .from("vs_entregables")
+      .select("*")
+      .order("created_at", { ascending: false }),
     c.from("vs_cobros").select("*").order("created_at", { ascending: false }),
-    c.from("vs_pagos").select("*").order("created_at", { ascending: false }).limit(500),
+    c.from("vs_pagos").select("*").order("created_at", { ascending: false }),
     c.from("vs_ofertas").select("*").order("orden"),
     c.from("vs_trabajos").select("*").order("orden"),
     c.from("vs_apps").select("*").order("orden"),
   ])
   const fallo = [cl, pr, py, en, co, pa, of, tr, ap].find((r) => r.error)
-  if (fallo?.error) throw new Error(`No se pudo leer la base: ${fallo.error.message}`)
+  if (fallo?.error)
+    throw new Error(`No se pudo leer la base: ${fallo.error.message}`)
   return {
     ajustes: normalizarAjustes(aj.data?.datos),
     clientes: (cl.data ?? []).map(aCliente),
@@ -291,8 +336,21 @@ export async function leerPanel(): Promise<Panel> {
 export type Portal = {
   ajustes: Ajustes
   cliente: Pick<Cliente, "id" | "nombre" | "contacto"> | null
-  proyectos: Pick<Proyecto, "id" | "nombre" | "etapa" | "fechaEntrega" | "notaCliente" | "cerrado">[]
-  entregables: Pick<Entregable, "id" | "proyectoId" | "titulo" | "enlace" | "descripcion" | "estado" | "comentarioCliente" | "respondidoAt">[]
+  proyectos: Pick<
+    Proyecto,
+    "id" | "nombre" | "etapa" | "fechaEntrega" | "notaCliente" | "cerrado"
+  >[]
+  entregables: Pick<
+    Entregable,
+    | "id"
+    | "proyectoId"
+    | "titulo"
+    | "enlace"
+    | "descripcion"
+    | "estado"
+    | "comentarioCliente"
+    | "respondidoAt"
+  >[]
   cobros: Cobro[]
   pagos: Pago[]
   pagosCreditos: Pago[]
@@ -303,14 +361,35 @@ export type Portal = {
  * Lo que ve un cliente en su área: solo lo suyo y solo los campos pensados para
  * él (sin notas internas). Se busca por el correo verificado de su sesión.
  */
-export async function leerPortal(sesion: { userId: string; email: string }): Promise<Portal> {
+export async function leerPortal(sesion: {
+  userId: string
+  email: string
+  emailConfirmed: boolean
+}): Promise<Portal> {
   const c = db()
-  const email = sesion.email.trim().toLowerCase()
+  // Solo un correo confirmado enlaza a un cliente.
+  const email = sesion.emailConfirmed ? sesion.email.trim().toLowerCase() : ""
   const [aj, cl, cuenta, creditos] = await Promise.all([
     c.from("vs_ajustes").select("datos").eq("id", 1).maybeSingle(),
-    email ? c.from("vs_clientes").select("id, nombre, contacto").eq("email", email).maybeSingle() : Promise.resolve({ data: null }),
-    c.from("accounts").select("credits").eq("user_id", sesion.userId).maybeSingle(),
-    c.from("vs_pagos").select("*").eq("tipo", "creditos").eq("user_id", sesion.userId).order("created_at", { ascending: false }).limit(30),
+    email
+      ? c
+          .from("vs_clientes")
+          .select("id, nombre, contacto")
+          .eq("email", email)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    c
+      .from("accounts")
+      .select("credits")
+      .eq("user_id", sesion.userId)
+      .maybeSingle(),
+    c
+      .from("vs_pagos")
+      .select("*")
+      .eq("tipo", "creditos")
+      .eq("user_id", sesion.userId)
+      .order("created_at", { ascending: false })
+      .limit(30),
   ])
   const base: Portal = {
     ajustes: normalizarAjustes(aj.data?.datos),
@@ -325,26 +404,84 @@ export async function leerPortal(sesion: { userId: string; email: string }): Pro
   if (!cl.data) return base
   const clienteId = s(cl.data.id)
   const [py, co] = await Promise.all([
-    c.from("vs_proyectos").select("id, nombre, etapa, fecha_entrega, nota_cliente, cerrado").eq("cliente_id", clienteId).order("created_at", { ascending: false }),
-    c.from("vs_cobros").select("*").eq("cliente_id", clienteId).eq("cancelado", false).order("created_at", { ascending: false }),
+    c
+      .from("vs_proyectos")
+      .select("id, nombre, etapa, fecha_entrega, nota_cliente, cerrado")
+      .eq("cliente_id", clienteId)
+      .order("created_at", { ascending: false }),
+    c
+      .from("vs_cobros")
+      .select("*")
+      .eq("cliente_id", clienteId)
+      .eq("cancelado", false)
+      .order("created_at", { ascending: false }),
   ])
   const proyectos = (py.data ?? []).map(aProyecto)
   const cobros = (co.data ?? []).map(aCobro)
   const [en, pa] = await Promise.all([
     proyectos.length
-      ? c.from("vs_entregables").select("*").in("proyecto_id", proyectos.map((p) => p.id)).eq("visible_cliente", true).neq("estado", "borrador").order("created_at", { ascending: false })
+      ? c
+          .from("vs_entregables")
+          .select("*")
+          .in(
+            "proyecto_id",
+            proyectos.map((p) => p.id)
+          )
+          .eq("visible_cliente", true)
+          .neq("estado", "borrador")
+          .order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as Fila[] }),
     cobros.length
-      ? c.from("vs_pagos").select("*").in("cobro_id", cobros.map((x) => x.id)).order("created_at", { ascending: false })
+      ? c
+          .from("vs_pagos")
+          .select("*")
+          .in(
+            "cobro_id",
+            cobros.map((x) => x.id)
+          )
+          .order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as Fila[] }),
   ])
   return {
     ...base,
-    cliente: { id: clienteId, nombre: s(cl.data.nombre), contacto: s(cl.data.contacto) },
-    proyectos: proyectos.map(({ id, nombre, etapa, fechaEntrega, notaCliente, cerrado }) => ({ id, nombre, etapa, fechaEntrega, notaCliente, cerrado })),
-    entregables: (en.data ?? []).map(aEntregable).map(({ id, proyectoId, titulo, enlace, descripcion, estado, comentarioCliente, respondidoAt }) => ({
-      id, proyectoId, titulo, enlace, descripcion, estado, comentarioCliente, respondidoAt,
-    })),
+    cliente: {
+      id: clienteId,
+      nombre: s(cl.data.nombre),
+      contacto: s(cl.data.contacto),
+    },
+    proyectos: proyectos.map(
+      ({ id, nombre, etapa, fechaEntrega, notaCliente, cerrado }) => ({
+        id,
+        nombre,
+        etapa,
+        fechaEntrega,
+        notaCliente,
+        cerrado,
+      })
+    ),
+    entregables: (en.data ?? [])
+      .map(aEntregable)
+      .map(
+        ({
+          id,
+          proyectoId,
+          titulo,
+          enlace,
+          descripcion,
+          estado,
+          comentarioCliente,
+          respondidoAt,
+        }) => ({
+          id,
+          proyectoId,
+          titulo,
+          enlace,
+          descripcion,
+          estado,
+          comentarioCliente,
+          respondidoAt,
+        })
+      ),
     cobros,
     pagos: (pa.data ?? []).map(aPago),
   }

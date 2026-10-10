@@ -38,9 +38,19 @@ export function Sitio({
     "No sé, ayúdame a decidir",
   ]
   const canales: [string, string, string][] = []
-  if (ajustes.whatsapp) canales.push([`https://wa.me/${ajustes.whatsapp}`, "WhatsApp", "Escríbenos directo"])
-  canales.push([`https://www.instagram.com/${ajustes.instagram}/`, "Instagram", `@${ajustes.instagram}`])
-  if (ajustes.correo) canales.push([`mailto:${ajustes.correo}`, "Correo", ajustes.correo])
+  if (ajustes.whatsapp)
+    canales.push([
+      `https://wa.me/${ajustes.whatsapp}`,
+      "WhatsApp",
+      "Escríbenos directo",
+    ])
+  canales.push([
+    `https://www.instagram.com/${ajustes.instagram}/`,
+    "Instagram",
+    `@${ajustes.instagram}`,
+  ])
+  if (ajustes.correo)
+    canales.push([`mailto:${ajustes.correo}`, "Correo", ajustes.correo])
 
   const datosNegocio = {
     "@context": "https://schema.org",
@@ -48,19 +58,36 @@ export function Sitio({
     name: ajustes.nombre,
     url: "https://402visionstudios.com/",
     image: "https://402visionstudios.com/og.jpg",
-    description: "Estudio de diseño, software y video para negocios en Santiago de los Caballeros.",
+    description:
+      "Estudio de diseño, software y video para negocios en Santiago de los Caballeros.",
     areaServed: { "@type": "City", name: "Santiago de los Caballeros" },
-    address: { "@type": "PostalAddress", addressLocality: "Santiago de los Caballeros", addressCountry: "DO" },
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Santiago de los Caballeros",
+      addressCountry: "DO",
+    },
     sameAs: [`https://www.instagram.com/${ajustes.instagram}/`],
     ...(radiografia?.precioPublico
-      ? { makesOffer: { "@type": "Offer", name: radiografia.nombre, price: String(radiografia.precioPublico), priceCurrency: "DOP" } }
+      ? {
+          makesOffer: {
+            "@type": "Offer",
+            name: radiografia.nombre,
+            price: String(radiografia.precioPublico),
+            priceCurrency: "DOP",
+          },
+        }
       : {}),
   }
 
   return (
     <div className="vs">
       <script dangerouslySetInnerHTML={{ __html: DETECTAR }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datosNegocio) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(datosNegocio).replace(/</g, "\\u003c"),
+        }}
+      />
       <a className="saltar" href="#trabajo">
         Saltar al trabajo
       </a>
@@ -68,7 +95,11 @@ export function Sitio({
 
       <main id="inicio">
         {/* PORTADA: mostrar primero. */}
-        <section className="portada" id="inicio-portada" aria-labelledby="titulo">
+        <section
+          className="portada"
+          id="inicio-portada"
+          aria-labelledby="titulo"
+        >
           <div className="envoltura">
             <div>
               <h1 id="titulo">
@@ -77,7 +108,8 @@ export function Sitio({
                 en foco.
               </h1>
               <p className="bajada">
-                Diseñamos y programamos apps, páginas, marcas y video para negocios de Santiago.{" "}
+                Diseñamos y programamos apps, páginas, marcas y video para
+                negocios de Santiago.{" "}
                 <span>Todo hecho a la medida, desde cero.</span>
               </p>
               <div className="acciones">
@@ -101,25 +133,38 @@ export function Sitio({
         </section>
 
         {/* VITRINA: el catálogo de lo que ya está hecho. */}
-        <section className="seccion vitrina" id="trabajo" aria-labelledby="t-trabajo">
+        <section
+          className="seccion vitrina"
+          id="trabajo"
+          aria-labelledby="t-trabajo"
+        >
           <div className="envoltura">
             <div className="cabeza">
               <h2 id="t-trabajo">Lo que ya está hecho.</h2>
-              <p>Trabajo real, en uso. Toca cualquier pieza para ver qué hicimos y cómo funciona.</p>
+              <p>
+                Trabajo real, en uso. Toca cualquier pieza para ver qué hicimos
+                y cómo funciona.
+              </p>
             </div>
             <Vitrina trabajos={trabajos} espacioLibre={ajustes.espacioLibre} />
           </div>
         </section>
 
         {/* HECHO A LA MEDIDA */}
-        <section className="seccion medida" id="medida" aria-labelledby="t-medida">
+        <section
+          className="seccion medida"
+          id="medida"
+          aria-labelledby="t-medida"
+        >
           <div className="envoltura">
             <div>
               <h2 id="t-medida">Hecho para tu negocio. No para cualquiera.</h2>
               <p className="lead">
-                La mayoría de las páginas y apps que se venden por aquí son maquetas compradas y revendidas con otro
-                logo encima. <b>Aquí no.</b> Empezamos por tu negocio: cómo vendes, cómo atiendes y qué te está
-                costando clientes. De ahí diseñamos y programamos todo desde cero. <b>Trabajo 100% personalizado.</b>
+                La mayoría de las páginas y apps que se venden por aquí son
+                maquetas compradas y revendidas con otro logo encima.{" "}
+                <b>Aquí no.</b> Empezamos por tu negocio: cómo vendes, cómo
+                atiendes y qué te está costando clientes. De ahí diseñamos y
+                programamos todo desde cero. <b>Trabajo 100% personalizado.</b>
               </p>
             </div>
             <div className="compromisos">
@@ -140,13 +185,17 @@ export function Sitio({
         </section>
 
         {/* SERVICIOS: sin precios; cada uno se cotiza a la medida. */}
-        <section className="seccion" id="servicios" aria-labelledby="t-servicios">
+        <section
+          className="seccion"
+          id="servicios"
+          aria-labelledby="t-servicios"
+        >
           <div className="envoltura">
             <div className="cabeza">
               <h2 id="t-servicios">Lo que hacemos.</h2>
               <p>
-                Cada trabajo se cotiza según tu negocio, después de entenderlo. Si no sabes por dónde empezar, empieza
-                por la radiografía.
+                Cada trabajo se cotiza según tu negocio, después de entenderlo.
+                Si no sabes por dónde empezar, empieza por la radiografía.
               </p>
             </div>
             <div className="servicios">
@@ -169,8 +218,9 @@ export function Sitio({
             </div>
             <div className="nota-estudio">
               <p>
-                <b>¿Prefieres crear tú mismo?</b> En el Estudio Vision haces imágenes y video para tu negocio desde el
-                navegador y pagas solo lo que usas.
+                <b>¿Prefieres crear tú mismo?</b> En el Estudio Vision haces
+                imágenes y video para tu negocio desde el navegador y pagas solo
+                lo que usas.
               </p>
               <Link className="boton" href="/estudio">
                 <Icono.afuera />
@@ -182,7 +232,11 @@ export function Sitio({
 
         {/* RADIOGRAFÍA: la única tarifa publicada. */}
         {radiografia ? (
-          <section className="seccion radiografia" id="radiografia" aria-labelledby="t-radio">
+          <section
+            className="seccion radiografia"
+            id="radiografia"
+            aria-labelledby="t-radio"
+          >
             <div className="envoltura">
               <div className="placa">
                 <div>
@@ -222,10 +276,13 @@ export function Sitio({
         <section className="seccion" id="proceso" aria-labelledby="t-proceso">
           <div className="envoltura">
             <div className="cabeza">
-              <h2 id="t-proceso">Como una foto: enfocar, encuadrar, disparar, revelar.</h2>
+              <h2 id="t-proceso">
+                Como una foto: enfocar, encuadrar, disparar, revelar.
+              </h2>
               <p>
-                Trabajamos con depósito y a fecha. Cada cliente tiene su área privada donde ve en qué va su proyecto,
-                aprueba las entregas y lleva sus pagos al día.
+                Trabajamos con depósito y a fecha. Cada cliente tiene su área
+                privada donde ve en qué va su proyecto, aprueba las entregas y
+                lleva sus pagos al día.
               </p>
             </div>
             <ol className="pasos">
@@ -241,17 +298,27 @@ export function Sitio({
         </section>
 
         {/* CONTACTO: llega al panel como prospecto nuevo. */}
-        <section className="seccion contacto" id="contacto" aria-labelledby="t-contacto">
+        <section
+          className="seccion contacto"
+          id="contacto"
+          aria-labelledby="t-contacto"
+        >
           <div className="envoltura">
             <div>
               <h2 id="t-contacto">Cuéntanos tu negocio.</h2>
               <p className="lead">
-                Un minuto y nos llega todo. Te contestamos por WhatsApp. Primero entendemos, después cotizamos, sin
-                compromiso.
+                Un minuto y nos llega todo. Te contestamos por WhatsApp. Primero
+                entendemos, después cotizamos, sin compromiso.
               </p>
               <div className="canales">
                 {canales.map(([h, t, s]) => (
-                  <a className="canal" href={h} key={t} target="_blank" rel="noopener">
+                  <a
+                    className="canal"
+                    href={h}
+                    key={t}
+                    target="_blank"
+                    rel="noopener"
+                  >
                     <b>{t}</b>
                     <span>{s}</span>
                   </a>
@@ -263,7 +330,11 @@ export function Sitio({
               </div>
             </div>
             <div>
-              <FormularioContacto opciones={opciones} whatsapp={ajustes.whatsapp} instagram={ajustes.instagram} />
+              <FormularioContacto
+                opciones={opciones}
+                whatsapp={ajustes.whatsapp}
+                instagram={ajustes.instagram}
+              />
             </div>
           </div>
         </section>
@@ -283,15 +354,24 @@ export function Sitio({
             </nav>
           </div>
           <div className="datos">
-            <a href={`https://www.instagram.com/${ajustes.instagram}/`} target="_blank" rel="noopener">
+            <a
+              href={`https://www.instagram.com/${ajustes.instagram}/`}
+              target="_blank"
+              rel="noopener"
+            >
               @{ajustes.instagram}
             </a>
-            {ajustes.correo ? <a href={`mailto:${ajustes.correo}`}>{ajustes.correo}</a> : null}
+            {ajustes.correo ? (
+              <a href={`mailto:${ajustes.correo}`}>{ajustes.correo}</a>
+            ) : null}
             <span>Santiago de los Caballeros, República Dominicana</span>
             <span>
-              <Link href="/privacidad">Privacidad</Link> · <Link href="/terminos">Condiciones</Link>
+              <Link href="/privacidad">Privacidad</Link> ·{" "}
+              <Link href="/terminos">Condiciones</Link>
             </span>
-            <span>© {new Date().getFullYear()} {ajustes.nombre}</span>
+            <span>
+              © {new Date().getFullYear()} {ajustes.nombre}
+            </span>
           </div>
         </div>
       </footer>
