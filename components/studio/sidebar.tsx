@@ -2,7 +2,9 @@
 "use client"
 
 import type { ReactNode } from "react"
+import { useRouter } from "next/navigation"
 import {
+  BriefcaseBusiness,
   House,
   Images,
   CircleUserRound,
@@ -133,6 +135,7 @@ export function StudioSidebar({
   accountOk,
   onOpenAccount,
 }: StudioSidebarProps) {
+  const router = useRouter()
   return (
     <aside
       className={cn(
@@ -193,6 +196,13 @@ export function StudioSidebar({
             start={<IconTile as={Images} gradient="purple" />}
             title="Todas las generaciones"
             ariaLabel="Todas las generaciones"
+          />
+          <Row
+            collapsed={collapsed}
+            onClick={() => router.push("/servicios")}
+            start={<IconTile as={BriefcaseBusiness} gradient="teal" />}
+            title="Agentes y servicios"
+            ariaLabel="Agentes y servicios: chat con especialistas, contenido, radiografía, documentos y asistente"
           />
         </div>
 
