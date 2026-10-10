@@ -8,12 +8,26 @@ import {
   resolveDeviceId,
 } from "./generation/device"
 
+/** Dirección vieja del Estudio: cuando la principal es otra, se manda allá. */
+const DOMINIO_VIEJO = "studio.402visionstudios.com"
+
 export async function proxy(request: NextRequest) {
+  const principal = process.env.NEXT_PUBLIC_SITE_URL
+  if (principal && request.nextUrl.hostname === DOMINIO_VIEJO) {
+    const destino = new URL(principal)
+    if (destino.hostname !== DOMINIO_VIEJO) {
+      destino.pathname =
+        request.nextUrl.pathname === "/" ? "/estudio" : request.nextUrl.pathname
+      destino.search = request.nextUrl.search
+      return NextResponse.redirect(destino, 301)
+    }
+  }
   const { deviceId, minted } = resolveDeviceId(
     request.cookies.get(DEVICE_COOKIE)?.value
   )
   let response = NextResponse.next({ request })
-  if (minted) response.cookies.set(DEVICE_COOKIE, deviceId, DEVICE_COOKIE_OPTIONS)
+  if (minted)
+    response.cookies.set(DEVICE_COOKIE, deviceId, DEVICE_COOKIE_OPTIONS)
 
   // Refresca la sesión de Supabase en las navegaciones. Las server actions la
   // refrescan por su cuenta, así que no pagan este viaje en cada sondeo.

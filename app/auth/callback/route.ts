@@ -1,16 +1,33 @@
+import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 
 import { createSupabaseServer } from "@/lib/supabase/server"
 
-/** Google devuelve aquí con un código; se cambia por la sesión y se entra al estudio. */
+/** Solo rutas internas: nunca se redirige a otro sitio. */
+function destinoSeguro(valor: string | undefined): string {
+  if (!valor) return "/cuenta"
+  const ruta = decodeURIComponent(valor)
+  return ruta.startsWith("/") && !ruta.startsWith("//") && !ruta.includes("\\") ? ruta : "/cuenta"
+}
+
+/**
+ * Google devuelve aquí con un código; se cambia por la sesión y se sigue a donde
+ * la persona iba (el Estudio, su cuenta o el panel), guardado en la cookie vs_next.
+ */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? origin
+  const jar = await cookies()
+  const destino = destinoSeguro(jar.get("vs_next")?.value)
   const code = searchParams.get("code")
   if (code) {
     const supabase = await createSupabaseServer()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) return NextResponse.redirect(`${base}/`)
+    if (!error) {
+      const res = NextResponse.redirect(`${base}${destino}`)
+      res.cookies.delete("vs_next")
+      return res
+    }
   }
-  return NextResponse.redirect(`${base}/?error=login`)
+  return NextResponse.redirect(`${base}/entrar?error=login`)
 }

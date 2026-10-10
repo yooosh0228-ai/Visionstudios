@@ -4,7 +4,8 @@
  * modelo lo fija el dueño en /admin.
  */
 
-export const DEFAULT_TOPUP_URL = "https://ig.me/m/visionstudios.rd"
+/** Recargar créditos: el área de cliente, donde se paga por transferencia. */
+export const DEFAULT_TOPUP_URL = "/cuenta"
 
 /** Correos de dueño: variable OWNER_EMAILS separada por comas, sin distinguir mayúsculas. */
 export function parseOwnerEmails(raw: string | undefined): string[] {
@@ -63,7 +64,9 @@ export const PRICE_UNIT_LABEL: Record<PriceUnit, string> = {
 }
 
 /** Duración pedida en segundos; null si la configuración no trae una válida. */
-export function durationSeconds(settings: Record<string, unknown>): number | null {
+export function durationSeconds(
+  settings: Record<string, unknown>
+): number | null {
   const n = settings.duration
   return typeof n === "number" && Number.isFinite(n) && n > 0 && n <= 600
     ? n
@@ -126,7 +129,10 @@ export function affordability(input: {
 /** Valida un monto escrito por el dueño; lanza con un mensaje legible. */
 export function parseCreditAmount(
   raw: unknown,
-  { allowNegative = false, max = 100_000 }: { allowNegative?: boolean; max?: number } = {}
+  {
+    allowNegative = false,
+    max = 100_000,
+  }: { allowNegative?: boolean; max?: number } = {}
 ): number {
   if (typeof raw === "string" && raw.trim() === "")
     throw new Error("Escribe un número válido")
@@ -134,7 +140,8 @@ export function parseCreditAmount(
   if (typeof n !== "number" || !Number.isFinite(n))
     throw new Error("Escribe un número válido")
   if (n === 0) throw new Error("El monto no puede ser cero")
-  if (n < 0 && !allowNegative) throw new Error("El monto debe ser mayor que cero")
+  if (n < 0 && !allowNegative)
+    throw new Error("El monto debe ser mayor que cero")
   if (Math.abs(n) > max) throw new Error(`El monto máximo es ${max}`)
   return roundCredits(n)
 }

@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next"
 
-/** Permite añadir el Estudio a la pantalla de inicio y abrirlo como app. */
+/** Permite añadir Vision Studios a la pantalla de inicio y abrirlo como app. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Estudio Vision",
-    short_name: "Estudio",
-    description: "Crea imágenes y video para tu negocio.",
+    name: "Vision Studios",
+    short_name: "Vision",
+    description:
+      "Apps, páginas, marca y video para tu negocio. Tu cuenta, tus proyectos y el Estudio.",
     lang: "es-DO",
     start_url: "/",
     scope: "/",

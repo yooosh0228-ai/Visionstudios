@@ -22,7 +22,7 @@ export default async function ServiciosPage() {
   } catch {
     session = null
   }
-  if (!session) redirect("/")
+  if (!session) redirect("/entrar?a=/servicios")
 
   const admin = createSupabaseAdmin()
   const [account, priceRows, jobs, assistants, chats] = await Promise.all([

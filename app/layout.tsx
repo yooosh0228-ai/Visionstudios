@@ -42,7 +42,14 @@ export const metadata: Metadata = {
   applicationName: "Vision Studios",
 }
 
-export const viewport: Viewport = { themeColor: "#141819" }
+// Llena la pantalla del iPhone (con muesca) y respeta las zonas seguras en todas las páginas.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#141819",
+  colorScheme: "dark",
+}
 
 export default function RootLayout({
   children,
@@ -51,6 +58,8 @@ export default function RootLayout({
     <html
       lang="es-DO"
       data-theme="default-dark"
+      // La portada escribe el tipo de dispositivo en <html> antes de pintar.
+      suppressHydrationWarning
       className={cn(
         "dark font-sans antialiased",
         poppins.variable,
