@@ -58,8 +58,8 @@ export function GenerationCard({
   alt = "",
   media,
   title,
-  generatingLabel = "Generating",
-  failureLabel = "The generation did not produce previewable media.",
+  generatingLabel = "Generando",
+  failureLabel = "Esta generación no dejó nada que mostrar.",
   className,
   children,
   ...props
@@ -115,7 +115,7 @@ export function GenerationCard({
           role="status"
         >
           <span className="text-sm font-semibold text-foreground">
-            Generation unavailable
+            Generación no disponible
           </span>
           <span className="text-xs text-muted-foreground">{failureLabel}</span>
         </span>
@@ -135,7 +135,7 @@ export interface CardAction {
 }
 
 const GLASS =
-  "pointer-events-auto flex size-8 shrink-0 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+  "pointer-events-auto flex size-8 shrink-0 pointer-coarse:size-10 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 
 function stop(event: MouseEvent) {
   event.stopPropagation()
@@ -153,7 +153,7 @@ export function CardActions({
   const inline = overflow ? actions.slice(0, max - 1) : actions
   const extra = overflow ? actions.slice(max - 1) : []
   return (
-    <div className="pointer-events-none absolute top-2 right-2 z-[2] flex flex-col items-center gap-1.5 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100">
+    <div className="pointer-events-none absolute top-2 right-2 z-[2] flex flex-col items-center gap-1.5 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 pointer-coarse:opacity-100">
       {inline.map((action) => (
         <button
           key={action.id}
@@ -172,7 +172,7 @@ export function CardActions({
       {extra.length > 0 ? (
         <DropdownMenu>
           <DropdownMenuTrigger
-            aria-label="More actions"
+            aria-label="Más acciones"
             className={GLASS}
             onPointerDown={stop}
             onClick={stop}
@@ -225,7 +225,7 @@ export function GenerationTile({
   alt = "",
   media,
   title,
-  generatingLabel = "Generating",
+  generatingLabel = "Generando",
   failureLabel,
   actions,
   children,
@@ -277,8 +277,8 @@ export function GenerationTile({
               aria-label={
                 openLabel ??
                 (generation?.prompt
-                  ? `Open generation: ${generation.prompt}`
-                  : "Open generation")
+                  ? `Abrir generación: ${generation.prompt}`
+                  : "Abrir generación")
               }
               className="absolute inset-0 z-[1] cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
               onFocus={onFocus}

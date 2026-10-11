@@ -2,6 +2,8 @@
 
 import { createSupabaseAdmin } from "@/lib/supabase/admin"
 
+import { SERVICE_PRICE_IDS } from "@/servicios/catalog"
+
 import { MODELS } from "./catalog"
 import { parseCreditAmount, parsePriceInput } from "./billing"
 import { getSession } from "./session"
@@ -52,7 +54,10 @@ export async function setModelPrice(data: unknown): Promise<AdminResult> {
     await requireOwner()
     const input = asObject(data)
     const modelId = input.modelId
-    if (typeof modelId !== "string" || !MODELS.some((m) => m.id === modelId))
+    if (
+      typeof modelId !== "string" ||
+      !(MODELS.some((m) => m.id === modelId) || SERVICE_PRICE_IDS.includes(modelId))
+    )
       throw new Error("Modelo desconocido")
     const price = parsePriceInput(input.credits)
     const admin = createSupabaseAdmin()

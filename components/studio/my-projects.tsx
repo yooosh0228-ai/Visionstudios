@@ -92,7 +92,7 @@ export function ProjectCard({
       <Mosaic images={images} />
       <button
         type="button"
-        aria-label={`Open ${title}`}
+        aria-label={`Abrir ${title}`}
         className="absolute inset-0 z-[1] cursor-pointer rounded-2xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
         onClick={onOpen}
       />
@@ -143,13 +143,13 @@ export function MyProjects({
             <span className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-foreground">
               <Plus className="size-5" />
             </span>
-            <span className="text-sm font-semibold">New project</span>
+            <span className="text-sm font-semibold">Nuevo proyecto</span>
           </button>
         }
       />
       <ProjectCard
-        title="All Generations"
-        subtitle={`${generations.length.toLocaleString("en-US")} generations`}
+        title="Todas las generaciones"
+        subtitle={`${generations.length.toLocaleString("es-DO")} generaciones`}
         images={previewImages(undefined, previews.all)}
         onOpen={onOpenAllGenerations}
       />
@@ -157,7 +157,7 @@ export function MyProjects({
         <ProjectCard
           key={project.id}
           title={project.name}
-          subtitle={`${project.generationCount.toLocaleString("en-US")} generations  •  Private`}
+          subtitle={`${project.generationCount.toLocaleString("es-DO")} generaciones  •  Privado`}
           images={previewImages(
             project,
             previews.byProject.get(project.id) ?? []

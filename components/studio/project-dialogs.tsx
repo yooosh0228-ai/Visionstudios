@@ -74,8 +74,8 @@ function NameDialog({
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Project name"
-                aria-label="Project name"
+                placeholder="Nombre del proyecto"
+                aria-label="Nombre del proyecto"
                 maxLength={80}
               />
             </div>
@@ -104,9 +104,9 @@ export function ProjectCreateModal({
       trigger={trigger}
       open={open}
       onOpenChange={setOpen}
-      title="New project"
-      description="Group generations under one name."
-      submitLabel="Create"
+      title="Nuevo proyecto"
+      description="Agrupa tus generaciones bajo un mismo nombre."
+      submitLabel="Crear"
       onSubmit={onCreate}
     />
   )
@@ -130,7 +130,7 @@ export function ProjectActions({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger
-          aria-label={`Actions for ${projectName}`}
+          aria-label={`Opciones de ${projectName}`}
           className={cn("q-close q-close-sm", className)}
           onClick={(e) => e.stopPropagation()}
         >
@@ -138,38 +138,39 @@ export function ProjectActions({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
           <DropdownMenuItem onClick={() => setRenaming(true)}>
-            <Pencil /> Rename
+            <Pencil /> Renombrar
           </DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
             onClick={() => setDeleting(true)}
           >
-            <Trash2 /> Delete
+            <Trash2 /> Borrar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <NameDialog
         open={renaming}
         onOpenChange={setRenaming}
-        title="Rename project"
-        description="Only the name changes; generations stay linked."
+        title="Cambiar nombre"
+        description="Solo cambia el nombre; las generaciones siguen dentro."
         initial={projectName}
-        submitLabel="Rename"
+        submitLabel="Guardar"
         onSubmit={onRename}
       />
       <Dialog open={deleting} onOpenChange={setDeleting}>
         <DialogContent size="xs">
           <DialogHeader>
-            <DialogTitle>Delete “{projectName}”?</DialogTitle>
+            <DialogTitle>¿Borrar «{projectName}»?</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <p className="text-q-body-sm-regular text-q-text-secondary">
-              The project goes away. Its generations stay in All Generations.
+              Se borra el proyecto. Sus generaciones se quedan en Todas las
+              generaciones.
             </p>
           </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleting(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button
               variant="destructive"
@@ -178,7 +179,7 @@ export function ProjectActions({
                 setDeleting(false)
               }}
             >
-              Delete
+              Borrar
             </Button>
           </DialogFooter>
         </DialogContent>

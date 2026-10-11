@@ -148,7 +148,8 @@ export function useRuns() {
         result = {
           ok: false,
           code: "platform",
-          message: "No se pudo contactar al estudio para cancelar. Intenta de nuevo.",
+          message:
+            "No se pudo contactar al estudio para cancelar. Intenta de nuevo.",
         }
       }
       if (result.ok) {
@@ -192,7 +193,7 @@ function settle(status: GenerationStatus): Partial<RunRecord> {
     status.status === "nsfw"
       ? "Blocked by the content filter"
       : status.status === "canceled"
-        ? "Canceled"
+        ? "Cancelada"
         : (describeError(status.error) ??
           "The generation did not produce media")
   return { status: "failed", error: reason }

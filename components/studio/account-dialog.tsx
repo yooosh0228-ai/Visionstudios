@@ -16,7 +16,7 @@ import { signOut } from "@/generation/account-actions"
 import { DEFAULT_TOPUP_URL, formatCredits } from "@/generation/billing"
 import { useAccount } from "@/generation/stores/account"
 
-const TOPUP_URL = process.env.NEXT_PUBLIC_TOPUP_URL || DEFAULT_TOPUP_URL
+const TOPUP_URL = DEFAULT_TOPUP_URL
 
 /** Cuenta: quién entró, cuánto saldo tiene, cómo recargar y cerrar sesión. */
 export function AccountDialog({
@@ -43,8 +43,8 @@ export function AccountDialog({
       <DialogContent size="sm">
         <DialogHeader>
           <DialogTitle>
-            <Wallet className="mr-2 size-5 shrink-0 text-q-icon-secondary" />{" "}
-            Mi cuenta
+            <Wallet className="mr-2 size-5 shrink-0 text-q-icon-secondary" /> Mi
+            cuenta
           </DialogTitle>
         </DialogHeader>
         <DialogBody>
@@ -83,8 +83,6 @@ export function AccountDialog({
               ) : (
                 <a
                   href={TOPUP_URL}
-                  target="_blank"
-                  rel="noreferrer"
                   className={buttonVariants({ variant: "outline", size: "lg" })}
                 >
                   <Wallet /> Recargar créditos

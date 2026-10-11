@@ -94,7 +94,7 @@ async function round(): Promise<void> {
     if (++dropped < MAX_MISSES) return
     settleAll(
       new Error(
-        "Lost contact with the studio server while checking progress. The generation may still finish on Higgsfield."
+        "Se perdió la conexión mientras revisábamos el avance. Puede que la generación termine igual: recarga en un momento."
       )
     )
   } finally {
@@ -142,7 +142,7 @@ function sweep(): void {
       new Error(
         last
           ? `Stopped checking: ${last}`
-          : "Stopped waiting: the generation did not finish in time. It may still complete on Higgsfield."
+          : "Dejamos de esperar porque tardó demasiado. Puede que termine igual: recarga en un momento."
       )
     )
   }

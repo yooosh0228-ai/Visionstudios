@@ -54,19 +54,19 @@ export interface TemplateItem {
   settings?: Record<string, unknown>
 }
 
-/** 402 Vision Studios briefs: each one loads a production-ready prompt and the
+/** Ejemplos de Vision Studios: each one loads a production-ready prompt and the
     model/settings it was written for. The user can still switch model after. */
 export const TEMPLATES: TemplateItem[] = [
   {
     id: "product-spot",
-    title: "Product spot",
-    subtitle: "Hero reveal for a client's product",
+    title: "Spot de producto",
+    subtitle: "Tu producto como protagonista",
     category: "commercial",
     kind: "video",
     images: [ART.productSpot, ART.brandStillLife, ART.campaignKeyVisual],
     icon: Clapperboard,
     prompt:
-      "Commercial product reveal: a glass bottle rises onto a dark stone plinth, slow 180-degree orbit, hard rim light in warm amber, fine dust drifting through a single top spotlight, shallow depth of field, premium and quiet.",
+      "Presentación comercial de producto: una botella de vidrio sube sobre un pedestal de piedra oscura, giro lento de cámara de 180 grados, luz de contorno ámbar, polvo fino flotando bajo un solo foco cenital, poca profundidad de campo, elegante y en calma.",
     modelId: "seedance-2.5",
     settings: {
       aspectRatio: "16:9",
@@ -77,66 +77,66 @@ export const TEMPLATES: TemplateItem[] = [
   },
   {
     id: "vertical-reel",
-    title: "Vertical reel",
-    subtitle: "9:16 opener for Instagram and TikTok",
+    title: "Reel vertical",
+    subtitle: "Arranque 9:16 para Instagram y TikTok",
     category: "social",
     kind: "video",
     images: [ART.verticalReel, ART.eventAftermovie, ART.productSpot],
     icon: Smartphone,
     prompt:
-      "Vertical social opener: handheld walk along a seafront boulevard at golden hour, city skyline in silhouette, waves catching the sun, quick whip pan into a close-up of the subject smiling at camera, energetic and natural.",
+      "Arranque vertical para redes: caminata con cámara en mano por el Malecón a la hora dorada, la ciudad en silueta, olas brillando con el sol, barrido rápido hacia un primer plano de la persona sonriendo a cámara, natural y con energía.",
     modelId: "kling-3-pro",
     settings: { aspectRatio: "9:16", duration: 5, sound: true },
   },
   {
     id: "editorial-portrait",
-    title: "Editorial portrait",
-    subtitle: "Magazine-grade talent still",
+    title: "Retrato editorial",
+    subtitle: "Retrato de revista para tu marca",
     category: "photo",
     kind: "image",
     images: [ART.editorialPortrait, ART.brandStillLife, ART.campaignKeyVisual],
     icon: Aperture,
     prompt:
-      "Editorial portrait of a musician in a deep green coat against a charcoal wall, single hard key light from the left, 85mm lens, shallow depth of field, rich skin tones, calm confident gaze, film grain.",
+      "Retrato editorial de un músico con abrigo verde oscuro frente a una pared gris carbón, una sola luz dura desde la izquierda, lente de 85 mm, poca profundidad de campo, piel con textura real, mirada tranquila y segura, grano de película.",
     modelId: "soul-cinema",
     settings: { aspectRatio: "3:4", resolution: "1080p" },
   },
   {
     id: "campaign-key-visual",
-    title: "Campaign key visual",
-    subtitle: "Poster art with room for type",
+    title: "Arte de campaña",
+    subtitle: "Cartel con espacio para el texto",
     category: "brand",
     kind: "image",
     images: [ART.campaignKeyVisual, ART.productSpot, ART.verticalReel],
     icon: Megaphone,
     prompt:
-      "Campaign key visual for a summer festival: bold flat amber background, a large green sun setting over stylised dark waves on the right, clean empty space on the left for headline typography, graphic poster style.",
+      "Arte de campaña para un festival de verano: fondo ámbar plano y fuerte, un gran sol verde poniéndose sobre olas oscuras estilizadas a la derecha, espacio vacío y limpio a la izquierda para el título, estilo de cartel gráfico, sin letras.",
     modelId: "ideogram-4",
     settings: { aspectRatio: "4:3", resolution: "2k" },
   },
   {
     id: "event-aftermovie",
-    title: "Event aftermovie",
-    subtitle: "Concert energy in one shot",
+    title: "Aftermovie de evento",
+    subtitle: "La energía de la fiesta en una toma",
     category: "events",
     kind: "video",
     images: [ART.eventAftermovie, ART.verticalReel, ART.editorialPortrait],
     icon: Music,
     prompt:
-      "Aftermovie shot at a night concert: crane move rising over a crowd with raised hands, green and amber stage beams cutting through haze, confetti in slow motion, cinematic contrast.",
+      "Toma de aftermovie en un concierto de noche: la cámara sube como grúa sobre un público con las manos arriba, rayos de luz verde y ámbar atravesando el humo, confeti en cámara lenta, contraste de cine.",
     modelId: "seedance-2-fast",
     settings: { aspectRatio: "16:9", duration: 6, generateAudio: true },
   },
   {
     id: "brand-still-life",
-    title: "Brand still life",
-    subtitle: "Menu, café and packaging shots",
+    title: "Foto de producto",
+    subtitle: "Menú, cafetería y empaques",
     category: "photo",
     kind: "image",
     images: [ART.brandStillLife, ART.productSpot, ART.editorialPortrait],
     icon: Coffee,
     prompt:
-      "Still life for a local café brand: ceramic cup of coffee with steam on a warm wooden table, a folded menu card beside it, soft window light from the right, deep green wall behind, appetising and natural.",
+      "Bodegón para una cafetería de barrio: taza de café de cerámica humeante sobre una mesa de madera cálida, un menú doblado al lado, luz suave de ventana desde la derecha, pared verde oscuro detrás, apetitoso y natural.",
     modelId: "soul-2",
     settings: { aspectRatio: "4:3" },
   },
@@ -184,7 +184,7 @@ export function TemplateCard({
   template,
   variant = "single",
   onTry,
-  tryLabel = "Try",
+  tryLabel = "Usar",
 }: TemplateCardProps) {
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.currentTarget !== event.target) return
@@ -197,7 +197,7 @@ export function TemplateCard({
     <div
       role="button"
       tabIndex={0}
-      aria-label={`Use template: ${template.title}`}
+      aria-label={`Usar ejemplo: ${template.title}`}
       className="relative flex cursor-pointer flex-col gap-2 rounded-[20px] bg-white/5 p-2 shadow-[0_2px_6px_rgba(0,0,0,0.15)] transition-[transform,background-color] duration-200 hover:z-[1] hover:-translate-y-0.5 hover:bg-white/8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none motion-reduce:hover:translate-y-0"
       onClick={() => onTry(template)}
       onKeyDown={onKeyDown}
@@ -214,7 +214,7 @@ export function TemplateCard({
             >
               <img
                 src={src}
-                alt={`${template.title} — shot ${i + 1}`}
+                alt={`${template.title}, toma ${i + 1}`}
                 className="size-full object-cover"
               />
             </div>
@@ -265,7 +265,7 @@ export interface ExamplePresetsProps {
 export function ExamplePresets({
   items,
   onUse,
-  tryLabel = "Try",
+  tryLabel = "Usar",
   className = "w-full max-w-[900px]",
 }: ExamplePresetsProps) {
   return (

@@ -47,17 +47,17 @@ async function copyText(text: string) {
 
 function defaultRows(g: GenerationDetail): GenerationDetailRow[] {
   const rows: GenerationDetailRow[] = []
-  if (g.model) rows.push({ id: "model", label: "Model", value: g.model })
+  if (g.model) rows.push({ id: "model", label: "Modelo", value: g.model })
   rows.push({
     id: "type",
     label: "Type",
-    value: g.mediaType === "video" ? "Video" : "Image",
+    value: g.mediaType === "video" ? "Video" : "Imagen",
   })
   if (g.createdAt)
     rows.push({
       id: "created",
-      label: "Created",
-      value: new Date(g.createdAt).toLocaleString(),
+      label: "Creada",
+      value: new Date(g.createdAt).toLocaleString("es-DO"),
     })
   for (const [key, value] of Object.entries(g.settings ?? {})) {
     if (value === undefined || value === null) continue
@@ -88,7 +88,7 @@ export function GenerationDetailModal({
             Generation
           </DialogPrimitive.Title>
           <DialogPrimitive.Description className="sr-only">
-            {generation.prompt ?? "Generated media"}
+            {generation.prompt ?? "Archivo generado"}
           </DialogPrimitive.Description>
           {backdrop ? (
             <img
@@ -119,10 +119,10 @@ export function GenerationDetailModal({
           </div>
           <aside className="relative flex w-full shrink-0 flex-col gap-4 border-t border-white/10 bg-background/70 p-4 backdrop-blur-xl md:m-4 md:w-[360px] md:rounded-2xl md:border">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-semibold">Generation</span>
+              <span className="text-sm font-semibold">Generación</span>
               <DialogPrimitive.Close
                 render={
-                  <Button variant="ghost" size="icon-sm" aria-label="Close" />
+                  <Button variant="ghost" size="icon-sm" aria-label="Cerrar" />
                 }
               >
                 <X />
@@ -159,13 +159,13 @@ export function GenerationDetailModal({
                     className="flex-1"
                     onClick={() => void downloadMedia(generation.src)}
                   >
-                    <Download /> Download
+                    <Download /> Descargar
                   </Button>
                   {generation.prompt ? (
                     <Button
                       variant="outline"
                       size="icon"
-                      aria-label="Copy prompt"
+                      aria-label="Copiar descripción"
                       className={cn(copied && "text-primary")}
                       onClick={() => {
                         void copyText(generation.prompt!).then(() => {
@@ -180,7 +180,7 @@ export function GenerationDetailModal({
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label="Share"
+                    aria-label="Compartir"
                     onClick={() => {
                       const url = new URL(generation.src, window.location.href)
                         .href

@@ -1,3 +1,5 @@
+import type { Metadata, Viewport } from "next"
+
 import { MODELS } from "@/generation/catalog"
 import { getSession } from "@/generation/session"
 import { StudioTemplate } from "@/layouts/studio"
@@ -6,6 +8,22 @@ import { createSupabaseServer } from "@/lib/supabase/server"
 import { AccountGate } from "@/components/studio/account-gate"
 import { LoginScreen } from "@/components/studio/login-screen"
 import { NoModels } from "@/components/studio/no-models"
+
+export const metadata: Metadata = {
+  title: "Estudio · Vision Studios",
+  description: "Crea imágenes y video para tu negocio desde el navegador. Entra con Google y paga solo lo que generas.",
+  appleWebApp: { capable: true, title: "Estudio", statusBarStyle: "black" },
+  formatDetection: { telephone: false },
+}
+
+// Llena la pantalla del iPhone (con muesca) y respeta las zonas seguras.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#141819",
+  colorScheme: "dark",
+}
 
 export default async function Page({
   searchParams,

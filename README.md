@@ -15,10 +15,13 @@ con Next.js 16, Tailwind v4 y shadcn/Base UI. Lee `AGENTS.md`,
   el servidor. Los clientes nunca ven ni pegan una llave.
 - **Entrada**: botón "Continuar con Google" (Supabase Auth). La cuenta se crea
   sola al primer ingreso, con saldo 0.
-- **Créditos**: cada generación cuesta `precio del modelo × cantidad de
-  imágenes`. El cobro se hace **antes** de enviar a Higgsfield, con una función
-  de base de datos atómica y repetible: un doble clic o una pestaña repetida
-  nunca cobran dos veces.
+- **Créditos**: un crédito vale US$0.01 de lo que paga el cliente. Cada
+  modelo tiene un precio en la misma unidad en que Higgsfield le cobra al
+  estudio: **por segundo** de video (se multiplica por la duración elegida),
+  **por imagen** (se multiplica por la cantidad) o **por generación** (DoP y los
+  modelos sin duración elegible). El cobro se hace **antes** de enviar a
+  Higgsfield, con una función de base de datos atómica y repetible: un doble
+  clic o una pestaña repetida nunca cobran dos veces.
 - **Reembolsos automáticos**: si Higgsfield rechaza el envío, o la generación
   termina `failed`, `nsfw` o `canceled`, los créditos se devuelven (una sola
   vez). Al volver al estudio se liquida lo que quedó en cola mientras la
@@ -31,8 +34,11 @@ con Next.js 16, Tailwind v4 y shadcn/Base UI. Lee `AGENTS.md`,
 - **Panel `/admin`**: recargar o descontar créditos a un cliente, fijar el
   precio de cada modelo, ver los últimos movimientos y los cobros por revisar.
 - **Un modelo sin precio no se puede usar por los clientes.** Pon el precio de
-  la configuración más cara de cada modelo (duración o resolución máximas)
-  para no cobrar de menos.
+  la configuración más cara de cada modelo (resolución, audio) para no cobrar
+  de menos; la duración ya se multiplica sola. Los modelos de editar video y de
+  control de movimiento cobran Higgsfield según el largo del video de origen,
+  que el estudio no conoce: déjalos sin precio o ponles un precio por
+  generación que cubra el peor caso.
 
 ## Variables de entorno
 

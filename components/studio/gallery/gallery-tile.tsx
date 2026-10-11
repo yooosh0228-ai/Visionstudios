@@ -144,8 +144,8 @@ function GalleryTileComponent({
         {onDelete ? (
           <button
             type="button"
-            aria-label="Remove"
-            className="absolute top-2 right-2 z-[2] flex size-8 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100 hover:bg-black/60"
+            aria-label="Quitar"
+            className="absolute top-2 right-2 z-[2] flex size-8 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100 hover:bg-black/60 pointer-coarse:opacity-100"
             onClick={() => onDelete(item)}
           >
             <Trash2 className="size-4" />
@@ -168,16 +168,16 @@ function GalleryTileComponent({
   )
 
   const actions: CardAction[] = [
-    { id: "download", label: "Download", icon: Download },
+    { id: "download", label: "Descargar", icon: Download },
     {
       id: "copy",
-      label: "Copy prompt",
+      label: "Copiar descripción",
       icon: Copy,
       onSelect: () => void copyText(item.prompt),
     },
     {
       id: "share",
-      label: "Share",
+      label: "Compartir",
       icon: Share2,
       onSelect: () => {
         const url = new URL(item.videoSrc ?? item.src, window.location.href)
@@ -193,7 +193,7 @@ function GalleryTileComponent({
       ? [
           {
             id: "delete",
-            label: "Delete",
+            label: "Borrar",
             icon: Trash2,
             danger: true,
             onSelect: () => onDelete(item),
@@ -218,7 +218,7 @@ function GalleryTileComponent({
           createdAt: item.createdAt,
           settings: item.settings,
         }}
-        openLabel={`Open generation: ${item.prompt}`}
+        openLabel={`Abrir generación: ${item.prompt}`}
         onMouseEnter={isVideo ? () => setHovered(true) : undefined}
         onMouseLeave={isVideo ? () => setHovered(false) : undefined}
         onFocus={isVideo ? () => setHovered(true) : undefined}

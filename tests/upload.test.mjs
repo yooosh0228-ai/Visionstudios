@@ -56,7 +56,7 @@ test("unsupported content types are rejected before calling the platform", async
   let calls = 0;
   const api = client(async () => { calls++; return Response.json(ticket); });
   for (const type of ["image/svg+xml", "text/html", "", null]) {
-    await assert.rejects(() => api.createUpload(type), /Unsupported file type/);
+    await assert.rejects(() => api.createUpload(type), /no se puede usar/);
   }
   assert.equal(calls, 0);
 });
@@ -76,7 +76,7 @@ test("malformed upload tickets are rejected", async () => {
     { ...ticket, upload_headers: { "Content-Type": "image/jpeg" } },
     { ...ticket, upload_headers: { ...ticket.upload_headers, Authorization: "Key test-id:test-secret" } },
   ]) {
-    await assert.rejects(() => client(async () => Response.json(invalid)).createUpload("image/png"), /Invalid upload response/);
+    await assert.rejects(() => client(async () => Response.json(invalid)).createUpload("image/png"), /no se completó/);
   }
 });
 
@@ -111,7 +111,7 @@ test("browser handles an unexpected non-JSON route error", async (t) => {
 
 test("browser rejects malformed tickets before attempting storage upload", async (t) => {
   const fetch = t.mock.method(globalThis, "fetch", async () => Response.json({ upload_url: ticket.upload_url }));
-  await assert.rejects(() => uploadMedia(png()), /Invalid upload response/);
+  await assert.rejects(() => uploadMedia(png()), /no se completó/);
   assert.equal(fetch.mock.callCount(), 1);
 });
 
@@ -123,6 +123,6 @@ test("storage failures do not return a public URL", async (t) => {
 
 test("browser rejects unsupported files before requesting a signed URL", async (t) => {
   const fetch = t.mock.method(globalThis, "fetch", async () => Response.json(ticket));
-  await assert.rejects(() => uploadMedia(new File(["<svg/>"], "reference.svg", { type: "image/svg+xml" })), /Unsupported file type/);
+  await assert.rejects(() => uploadMedia(new File(["<svg/>"], "reference.svg", { type: "image/svg+xml" })), /no se puede usar/);
   assert.equal(fetch.mock.callCount(), 0);
 });

@@ -12,7 +12,8 @@ import {
   setModelPrice,
 } from "@/generation/admin-actions"
 import type { AdminResult } from "@/generation/admin-actions"
-import { formatCredits } from "@/generation/billing"
+import { PRICE_UNIT_LABEL, formatCredits } from "@/generation/billing"
+import type { PriceUnit } from "@/generation/billing"
 
 export type AdminAccount = {
   userId: string
@@ -24,6 +25,7 @@ export type AdminModel = {
   id: string
   label: string
   surface: string
+  unit: PriceUnit
   price: number | null
 }
 export type AdminMovement = {
@@ -97,7 +99,13 @@ function useAdminAction() {
   return { pending, message, failed, run }
 }
 
-function Status({ message, failed }: { message: string | null; failed: boolean }) {
+function Status({
+  message,
+  failed,
+}: {
+  message: string | null
+  failed: boolean
+}) {
   if (!message) return null
   return (
     <span
@@ -163,13 +171,17 @@ function AccountRow({ account }: { account: AdminAccount }) {
 }
 
 function ModelRow({ model }: { model: AdminModel }) {
-  const [price, setPrice] = useState(model.price === null ? "" : String(model.price))
+  const [price, setPrice] = useState(
+    model.price === null ? "" : String(model.price)
+  )
   const { pending, message, failed, run } = useAdminAction()
   return (
     <tr className="border-t border-border">
       <td className="py-2 pr-3">
         {model.label}
-        <span className="ml-2 text-xs text-muted-foreground">{model.surface}</span>
+        <span className="ml-2 text-xs text-muted-foreground">
+          {model.surface}
+        </span>
       </td>
       <td className="py-2">
         <form
@@ -190,6 +202,9 @@ function ModelRow({ model }: { model: AdminModel }) {
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />
+          <span className="text-xs text-muted-foreground">
+            créditos {PRICE_UNIT_LABEL[model.unit]}
+          </span>
           <Button type="submit" size="sm" variant="outline" disabled={pending}>
             Guardar
           </Button>
@@ -251,17 +266,22 @@ export function AdminPanel({
 }) {
   const unpriced = models.filter((m) => m.price === null).length
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-10 px-4 py-8">
+    <div className="flex w-full flex-col gap-10">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-q-headline-md-semi-bold">Panel de dueño</h1>
-          <p className="text-sm text-muted-foreground">{ownerEmail}</p>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            Estudio y créditos
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Saldos de cada cuenta, precio de cada modelo y movimientos. Entras
+            como {ownerEmail}.
+          </p>
         </div>
         <Link
-          href="/"
+          href="/estudio"
           className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
         >
-          ← Volver al estudio
+          Abrir el Estudio →
         </Link>
       </header>
 
@@ -270,23 +290,25 @@ export function AdminPanel({
           title="Por revisar"
           hint="Cobros que no llegaron a confirmarse con Higgsfield. Revisa tu historial en Higgsfield y devuelve los créditos si no se generó."
         >
-          <table className="w-full text-left text-sm">
-            <thead className="text-xs text-muted-foreground">
-              <tr>
-                <th className="pb-1 font-medium">Fecha</th>
-                <th className="pb-1 font-medium">Cliente</th>
-                <th className="pb-1 font-medium">Modelo</th>
-                <th className="pb-1 font-medium">Créditos</th>
-                <th className="pb-1 font-medium">Estado</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {pending.map((item) => (
-                <PendingRow key={item.id} item={item} />
-              ))}
-            </tbody>
-          </table>
+          <div className="-mx-1 overflow-x-auto px-1">
+            <table className="w-full min-w-[520px] text-left text-sm">
+              <thead className="text-xs text-muted-foreground">
+                <tr>
+                  <th className="pb-1 font-medium">Fecha</th>
+                  <th className="pb-1 font-medium">Cliente</th>
+                  <th className="pb-1 font-medium">Modelo</th>
+                  <th className="pb-1 font-medium">Créditos</th>
+                  <th className="pb-1 font-medium">Estado</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {pending.map((item) => (
+                  <PendingRow key={item.id} item={item} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Section>
       ) : null}
 
@@ -299,81 +321,93 @@ export function AdminPanel({
             Aún no hay cuentas. Aparecen solas cuando alguien entra con Google.
           </p>
         ) : (
-          <table className="w-full text-left text-sm">
-            <thead className="text-xs text-muted-foreground">
-              <tr>
-                <th className="pb-1 font-medium">Correo</th>
-                <th className="pb-1 font-medium">Saldo</th>
-                <th className="pb-1 font-medium">Recargar o ajustar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {accounts.map((account) => (
-                <AccountRow key={account.userId} account={account} />
-              ))}
-            </tbody>
-          </table>
+          <div className="-mx-1 overflow-x-auto px-1">
+            <table className="w-full min-w-[520px] text-left text-sm">
+              <thead className="text-xs text-muted-foreground">
+                <tr>
+                  <th className="pb-1 font-medium">Correo</th>
+                  <th className="pb-1 font-medium">Saldo</th>
+                  <th className="pb-1 font-medium">Recargar o ajustar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {accounts.map((account) => (
+                  <AccountRow key={account.userId} account={account} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </Section>
 
       <Section
         title="Precios por modelo"
-        hint={`Precio en créditos por generación. Ponlo según la configuración más cara del modelo (duración o resolución máximas) para no cobrar de menos; Soul se multiplica por el número de imágenes. ${
+        hint={`Precio en créditos en la unidad que indica cada fila: por segundo de video (se multiplica por la duración que pida el cliente), por imagen (se multiplica por la cantidad) o por generación. Ponlo según la configuración más cara del modelo (resolución, audio) para no cobrar de menos. ${
           unpriced > 0
             ? `${unpriced} de ${models.length} modelos aún no tienen precio y los clientes no los pueden usar.`
             : ""
         }`}
       >
-        <table className="w-full text-left text-sm">
-          <thead className="text-xs text-muted-foreground">
-            <tr>
-              <th className="pb-1 font-medium">Modelo</th>
-              <th className="pb-1 font-medium">Créditos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {models.map((model) => (
-              <ModelRow key={model.id} model={model} />
-            ))}
-          </tbody>
-        </table>
+        <div className="-mx-1 overflow-x-auto px-1">
+          <table className="w-full min-w-[520px] text-left text-sm">
+            <thead className="text-xs text-muted-foreground">
+              <tr>
+                <th className="pb-1 font-medium">Modelo</th>
+                <th className="pb-1 font-medium">Créditos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {models.map((model) => (
+                <ModelRow key={model.id} model={model} />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Section>
 
       <Section title="Últimos movimientos">
         {movements.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Sin movimientos todavía.</p>
+          <p className="text-sm text-muted-foreground">
+            Sin movimientos todavía.
+          </p>
         ) : (
-          <table className="w-full text-left text-sm">
-            <thead className="text-xs text-muted-foreground">
-              <tr>
-                <th className="pb-1 font-medium">Fecha</th>
-                <th className="pb-1 font-medium">Cliente</th>
-                <th className="pb-1 font-medium">Tipo</th>
-                <th className="pb-1 font-medium">Créditos</th>
-                <th className="pb-1 font-medium">Saldo</th>
-                <th className="pb-1 font-medium">Nota</th>
-              </tr>
-            </thead>
-            <tbody>
-              {movements.map((m) => (
-                <tr key={m.id} className="border-t border-border">
-                  <td className="py-2 pr-3 whitespace-nowrap">{when(m.createdAt)}</td>
-                  <td className="max-w-48 truncate py-2 pr-3">{m.email}</td>
-                  <td className="py-2 pr-3">{REASONS[m.reason] ?? m.reason}</td>
-                  <td className="py-2 pr-3 tabular-nums">
-                    {m.delta > 0 ? "+" : ""}
-                    {formatCredits(m.delta)}
-                  </td>
-                  <td className="py-2 pr-3 tabular-nums">
-                    {formatCredits(m.balanceAfter)}
-                  </td>
-                  <td className="py-2 text-muted-foreground">{m.note}</td>
+          <div className="-mx-1 overflow-x-auto px-1">
+            <table className="w-full min-w-[520px] text-left text-sm">
+              <thead className="text-xs text-muted-foreground">
+                <tr>
+                  <th className="pb-1 font-medium">Fecha</th>
+                  <th className="pb-1 font-medium">Cliente</th>
+                  <th className="pb-1 font-medium">Tipo</th>
+                  <th className="pb-1 font-medium">Créditos</th>
+                  <th className="pb-1 font-medium">Saldo</th>
+                  <th className="pb-1 font-medium">Nota</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {movements.map((m) => (
+                  <tr key={m.id} className="border-t border-border">
+                    <td className="py-2 pr-3 whitespace-nowrap">
+                      {when(m.createdAt)}
+                    </td>
+                    <td className="max-w-48 truncate py-2 pr-3">{m.email}</td>
+                    <td className="py-2 pr-3">
+                      {REASONS[m.reason] ?? m.reason}
+                    </td>
+                    <td className="py-2 pr-3 tabular-nums">
+                      {m.delta > 0 ? "+" : ""}
+                      {formatCredits(m.delta)}
+                    </td>
+                    <td className="py-2 pr-3 tabular-nums">
+                      {formatCredits(m.balanceAfter)}
+                    </td>
+                    <td className="py-2 text-muted-foreground">{m.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </Section>
-    </main>
+    </div>
   )
 }

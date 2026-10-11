@@ -52,11 +52,11 @@ export default function PrivacyPage() {
         a{" "}
         <a
           className="underline"
-          href="https://instagram.com/402visionstudios"
+          href="https://www.instagram.com/visionstudios.rd/"
           target="_blank"
           rel="noreferrer"
         >
-          @402visionstudios
+          @visionstudios.rd
         </a>{" "}
         en Instagram.
       </p>

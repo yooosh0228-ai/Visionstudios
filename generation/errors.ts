@@ -27,7 +27,7 @@ export function describeFailure(
   if (error instanceof MissingCredentialsError)
     return fail(
       "missing_key",
-      "El estudio no está conectado a Higgsfield todavía. Avísale al administrador."
+      "El estudio todavía no está conectado al motor de generación. Avísale al administrador."
     )
 
   if (error instanceof PlatformError) {
@@ -35,20 +35,20 @@ export function describeFailure(
     if (error.status === 401 || error.status === 403)
       return fail(
         "invalid_key",
-        "Higgsfield rechazó la llave del estudio. Avísale al administrador."
+        "El motor de generación rechazó la llave del estudio. Avísale al administrador."
       )
     if (error.status === 429)
       return fail(
         "rate_limited",
-        "Higgsfield está recibiendo muchas solicitudes. Espera un momento y vuelve a intentar."
+        "Hay muchas solicitudes en este momento. Espera un poco y vuelve a intentar."
       )
     if (error.status === 404)
       return fail(
         "not_found",
         detail ??
           (context === "submit"
-            ? "Higgsfield no reconoce este modelo."
-            : "Higgsfield ya no conoce esta solicitud.")
+            ? "Este modelo no está disponible ahora mismo."
+            : "Esta solicitud ya no existe en el motor de generación.")
       )
     if (error.status >= 400 && error.status < 500) {
       if (context === "cancel")
@@ -73,16 +73,19 @@ export function describeFailure(
     if (context === "submit")
       return fail(
         "unconfirmed",
-        "No pudimos confirmar el envío a Higgsfield. Puede que sí se haya generado: escríbenos antes de intentarlo otra vez y lo revisamos."
+        "No pudimos confirmar el envío. Puede que sí se haya generado: escríbenos antes de intentarlo otra vez y lo revisamos."
       )
-    return fail("platform", "No se pudo conectar con Higgsfield. Revisa tu conexión.")
+    return fail(
+      "platform",
+      "No se pudo conectar con el motor de generación. Revisa tu conexión."
+    )
   }
 
   // Validation from the catalog (parseSettings / toPlatform) throws plain
   // errors with user-facing messages.
   if (error instanceof Error && error.message)
     return fail("invalid_input", error.message)
-  return fail("platform", "Algo salió mal al hablar con Higgsfield.")
+  return fail("platform", "Algo salió mal al generar. Vuelve a intentar.")
 }
 
 /** Failures worth polling through: the run may still finish on the platform. */

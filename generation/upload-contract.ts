@@ -21,7 +21,7 @@ export type UploadTicket = {
 export function requireUploadContentType(value: unknown): string {
   if (typeof value !== "string" || !CONTENT_TYPES.has(value)) {
     throw new Error(
-      "Unsupported file type. Use JPEG, PNG, WebP, GIF, MP4, or WAV."
+      "Ese tipo de archivo no se puede usar. Sube JPEG, PNG, WebP, GIF, MP4 o WAV."
     )
   }
   return value
@@ -38,7 +38,7 @@ export function parseUploadTicket(
   contentType: string
 ): UploadTicket {
   const invalid = () =>
-    new Error("Invalid upload response from Higgsfield. Try again.")
+    new Error("La subida no se completó bien. Vuelve a intentar.")
   if (!value || typeof value !== "object" || Array.isArray(value))
     throw invalid()
   const data = value as Record<string, unknown>

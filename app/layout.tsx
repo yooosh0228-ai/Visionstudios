@@ -1,46 +1,65 @@
 import type { Metadata, Viewport } from "next"
-import { IBM_Plex_Mono, IBM_Plex_Sans, Poppins } from "next/font/google"
+import localFont from "next/font/local"
 
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
 
-// 402 Vision Studios type; styles/theme.css maps them onto --hf-type-family-*-base.
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+// Tipografía de Vision Studios, servida desde el propio sitio (sin pedirle nada
+// a Google): carga más rápido, funciona aunque Google Fonts falle y no comparte
+// datos de quien entra. styles/theme.css las asigna a --hf-type-family-*-base.
+const poppins = localFont({
+  src: [
+    { path: "./fonts/poppins-latin-500-normal.woff2", weight: "500" },
+    { path: "./fonts/poppins-latin-600-normal.woff2", weight: "600" },
+    { path: "./fonts/poppins-latin-700-normal.woff2", weight: "700" },
+  ],
   variable: "--font-poppins",
   display: "swap",
 })
-const plexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const plexSans = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-sans-latin-400-normal.woff2", weight: "400" },
+    { path: "./fonts/ibm-plex-sans-latin-500-normal.woff2", weight: "500" },
+    { path: "./fonts/ibm-plex-sans-latin-600-normal.woff2", weight: "600" },
+  ],
   variable: "--font-ibm-plex-sans",
   display: "swap",
 })
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const plexMono = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-mono-latin-400-normal.woff2", weight: "400" },
+    { path: "./fonts/ibm-plex-mono-latin-500-normal.woff2", weight: "500" },
+  ],
   variable: "--font-ibm-plex-mono",
   display: "swap",
 })
 
 export const metadata: Metadata = {
-  title: "402 Vision Studios · Studio",
+  title: "Vision Studios · Estudio",
   description:
-    "402 Vision Studios' generation studio: write a brief, pick a model and produce images and video with Higgsfield.",
-  applicationName: "402 Vision Studios",
+    "El estudio de Vision Studios: imágenes y video para tu marca, y agentes especialistas que trabajan para tu negocio.",
+  applicationName: "Vision Studios",
 }
 
-export const viewport: Viewport = { themeColor: "#141819" }
+// Llena la pantalla del iPhone (con muesca) y respeta las zonas seguras en todas las páginas.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#141819",
+  colorScheme: "dark",
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="es"
+      lang="es-DO"
       data-theme="default-dark"
+      // La portada escribe el tipo de dispositivo en <html> antes de pintar.
+      suppressHydrationWarning
       className={cn(
         "dark font-sans antialiased",
         poppins.variable,

@@ -349,7 +349,7 @@ function Upload({
               <span
                 className="flex size-full items-center justify-center bg-q-background-tertiary"
                 role="img"
-                aria-label={alt || "Audio reference"}
+                aria-label={alt || "Audio de referencia"}
               >
                 <AudioLines className="size-7 text-q-icon-secondary" />
               </span>
@@ -416,7 +416,7 @@ function Generate({
   cost,
   oldCost,
   start,
-  children = "Generate",
+  children = "Generar",
   render,
   className,
   ref,

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ComponentProps } from "react"
-import { Compass, Folder } from "lucide-react"
+import { Compass, Folder, Menu } from "lucide-react"
 
 import { StudioPromptBox } from "@/components/studio/studio-prompt-box"
 import { BrandMark } from "@/components/studio/brand-mark"
@@ -23,7 +23,7 @@ import { UserGenerations } from "@/components/studio/user-generations"
 import type { GalleryItem } from "@/components/studio/gallery/gallery-types"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { reconcileMyGenerations } from "@/generation/actions"
-import { affordability, formatCredits } from "@/generation/billing"
+import { affordability, formatCredits, priceUnit } from "@/generation/billing"
 import { useAccount } from "@/generation/stores/account"
 import { MODELS, getModel, parseSettings } from "@/generation/catalog"
 import type {
@@ -54,6 +54,8 @@ import {
   type AssetSelection,
 } from "@/lib/studio/uploads"
 import { useRuns } from "@/lib/studio/use-runs"
+import { useDevice } from "@/lib/studio/use-device"
+import { cn } from "@/lib/utils"
 
 /**
  * StudioTemplate — the full creative workspace: projects-first sidebar, hero,
@@ -95,6 +97,7 @@ function heroImages(items: GalleryItem[]): readonly [string, string, string] {
 
 function HomeState({
   title,
+  phone,
   items,
   projects,
   dock,
@@ -104,6 +107,7 @@ function HomeState({
   onUseTemplate,
 }: {
   title: string
+  phone: boolean
   items: GalleryItem[]
   projects: MyProjectsProject[]
   dock: DockProps
@@ -134,7 +138,12 @@ function HomeState({
         style={{ backgroundImage: HERO_GLOW }}
       />
 
-      <div className="relative flex w-full flex-col items-center gap-12 px-6 pt-16 pb-16">
+      <div
+        className={cn(
+          "relative flex w-full flex-col items-center gap-10 px-4 pb-[max(4rem,env(safe-area-inset-bottom))] sm:gap-12 sm:px-6",
+          phone ? "pt-20" : "pt-10 lg:pt-16"
+        )}
+      >
         <div
           ref={promptRef}
           className="flex w-full min-w-0 flex-col items-center gap-8"
@@ -142,9 +151,9 @@ function HomeState({
           <div className="flex flex-col items-center gap-5">
             <HeroComposition
               images={images}
-              alt="Recent 402 Vision Studios work"
+              alt="Trabajo reciente de Vision Studios"
             />
-            <h1 className="max-w-[640px] text-center text-q-accent-lg-bold uppercase">
+            <h1 className="max-w-[640px] text-center text-[28px] leading-[1.1] font-bold tracking-tight text-balance uppercase sm:text-q-accent-lg-bold">
               {title}
             </h1>
           </div>
@@ -160,10 +169,10 @@ function HomeState({
           >
             <TabsList>
               <TabsTrigger value="explore" start={<Compass />}>
-                Explore
+                Explorar
               </TabsTrigger>
               <TabsTrigger value="projects" start={<Folder />}>
-                My Projects
+                Mis proyectos
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -182,7 +191,11 @@ function HomeState({
                 onUse={(t) => {
                   onUseTemplate(t)
                   promptRef.current?.scrollIntoView({
-                    behavior: "smooth",
+                    behavior: window.matchMedia(
+                      "(prefers-reduced-motion: reduce)"
+                    ).matches
+                      ? "auto"
+                      : "smooth",
                     block: "center",
                   })
                 }}
@@ -197,12 +210,14 @@ function HomeState({
 }
 
 function FeedState({
+  phone,
   items,
   previewItems,
   title,
   dock,
   onDelete,
 }: {
+  phone: boolean
   items: GalleryItem[]
   previewItems: GalleryItem[]
   title: string
@@ -224,7 +239,10 @@ function FeedState({
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
       <div
-        className="flex min-h-0 flex-1 flex-col px-4 pt-4"
+        className={cn(
+          "flex min-h-0 flex-1 flex-col px-2 sm:px-4",
+          phone ? "pt-[calc(4.25rem+env(safe-area-inset-top))]" : "pt-4"
+        )}
         style={{ paddingBottom: dockHeight + 24 }}
       >
         <UserGenerations
@@ -235,15 +253,15 @@ function FeedState({
             images,
             title:
               title === "Todas las generaciones"
-                ? "No generations yet"
-                : `No generations in ${title}`,
+                ? "Todavía no hay generaciones"
+                : `Todavía no hay nada en ${title}`,
             description:
-              "Write a shot or pick a brief on Home, then generate the first take.",
+              "Escribe tu idea o escoge un ejemplo en Inicio y genera la primera toma.",
           }}
         />
       </div>
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center px-4 pt-24 pb-4"
+        className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center px-2 pt-24 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:pb-4"
         style={{
           backgroundImage:
             "linear-gradient(to bottom, transparent 0%, var(--background) 100%)",
@@ -269,11 +287,19 @@ export interface StudioTemplateProps {
 }
 
 export function StudioTemplate({
-  title = "402 Vision Studios",
-  headline = "De la idea al primer corte en un solo prompt",
+  title = "Vision Studios",
+  headline = "Escribe tu idea y conviértela en imagen o video",
 }: StudioTemplateProps) {
   const [view, setView] = useState<StudioView>({ kind: "home" })
-  const [collapsed, setCollapsed] = useState(false)
+  // El menú lateral se acomoda solo al dispositivo: cajón en el teléfono,
+  // iconos en la tablet y abierto en la computadora. Si la persona lo abre o
+  // lo contrae a mano, esa elección manda.
+  const device = useDevice()
+  const phone = device.tipo === "telefono"
+  const [collapsedChoice, setCollapsedChoice] = useState<boolean | null>(null)
+  const collapsed = collapsedChoice ?? device.tipo === "tablet"
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const drawerVisible = phone && drawerOpen
   const [prompt, setPrompt] = useState("")
   const [media, setMedia] = useState<MediaItem[]>([])
   const [accountOpen, setAccountOpen] = useState(false)
@@ -333,6 +359,15 @@ export function StudioTemplate({
     }
   }, [inputMode, media, model, prompt, settings])
 
+  useEffect(() => {
+    if (!drawerVisible) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setDrawerOpen(false)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [drawerVisible])
+
   // Al abrir: liquida lo que quedó en cola mientras la pestaña estaba cerrada.
   useEffect(() => {
     void reconcileMyGenerations().then((credits) => {
@@ -349,8 +384,9 @@ export function StudioTemplate({
         credits,
         price: prices[model.id],
         settings: prepared.plane?.settings ?? settings,
+        unit: priceUnit(model),
       }),
-    [credits, isOwner, model.id, prepared.plane, prices, settings]
+    [credits, isOwner, model, prepared.plane, prices, settings]
   )
   const priceMessage =
     price.state === "unpriced"
@@ -513,7 +549,7 @@ export function StudioTemplate({
         setLocalError(
           caught instanceof Error
             ? caught.message
-            : "Could not change the image role."
+            : "No se pudo cambiar el papel de la imagen."
         )
       }
     },
@@ -531,7 +567,7 @@ export function StudioTemplate({
       price.state === "unpriced" ||
       price.state === "short",
     disabledReason: runs.submitting
-      ? "Enviando a Higgsfield…"
+      ? "Enviando…"
       : (priceMessage ?? prepared.error ?? undefined),
     error:
       localError ??
@@ -541,38 +577,105 @@ export function StudioTemplate({
       undefined,
   }
 
+  const renderSidebar = (asDrawer: boolean) => (
+    <StudioSidebar
+      title={title}
+      logo={<BrandMark className="w-7" />}
+      view={view}
+      projects={projects}
+      onCreateProject={(name) =>
+        setView({ kind: "project", projectId: projectsStore.create(name).id })
+      }
+      onRenameProject={(id, name) => projectsStore.rename(id, name)}
+      onDeleteProject={(id) => {
+        projectsStore.remove(id)
+        if (view.kind === "project" && view.projectId === id)
+          setView({ kind: "all" })
+      }}
+      accountLabel={account?.email ?? "Mi cuenta"}
+      {...(isOwner
+        ? { accountMeta: "Dueño" }
+        : account
+          ? { accountMeta: `${formatCredits(credits)} cr.` }
+          : {})}
+      accountOk={isOwner || credits > 0}
+      onViewChange={(next: StudioView) => {
+        setView(next)
+        setDrawerOpen(false)
+      }}
+      collapsed={asDrawer ? false : collapsed}
+      onCollapsedChange={(next: boolean) =>
+        asDrawer ? setDrawerOpen(false) : setCollapsedChoice(next)
+      }
+      onOpenAccount={() => {
+        setDrawerOpen(false)
+        setAccountOpen(true)
+      }}
+    />
+  )
+
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
-      <StudioSidebar
-        title={title}
-        logo={<BrandMark className="w-7" />}
-        view={view}
-        onViewChange={setView}
-        projects={projects}
-        onCreateProject={(name) =>
-          setView({ kind: "project", projectId: projectsStore.create(name).id })
-        }
-        onRenameProject={(id, name) => projectsStore.rename(id, name)}
-        onDeleteProject={(id) => {
-          projectsStore.remove(id)
-          if (view.kind === "project" && view.projectId === id)
-            setView({ kind: "all" })
-        }}
-        collapsed={collapsed}
-        onCollapsedChange={setCollapsed}
-        accountLabel={account?.email ?? "Mi cuenta"}
-        {...(isOwner
-          ? { accountMeta: "Dueño" }
-          : account
-            ? { accountMeta: `${formatCredits(credits)} cr.` }
-            : {})}
-        accountOk={isOwner || credits > 0}
-        onOpenAccount={() => setAccountOpen(true)}
-      />
+      {phone ? (
+        <>
+          <div
+            id="menu-estudio"
+            inert={!drawerVisible}
+            aria-hidden={!drawerVisible}
+            className={cn(
+              "fixed inset-y-0 left-0 z-50 h-dvh pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out motion-reduce:transition-none [&>aside]:h-[calc(100%-20px)]",
+              drawerVisible ? "translate-x-0" : "-translate-x-[110%]"
+            )}
+          >
+            {renderSidebar(true)}
+          </div>
+          {drawerVisible ? (
+            <button
+              type="button"
+              aria-label="Cerrar menú"
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px]"
+              onClick={() => setDrawerOpen(false)}
+            />
+          ) : null}
+        </>
+      ) : (
+        renderSidebar(false)
+      )}
       <main className="relative flex min-w-0 flex-1 flex-col">
+        {phone ? (
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-3 px-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+            <button
+              type="button"
+              aria-label="Abrir menú"
+              aria-expanded={drawerVisible}
+              aria-controls="menu-estudio"
+              className="pointer-events-auto inline-flex size-11 items-center justify-center rounded-full border border-white/10 bg-card/85 text-foreground shadow-[0_6px_18px_rgba(0,0,0,0.35)] backdrop-blur-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-95"
+              onClick={() => setDrawerOpen(true)}
+            >
+              <Menu className="size-5" />
+            </button>
+            <BrandMark className="w-10 text-foreground" />
+            <button
+              type="button"
+              aria-label="Mi cuenta y créditos"
+              className="pointer-events-auto inline-flex h-11 items-center gap-2 rounded-full border border-white/10 bg-card/85 px-4 text-sm font-semibold tabular-nums shadow-[0_6px_18px_rgba(0,0,0,0.35)] backdrop-blur-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-95"
+              onClick={() => setAccountOpen(true)}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "size-2 rounded-full",
+                  isOwner || credits > 0 ? "bg-primary" : "bg-destructive"
+                )}
+              />
+              {isOwner ? "Dueño" : `${formatCredits(credits)} cr.`}
+            </button>
+          </div>
+        ) : null}
         {view.kind === "home" ? (
           <HomeState
             title={headline}
+            phone={phone}
             items={galleryItems}
             projects={projects}
             dock={dock}
@@ -588,6 +691,7 @@ export function StudioTemplate({
           />
         ) : (
           <FeedState
+            phone={phone}
             items={visibleItems}
             previewItems={galleryItems}
             title={selectedProject?.name ?? "Todas las generaciones"}

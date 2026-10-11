@@ -103,7 +103,7 @@ function DialogCloseButton({
   return (
     <DialogPrimitive.Close
       data-slot="dialog-close"
-      aria-label="Close"
+      aria-label="Cerrar"
       className={cn("q-close q-close-md", className)}
       {...props}
     >

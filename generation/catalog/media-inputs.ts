@@ -15,12 +15,12 @@ export const MEDIA_ROLES: MediaRole[] = [
   "audio",
 ]
 export const ROLE_LABEL: Record<MediaRole, string> = {
-  source: "Source video",
-  start: "Start frame",
-  end: "End frame",
-  reference: "Image references",
-  video: "Video references",
-  audio: "Audio references",
+  source: "Video de origen",
+  start: "Inicio",
+  end: "Final",
+  reference: "Imágenes de referencia",
+  video: "Videos de referencia",
+  audio: "Audios de referencia",
 }
 export const ROLE_KIND: Record<MediaRole, MediaKind> = {
   source: "video",
@@ -60,7 +60,7 @@ export function mergeMedia(
     )
   )
     throw new Error(
-      `Choose ${ROLE_KIND[role]} files for ${ROLE_LABEL[role].toLowerCase()}.`
+      `Para ${ROLE_LABEL[role].toLowerCase()} escoge archivos de tipo ${ROLE_KIND[role]}.`
     )
   const existing =
     max === 1 ? current.filter((item) => item.role !== role) : current
@@ -70,7 +70,7 @@ export function mergeMedia(
       next.push(item)
   }
   if (!max || next.filter((item) => item.role === role).length > max)
-    throw new Error(`${ROLE_LABEL[role]}: maximum ${max} attachments.`)
+    throw new Error(`${ROLE_LABEL[role]}: máximo ${max}.`)
   return next
 }
 
@@ -91,11 +91,9 @@ export function mergeReferences(
     const role = REFERENCE_ROLE[item.kind]
     const max = roles[role] ?? 0
     if (!max)
-      throw new Error(
-        `${item.kind} references are not supported by this model.`
-      )
+      throw new Error(`Este modelo no acepta referencias de tipo ${item.kind}.`)
     if (next.filter((other) => other.role === role).length >= max)
-      throw new Error(`${ROLE_LABEL[role]}: maximum ${max} attachments.`)
+      throw new Error(`${ROLE_LABEL[role]}: máximo ${max}.`)
     next.push({ ...item, role })
   }
   return next
@@ -119,10 +117,10 @@ export function changeImageRole(
   role: "reference" | "start" | "end"
 ): MediaItem[] {
   if (!model.roles[role])
-    throw new Error(`${ROLE_LABEL[role]} is not supported by this model.`)
+    throw new Error(`Este modelo no acepta ${ROLE_LABEL[role].toLowerCase()}.`)
   const target = media.find((item) => item.id === id)
   if (!target || ROLE_KIND[target.role] !== "image")
-    throw new Error("Only images can be assigned a frame role.")
+    throw new Error("Solo las imágenes pueden ser cuadro inicial o final.")
   const next = media.map((item): MediaItem => {
     if (item.id === id) return { ...item, role }
     if (role !== "reference" && item.role === role)
@@ -133,9 +131,7 @@ export function changeImageRole(
     if (
       next.filter((item) => item.role === key).length > (model.roles[key] ?? 0)
     )
-      throw new Error(
-        `${ROLE_LABEL[key]}: maximum ${model.roles[key] ?? 0} attachments.`
-      )
+      throw new Error(`${ROLE_LABEL[key]}: máximo ${model.roles[key] ?? 0}.`)
   }
   return next
 }
@@ -149,7 +145,8 @@ export function validateMedia(
   for (const [key, items] of Object.entries(media)) {
     const role = key as MediaRole
     const max = roles[role] ?? 0
-    if (!Array.isArray(items)) throw new Error("Invalid media inputs.")
+    if (!Array.isArray(items))
+      throw new Error("Los archivos adjuntos no son válidos.")
     if (!items.length) continue
     if (!MEDIA_ROLES.includes(role) || !max) {
       if (
@@ -157,15 +154,15 @@ export function validateMedia(
         (role === "reference" || role === "video" || role === "audio")
       )
         throw new Error(
-          "References are not supported with start/end frames. Change the frame to Reference image, or remove the other references."
+          "Con cuadro inicial o final, este modelo no acepta otras referencias: cambia el cuadro a imagen de referencia o quita las demás."
         )
       throw new Error(
-        `${ROLE_LABEL[role] ?? key} are not supported by this model or input mode.`
+        `Este modelo no acepta ${(ROLE_LABEL[role] ?? key).toLowerCase()} en este modo.`
       )
     }
     if (items.length > max)
       throw new Error(
-        `${ROLE_LABEL[role]}: maximum ${max} for ${model.label}. Remove extra attachments.`
+        `${ROLE_LABEL[role]}: máximo ${max} en ${model.label}. Quita los que sobran.`
       )
     for (const item of items) {
       if (
@@ -174,23 +171,27 @@ export function validateMedia(
         typeof item.url !== "string" ||
         !/^https?:\/\//.test(item.url)
       )
-        throw new Error(`Invalid ${ROLE_LABEL[role].toLowerCase()} URL.`)
+        throw new Error(
+          `El enlace de ${ROLE_LABEL[role].toLowerCase()} no es válido.`
+        )
       if (item.kind && item.kind !== ROLE_KIND[role])
         throw new Error(
-          `${ROLE_LABEL[role]} only accepts ${ROLE_KIND[role]} files.`
+          `${ROLE_LABEL[role]} solo acepta archivos de tipo ${ROLE_KIND[role]}.`
         )
     }
   }
   for (const role of model.requiredRoles ?? []) {
     if (!media[role]?.length)
       throw new Error(
-        `Add a ${ROLE_LABEL[role].toLowerCase()} to use ${model.label}.`
+        `Para usar ${model.label} añade ${ROLE_LABEL[role].toLowerCase()}.`
       )
   }
   if (
     model.mediaModes?.find((item) => item.id === mode)?.requireAny &&
     !Object.values(media).some((items) => items?.length)
   ) {
-    throw new Error("Add at least one image, video, or audio reference.")
+    throw new Error(
+      "Añade por lo menos una imagen, un video o un audio de referencia."
+    )
   }
 }

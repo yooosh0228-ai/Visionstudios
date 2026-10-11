@@ -33,7 +33,7 @@ export const useProjects = create<ProjectsState>()(
         const now = Date.now()
         const project: Project = {
           id: newId(),
-          name: name.trim() || "Untitled",
+          name: name.trim() || "Sin título",
           createdAt: now,
           updatedAt: now,
         }
