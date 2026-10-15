@@ -180,7 +180,7 @@ export function Sitio({
             <Link className="boton claro grande" href="/estudio">
               {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
                 ? "Pruébalo gratis"
-                : "Entrar a Visiopus"}
+                : "Entrar a VS Studio"}
             </Link>
           </div>
         </section>
@@ -271,7 +271,7 @@ export function Sitio({
             </div>
             <div className="nota-estudio">
               <p>
-                <b>¿Prefieres crear tú mismo?</b> En Visiopus haces
+                <b>¿Prefieres crear tú mismo?</b> En VS Studio haces
                 fotos y videos para tu negocio desde el celular, con trends de
                 un toque, y pagas solo lo que usas.
               </p>

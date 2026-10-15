@@ -322,7 +322,7 @@ export interface StudioTemplateProps {
 }
 
 export function StudioTemplate({
-  title = "Visiopus",
+  title = "VS Studio",
   headline = "Escoge. Sube tu foto. Listo.",
 }: StudioTemplateProps) {
   const [view, setView] = useState<StudioView>({ kind: "home" })
