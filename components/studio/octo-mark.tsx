@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 /**
  * Marca de las ramas de Vision Studios: el ojo-obturador de siempre con un
  * tentáculo saliendo de cada aspa, como un pulpo. Verde luminoso. Se usa en
- * todo lo que depende de Vision Studios pero vive aparte (el Estudio, Visiopus).
+ * todo lo que depende de Vision Studios pero vive aparte (el Estudio, VS Studio).
  */
 const OJO = [
   "M 237.1572 133.4565 L 136.2263 191.729 A 250 250 0 0 0 237.1572 197.2233 Z",

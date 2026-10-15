@@ -10,7 +10,7 @@ import { LoginScreen } from "@/components/studio/login-screen"
 import { NoModels } from "@/components/studio/no-models"
 
 export const metadata: Metadata = {
-  title: "Visiopus · fotos y videos en el trend del momento",
+  title: "VS Studio · fotos y videos en el trend del momento",
   description: "Crea imágenes y video para tu negocio desde el navegador. Entra con Google y paga solo lo que generas.",
   appleWebApp: { capable: true, title: "Estudio", statusBarStyle: "black" },
   formatDetection: { telephone: false },
