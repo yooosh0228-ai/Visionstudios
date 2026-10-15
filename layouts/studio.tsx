@@ -5,7 +5,7 @@ import type { ComponentProps } from "react"
 import { Compass, Folder, Gift, Menu, PenLine } from "lucide-react"
 
 import { StudioPromptBox } from "@/components/studio/studio-prompt-box"
-import { BrandMark } from "@/components/studio/brand-mark"
+import { OctoMark } from "@/components/studio/octo-mark"
 import {
   ExamplePresets,
   HERO_ART,
@@ -168,8 +168,8 @@ function HomeState({
               {title}
             </h1>
             <p className="max-w-[520px] text-center text-sm text-muted-foreground sm:text-base">
-              Escoge un trend, sube tu foto y toca Generar. En segundos tienes
-              tu imagen o tu video para compartir.
+              Fotos y videos en el trend del momento, en segundos y desde tu
+              celular.
             </p>
             {gift !== null && gift > 0 ? (
               <p className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium">
@@ -322,8 +322,8 @@ export interface StudioTemplateProps {
 }
 
 export function StudioTemplate({
-  title = "Vision Studios",
-  headline = "Tu foto, en el trend del momento",
+  title = "Visiopus",
+  headline = "Escoge. Sube tu foto. Listo.",
 }: StudioTemplateProps) {
   const [view, setView] = useState<StudioView>({ kind: "home" })
   // El menú lateral se acomoda solo al dispositivo: cajón en el teléfono,
@@ -681,7 +681,7 @@ export function StudioTemplate({
   const renderSidebar = (asDrawer: boolean) => (
     <StudioSidebar
       title={title}
-      logo={<BrandMark className="w-7" />}
+      logo={<OctoMark className="w-9" />}
       view={view}
       projects={projects}
       onCreateProject={(name) =>
@@ -755,7 +755,7 @@ export function StudioTemplate({
             >
               <Menu className="size-5" />
             </button>
-            <BrandMark className="w-10 text-foreground" />
+            <OctoMark className="w-14" />
             <button
               type="button"
               aria-label="Mi cuenta y créditos"

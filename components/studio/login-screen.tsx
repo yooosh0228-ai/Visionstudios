@@ -7,13 +7,13 @@ import { LogIn } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { createSupabaseBrowser } from "@/lib/supabase/browser"
 
-import { BrandMark } from "./brand-mark"
+import { OctoMark } from "./octo-mark"
 
 /** Entrada de un solo botón: cuenta de Google y listo. */
 export function LoginScreen({
   error,
   next = "/estudio",
-  titulo = "Estudio Vision",
+  titulo = "Visiopus",
   texto = "Crea imágenes y video para tu negocio. Entra con un toque y paga solo lo que generas, con créditos que recargas con nosotros.",
   volver = true,
 }: {
@@ -57,7 +57,7 @@ export function LoginScreen({
         }}
       />
       <div className="relative flex w-full max-w-sm flex-col items-center gap-6 text-center">
-        <BrandMark className="w-16 text-foreground" title="Vision Studios" />
+        <OctoMark className="w-32" title="Visiopus, de Vision Studios" />
         <div className="flex flex-col gap-2">
           <h1 className="text-q-headline-md-semi-bold">{titulo}</h1>
           <p className="text-sm text-muted-foreground">{texto}</p>
