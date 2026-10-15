@@ -11,14 +11,15 @@ import type { GenerationPlane, MediaItem } from "@/generation/catalog"
 const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3Fy5zinm57MfSWOTmON75ozgJVz/"
 const muestra = (id: string) => `${CDN}${id}_min.webp`
 
-export type TrendCategory = "foto" | "negocio" | "video"
+export type TrendCategory = "foto" | "negocio" | "video" | "bulto"
 
 export const TREND_CATEGORIES: { id: "todo" | TrendCategory; label: string }[] =
   [
-    { id: "todo", label: "Para ti" },
+    { id: "todo", label: "Pa' tripear" },
+    { id: "bulto", label: "Pa'l bulto" },
     { id: "foto", label: "Con tu foto" },
     { id: "video", label: "Videos" },
-    { id: "negocio", label: "Tu negocio" },
+    { id: "negocio", label: "Pa' tu negocio" },
   ]
 
 export type TrendPhoto = {
@@ -69,7 +70,47 @@ const SELFIE: TrendPhoto = {
 
 const SELFIE_SETTINGS = { aspectRatio: "3:4", resolution: "1k" }
 
-export const TRENDS: Trend[] = [
+/**
+ * Pa'l bulto: fotos para aparentar. Las muestras se generan en Soul con los
+ * prompts de la guía; mientras una trend no tenga muestra (cover vacío), no se
+ * muestra en ninguna parte.
+ */
+const BULTO: Trend[] = [
+  {
+    id: "rolex-diamantes",
+    title: "Rolex con diamantes",
+    subtitle: "Tu muñeca, otro nivel y otro lugar",
+    category: "bulto",
+    kind: "image",
+    cover: "",
+    badge: "Pa'l bulto",
+    model: "grok-imagine-2",
+    settings: SELFIE_SETTINGS,
+    photo: {
+      label: "Foto de tu muñeca o tu brazo",
+      hint: "Tómala como sea, en tu casa. Nosotros cambiamos el resto.",
+      role: "reference",
+    },
+    prompt: () =>
+      "Use the arm and hand from the reference photo, same skin tone and shape. Now wearing a luxury gold watch fully set with diamonds on the wrist, crisp cuff of an elegant shirt, inside a clean modern luxury penthouse with warm light and marble, shallow depth of field, realistic photo, no brand names or logos.",
+  },
+  {
+    id: "carro-nuevo",
+    title: "Del Accord al Mercedes",
+    subtitle: "Mismo barrio, otro carro y otra pinta",
+    category: "bulto",
+    kind: "image",
+    cover: "",
+    badge: "Pa'l bulto",
+    model: "grok-imagine-2",
+    settings: SELFIE_SETTINGS,
+    photo: SELFIE,
+    prompt: () =>
+      `${KEEP_FACE} Same Dominican neighborhood street as the photo, but the person now leans proudly on a brand-new glossy black luxury German sedan, wearing a sharp designer outfit, clean sneakers and a watch, golden afternoon light, realistic phone photo, no visible logos or license plate text.`,
+  },
+]
+
+const TODAS: Trend[] = [
   {
     id: "noche-de-pelota",
     title: "Noche de pelota",
@@ -356,6 +397,9 @@ export const TRENDS: Trend[] = [
       "Premium advertising photo of the exact product from the reference photo, keep its shape, label and colors unchanged, on a black stone pedestal, single spotlight from above, dramatic rim light, fine mist, dark green background, reflections, commercial quality.",
   },
 ]
+
+/** Solo las que ya tienen muestra. */
+export const TRENDS: Trend[] = [...BULTO, ...TODAS].filter((t) => t.cover)
 
 export function getTrend(id: string): Trend | undefined {
   return TRENDS.find((t) => t.id === id)
