@@ -149,7 +149,9 @@ const TODAS: Trend[] = [
     subtitle: "Tu juguete con accesorios y tu nombre",
     category: "foto",
     kind: "image",
-    cover: muestra("hf_20261015_064449_10208c65-3b72-4324-b652-4278ae998c7e"),
+    cover: muestra("hf_20261015_234808_8d2123d8-2790-4304-87c6-d8ef0252ae24"),
+    before:
+      "https://d2ol7oe51mr4n9.cloudfront.net/user_3Fy5zinm57MfSWOTmON75ozgJVz/1c7c48f6-acc8-44f4-ae17-a0430990f9fc.png",
     model: "grok-imagine-2",
     settings: SELFIE_SETTINGS,
     photo: SELFIE,
