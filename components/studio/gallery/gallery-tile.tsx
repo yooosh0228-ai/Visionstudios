@@ -3,7 +3,7 @@
 
 import { memo, useEffect, useRef, useState } from "react"
 import type { CSSProperties } from "react"
-import { Copy, Download, Share2, Trash2 } from "lucide-react"
+import { Clapperboard, Copy, Download, Share2, Trash2 } from "lucide-react"
 
 import {
   GenerationTile,
@@ -25,6 +25,7 @@ export interface GalleryTileProps {
   tier: LoadTier
   reducedMotion: boolean
   onDelete?: (item: GalleryItem) => void
+  onAnimate?: (item: GalleryItem) => void
 }
 
 function rectStyle(rect: TileRect, top: number): CSSProperties {
@@ -122,6 +123,7 @@ function GalleryTileComponent({
   tier,
   reducedMotion,
   onDelete,
+  onAnimate,
 }: GalleryTileProps) {
   const [hovered, setHovered] = useState(false)
   const style = rectStyle(rect, top)
@@ -168,6 +170,16 @@ function GalleryTileComponent({
   )
 
   const actions: CardAction[] = [
+    ...(onAnimate && !isVideo
+      ? [
+          {
+            id: "animate",
+            label: "Dale vida",
+            icon: Clapperboard,
+            onSelect: () => onAnimate(item),
+          },
+        ]
+      : []),
     { id: "download", label: "Descargar", icon: Download },
     {
       id: "copy",

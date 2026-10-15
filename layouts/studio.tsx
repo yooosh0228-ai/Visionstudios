@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ComponentProps } from "react"
-import { Compass, Folder, Menu } from "lucide-react"
+import { Compass, Folder, Gift, Menu, PenLine } from "lucide-react"
 
 import { StudioPromptBox } from "@/components/studio/studio-prompt-box"
 import { BrandMark } from "@/components/studio/brand-mark"
@@ -13,6 +13,13 @@ import {
   type TemplateItem,
 } from "@/components/studio/template-picker"
 import { HeroComposition } from "@/components/studio/hero-composition"
+import {
+  TrendGallery,
+  TrendSheet,
+  type TrendPhotoValue,
+  type TrendPrice,
+} from "@/components/studio/trends"
+import { getTrend, trendPlane, type Trend } from "@/lib/studio/trends"
 import { AccountDialog } from "@/components/studio/account-dialog"
 import {
   MyProjects,
@@ -105,6 +112,9 @@ function HomeState({
   onOpenAll,
   onOpenProject,
   onUseTemplate,
+  gift,
+  priceOf,
+  onOpenTrend,
 }: {
   title: string
   phone: boolean
@@ -115,6 +125,10 @@ function HomeState({
   onOpenAll: () => void
   onOpenProject: (project: MyProjectsProject) => void
   onUseTemplate: (template: TemplateItem) => void
+  /** Créditos que la persona tiene para probar (null si no aplica). */
+  gift: number | null
+  priceOf: (trend: Trend) => TrendPrice
+  onOpenTrend: (trend: Trend) => void
 }) {
   const [tab, setTab] = useState("explore")
   const promptRef = useRef<HTMLDivElement>(null)
@@ -144,19 +158,37 @@ function HomeState({
           phone ? "pt-20" : "pt-10 lg:pt-16"
         )}
       >
-        <div
-          ref={promptRef}
-          className="flex w-full min-w-0 flex-col items-center gap-8"
-        >
+        <div className="flex w-full max-w-[1200px] flex-col items-center gap-6">
           <div className="flex flex-col items-center gap-5">
             <HeroComposition
               images={images}
-              alt="Trabajo reciente de Vision Studios"
+              alt="Ejemplos hechos en Vision Studios"
             />
-            <h1 className="max-w-[640px] text-center text-[28px] leading-[1.1] font-bold tracking-tight text-balance uppercase sm:text-q-accent-lg-bold">
+            <h1 className="max-w-[680px] text-center text-[28px] leading-[1.1] font-bold tracking-tight text-balance uppercase sm:text-q-accent-lg-bold">
               {title}
             </h1>
+            <p className="max-w-[520px] text-center text-sm text-muted-foreground sm:text-base">
+              Escoge un trend, sube tu foto y toca Generar. En segundos tienes
+              tu imagen o tu video para compartir.
+            </p>
+            {gift !== null && gift > 0 ? (
+              <p className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium">
+                <Gift className="size-4 text-primary" />
+                Tienes {new Intl.NumberFormat("es-DO").format(gift)} créditos
+                para probar
+              </p>
+            ) : null}
           </div>
+          <TrendGallery priceOf={priceOf} onOpen={onOpenTrend} />
+        </div>
+
+        <div
+          ref={promptRef}
+          className="flex w-full min-w-0 flex-col items-center gap-4"
+        >
+          <h2 className="inline-flex items-center gap-2 text-lg font-semibold">
+            <PenLine className="size-5 text-primary" /> O escribe tu propia idea
+          </h2>
           <StudioPromptBox {...dock} />
         </div>
 
@@ -169,7 +201,7 @@ function HomeState({
           >
             <TabsList>
               <TabsTrigger value="explore" start={<Compass />}>
-                Explorar
+                Ideas para escribir
               </TabsTrigger>
               <TabsTrigger value="projects" start={<Folder />}>
                 Mis proyectos
@@ -216,6 +248,7 @@ function FeedState({
   title,
   dock,
   onDelete,
+  onAnimate,
 }: {
   phone: boolean
   items: GalleryItem[]
@@ -223,6 +256,7 @@ function FeedState({
   title: string
   dock: DockProps
   onDelete: (item: GalleryItem) => void
+  onAnimate: (item: GalleryItem) => void
 }) {
   const images = useMemo(() => heroImages(previewItems), [previewItems])
   const dockRef = useRef<HTMLDivElement>(null)
@@ -249,6 +283,7 @@ function FeedState({
           items={items}
           title={title}
           onDelete={onDelete}
+          onAnimate={onAnimate}
           emptyState={{
             images,
             title:
@@ -256,7 +291,7 @@ function FeedState({
                 ? "Todavía no hay generaciones"
                 : `Todavía no hay nada en ${title}`,
             description:
-              "Escribe tu idea o escoge un ejemplo en Inicio y genera la primera toma.",
+              "Escoge un trend en Inicio o escribe tu idea, y genera la primera.",
           }}
         />
       </div>
@@ -288,7 +323,7 @@ export interface StudioTemplateProps {
 
 export function StudioTemplate({
   title = "Vision Studios",
-  headline = "Escribe tu idea y conviértela en imagen o video",
+  headline = "Tu foto, en el trend del momento",
 }: StudioTemplateProps) {
   const [view, setView] = useState<StudioView>({ kind: "home" })
   // El menú lateral se acomoda solo al dispositivo: cajón en el teléfono,
@@ -305,6 +340,9 @@ export function StudioTemplate({
   const [accountOpen, setAccountOpen] = useState(false)
   const [canceling, setCanceling] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
+  const [trend, setTrend] = useState<Trend | null>(null)
+  const [trendPhoto, setTrendPhoto] = useState<TrendPhotoValue | null>(null)
+  const [trendOpen, setTrendOpen] = useState(false)
 
   const surface = useActive((s) => s.surface)
   const modelId = useActive((s) => s.model)
@@ -503,6 +541,69 @@ export function StudioTemplate({
     if (first) setActiveModel(first.id)
   }
 
+  /** Precio de una trend para esta persona, con su modelo y su configuración. */
+  const priceOfTrend = useCallback(
+    (t: Trend): TrendPrice => {
+      let entry
+      try {
+        entry = getModel(t.model)
+      } catch {
+        return { state: "unpriced" }
+      }
+      const p = affordability({
+        isOwner,
+        credits,
+        price: prices[entry.id],
+        settings: parseSettings(entry, t.settings),
+        unit: priceUnit(entry),
+      })
+      return p.state === "short" ? { state: "short", cost: p.cost } : p
+    },
+    [credits, isOwner, prices]
+  )
+
+  const openTrend = (t: Trend, photo: TrendPhotoValue | null = null) => {
+    setTrend(t)
+    setTrendPhoto(photo)
+    setTrendOpen(true)
+  }
+
+  const handleTrendGenerate = (input: {
+    text: string
+    photo: TrendPhotoValue | null
+  }) => {
+    if (!trend || generating || runs.submitting) return
+    let plane: GenerationPlane
+    try {
+      const entry = getModel(trend.model)
+      const draft = trendPlane(trend, input)
+      plane = { ...draft, settings: parseSettings(entry, draft.settings) }
+      toPlatform(plane)
+    } catch (caught) {
+      runs.setError(
+        caught instanceof Error ? caught.message : "No se pudo preparar."
+      )
+      return
+    }
+    const projectId = view.kind === "project" ? view.projectId : undefined
+    void runs.submit(plane, projectId).then(({ record, failure }) => {
+      if (failure?.code === "not_signed_in") window.location.reload()
+      else if (failure?.code === "insufficient_credits") {
+        setTrendOpen(false)
+        setAccountOpen(true)
+      }
+      if (!record) return
+      setTrendOpen(false)
+      if (view.kind === "home") setView({ kind: "all" })
+      if (projectId) projectsStore.touch(projectId)
+    })
+  }
+
+  const handleAnimate = (item: GalleryItem) => {
+    const t = getTrend("dale-vida")
+    if (t) openTrend(t, { url: item.src, name: item.alt })
+  }
+
   const dock: DockProps = {
     surfaces,
     surface,
@@ -688,6 +789,9 @@ export function StudioTemplate({
             onOpenAll={() => setView({ kind: "all" })}
             onOpenProject={(p) => setView({ kind: "project", projectId: p.id })}
             onUseTemplate={handleUseTemplate}
+            gift={account && !isOwner ? credits : null}
+            priceOf={priceOfTrend}
+            onOpenTrend={(t) => openTrend(t)}
           />
         ) : (
           <FeedState
@@ -697,9 +801,24 @@ export function StudioTemplate({
             title={selectedProject?.name ?? "Todas las generaciones"}
             dock={dock}
             onDelete={(item) => runs.remove(item.runId)}
+            onAnimate={handleAnimate}
           />
         )}
       </main>
+      <TrendSheet
+        trend={trend}
+        open={trendOpen}
+        onOpenChange={setTrendOpen}
+        price={trend ? priceOfTrend(trend) : { state: "unpriced" }}
+        recent={libraryItems}
+        initialPhoto={trendPhoto}
+        busy={runs.submitting}
+        onGenerate={handleTrendGenerate}
+        onTopUp={() => {
+          setTrendOpen(false)
+          setAccountOpen(true)
+        }}
+      />
       <AccountDialog open={accountOpen} onOpenChange={setAccountOpen} />
     </div>
   )

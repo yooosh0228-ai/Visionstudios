@@ -22,20 +22,24 @@ import { cn } from "@/lib/utils"
  * `ExamplePresets`.
  */
 
+const CDN =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3Fy5zinm57MfSWOTmON75ozgJVz/"
+
+/** Muestras reales generadas por Vision Studios (las mismas de las trends). */
 const ART = {
-  productSpot: "/presets/product-spot.svg",
-  verticalReel: "/presets/vertical-reel.svg",
-  editorialPortrait: "/presets/editorial-portrait.svg",
-  campaignKeyVisual: "/presets/campaign-key-visual.svg",
-  eventAftermovie: "/presets/event-aftermovie.svg",
-  brandStillLife: "/presets/brand-still-life.svg",
+  productSpot: `${CDN}hf_20261015_064447_23bef359-075a-4419-874a-0fcb35c00f28_min.webp`,
+  verticalReel: `${CDN}hf_20261015_064448_d49fb799-a376-483d-a6ad-042d128e2009_min.webp`,
+  editorialPortrait: `${CDN}hf_20261015_064446_f6e5e6c0-158e-4474-bf75-33ca989d2e66_min.webp`,
+  campaignKeyVisual: `${CDN}hf_20261015_064447_6c412213-6d82-4c76-810a-d98c2d212160_min.webp`,
+  eventAftermovie: `${CDN}hf_20261015_064447_079aa092-61ab-4348-b50e-f74a4227b672_min.webp`,
+  brandStillLife: `${CDN}hf_20261015_064448_0ba01e0f-fb12-4979-a870-08f8725fc4b8_min.webp`,
 } as const
 
 /** Shared by the hero until the user has three finished outputs of their own. */
 export const HERO_ART = [
-  ART.editorialPortrait,
-  ART.productSpot,
-  ART.eventAftermovie,
+  `${CDN}hf_20261015_064519_d962471c-005c-413c-95aa-0576e0e6d7df_min.webp`,
+  `${CDN}hf_20261015_065355_67a18948-6c3f-4468-bafd-d09ca896d762_min.webp`,
+  `${CDN}hf_20261015_064518_fbe0365a-fd7f-44fd-ac41-7944287be46a_min.webp`,
 ] as const
 
 export interface TemplateItem {

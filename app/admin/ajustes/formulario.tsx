@@ -49,10 +49,13 @@ export function FormularioAjustes({
   ajustes,
   videos,
   ofertas,
+  regalados,
 }: {
   ajustes: Ajustes
   videos: { id: string; nombre: string }[]
   ofertas: { id: string; nombre: string }[]
+  /** Cuántas cuentas ya recibieron el regalo de bienvenida (null si no se pudo leer). */
+  regalados: number | null
 }) {
   const [a, setA] = useState(ajustes)
   const [prueba, setPrueba] = useState(aLineas(ajustes.pruebaSocial))
@@ -256,6 +259,65 @@ export function FormularioAjustes({
         >
           <Plus /> Agregar paquete
         </Boton>
+      </Tarjeta>
+
+      <Tarjeta className="grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <h2 className="font-semibold">Regalo de bienvenida del Estudio</h2>
+          <p className="text-sm text-muted-foreground">
+            Créditos que recibe cada persona la primera vez que entra con
+            Google. 50 créditos alcanzan para 1 video de 5 segundos o 10
+            imágenes y te cuestan ≈US$0.10 por persona en Higgsfield.
+            {regalados !== null
+              ? ` Ya se regalaron a ${regalados} de ${a.bienvenida.tope} personas.`
+              : ""}
+          </p>
+        </div>
+        <label className="flex items-center gap-3 sm:col-span-2">
+          <input
+            type="checkbox"
+            className="size-5 accent-primary"
+            checked={a.bienvenida.activo}
+            onChange={(e) =>
+              poner("bienvenida", { ...a.bienvenida, activo: e.target.checked })
+            }
+          />
+          <span className="text-sm font-medium">
+            {a.bienvenida.activo ? "Regalo activo" : "Regalo apagado"}
+          </span>
+        </label>
+        <Campo etiqueta="Créditos por persona" ayuda="Máximo 1,000.">
+          <input
+            className={claseCampo}
+            inputMode="numeric"
+            value={a.bienvenida.creditos}
+            onChange={(e) =>
+              poner("bienvenida", {
+                ...a.bienvenida,
+                creditos: Math.min(
+                  Number(e.target.value.replace(/\D/g, "")) || 0,
+                  1000
+                ),
+              })
+            }
+          />
+        </Campo>
+        <Campo
+          etiqueta="Hasta cuántas personas"
+          ayuda="Al llegar al tope se apaga solo. Súbelo cuando quieras."
+        >
+          <input
+            className={claseCampo}
+            inputMode="numeric"
+            value={a.bienvenida.tope}
+            onChange={(e) =>
+              poner("bienvenida", {
+                ...a.bienvenida,
+                tope: Number(e.target.value.replace(/\D/g, "")) || 0,
+              })
+            }
+          />
+        </Campo>
       </Tarjeta>
 
       <Tarjeta className="grid gap-4 sm:grid-cols-2">

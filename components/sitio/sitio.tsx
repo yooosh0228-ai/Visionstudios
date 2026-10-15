@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link"
 
 import type { Ajustes } from "@/lib/vs/ajustes"
 import { enlaceChat } from "@/lib/vs/ajustes"
+import { TRENDS } from "@/lib/studio/trends"
 import { formatoRD } from "@/lib/vs/cuentas"
 import type { Oferta, Trabajo } from "@/lib/vs/types"
 
@@ -150,6 +152,53 @@ export function Sitio({
           </div>
         </section>
 
+        {/* PRUÉBALO: la puerta al Estudio con los trends del momento. */}
+        <section
+          className="seccion pruebalo"
+          id="pruebalo"
+          aria-labelledby="t-pruebalo"
+        >
+          <div className="envoltura">
+            <div className="cabeza">
+              <h2 id="t-pruebalo">Tu foto, en el trend del momento.</h2>
+              <p>
+                Sube una selfie, escoge el estilo y en segundos la tienes lista
+                para tus estados. También le das vida en video.
+                {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
+                  ? " Entra con tu cuenta de Google y te regalamos créditos para probar."
+                  : ""}
+              </p>
+            </div>
+            <ul className="trends" role="list">
+              {TRENDS.slice(0, 8).map((t) => (
+                <li key={t.id}>
+                  <Link href="/estudio" className="trend">
+                    <img src={t.cover} alt="" loading="lazy" decoding="async" />
+                    {t.before ? (
+                      <img
+                        className="antes"
+                        src={t.before}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : null}
+                    <span>
+                      <b>{t.title}</b>
+                      {t.kind === "video" ? <em>Video</em> : null}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <Link className="boton claro grande" href="/estudio">
+              {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
+                ? "Pruébalo gratis"
+                : "Entrar al Estudio"}
+            </Link>
+          </div>
+        </section>
+
         {/* HECHO A LA MEDIDA */}
         <section
           className="seccion medida"
@@ -219,8 +268,8 @@ export function Sitio({
             <div className="nota-estudio">
               <p>
                 <b>¿Prefieres crear tú mismo?</b> En el Estudio Vision haces
-                imágenes y video para tu negocio desde el navegador y pagas solo
-                lo que usas.
+                fotos y videos para tu negocio desde el celular, con trends de
+                un toque, y pagas solo lo que usas.
               </p>
               <Link className="boton" href="/estudio">
                 <Icono.afuera />
