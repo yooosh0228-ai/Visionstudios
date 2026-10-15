@@ -571,6 +571,7 @@ export function StudioTemplate({
   const handleTrendGenerate = (input: {
     text: string
     photo: TrendPhotoValue | null
+    lugar: string
   }) => {
     if (!trend || generating || runs.submitting) return
     let plane: GenerationPlane

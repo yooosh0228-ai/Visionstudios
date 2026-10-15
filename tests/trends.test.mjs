@@ -31,7 +31,7 @@ test("cada trend usa un modelo instalado y una muestra real", () => {
   const ids = new Set(MODELS.map((m) => m.id));
   for (const t of TRENDS) {
     assert.ok(ids.has(t.model), `${t.id} usa ${t.model}`);
-    assert.match(t.cover, /^https:\/\//, `${t.id} tiene muestra`);
+    assert.match(t.cover, /^(https:\/\/|\/trends\/)/, `${t.id} tiene muestra`);
     assert.equal(getModel(t.model).surface, t.kind, `${t.id} genera ${t.kind}`);
   }
   assert.equal(new Set(TRENDS.map((t) => t.id)).size, TRENDS.length, "ids únicos");
@@ -80,4 +80,11 @@ test("el regalo de bienvenida tiene valores seguros", () => {
   const n = normalizarAjustes({ bienvenida: { activo: false, creditos: 99999, tope: "20" } });
   assert.deepEqual(n.bienvenida, { activo: false, creditos: 1000, tope: 20 });
   assert.deepEqual(normalizarAjustes({ bienvenida: { creditos: -5 } }).bienvenida, { activo: true, creditos: 50, tope: 100 });
+});
+
+test("el lugar de fondo cambia el entorno solo en trends con foto", () => {
+  const conFoto = trendPlane(getTrend("carro-nuevo"), { photo: foto, lugar: 'frente al "Monumento"' });
+  assert.match(conFoto.prompt.text, /Replace the entire background.*'Monumento'/);
+  const video = trendPlane(getTrend("dale-vida"), { photo: foto, lugar: "París" });
+  assert.doesNotMatch(video.prompt.text, /París/);
 });

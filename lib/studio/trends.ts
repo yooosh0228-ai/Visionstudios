@@ -77,12 +77,28 @@ const SELFIE_SETTINGS = { aspectRatio: "3:4", resolution: "1k" }
  */
 const BULTO: Trend[] = [
   {
+    id: "carro-nuevo",
+    title: "Del Accord al Mercedes",
+    subtitle: "Mismo barrio, otro carro y otra pinta",
+    category: "bulto",
+    kind: "image",
+    cover: "/trends/carro-despues.webp",
+    before: "/trends/carro-antes.webp",
+    badge: "🔥 El más usado",
+    model: "grok-imagine-2",
+    settings: SELFIE_SETTINGS,
+    photo: SELFIE,
+    prompt: () =>
+      `${KEEP_FACE} Same Dominican neighborhood street as the photo, but the person now leans proudly on a brand-new glossy black luxury German sedan, wearing a sharp designer outfit, clean sneakers and a watch, golden afternoon light, realistic phone photo, no visible logos or license plate text.`,
+  },
+  {
     id: "rolex-diamantes",
     title: "Rolex con diamantes",
     subtitle: "Tu muñeca, otro nivel y otro lugar",
     category: "bulto",
     kind: "image",
-    cover: "",
+    cover: "/trends/reloj-despues.webp",
+    before: "/trends/reloj-antes.webp",
     badge: "Pa'l bulto",
     model: "grok-imagine-2",
     settings: SELFIE_SETTINGS,
@@ -93,20 +109,6 @@ const BULTO: Trend[] = [
     },
     prompt: () =>
       "Use the arm and hand from the reference photo, same skin tone and shape. Now wearing a luxury gold watch fully set with diamonds on the wrist, crisp cuff of an elegant shirt, inside a clean modern luxury penthouse with warm light and marble, shallow depth of field, realistic photo, no brand names or logos.",
-  },
-  {
-    id: "carro-nuevo",
-    title: "Del Accord al Mercedes",
-    subtitle: "Mismo barrio, otro carro y otra pinta",
-    category: "bulto",
-    kind: "image",
-    cover: "",
-    badge: "Pa'l bulto",
-    model: "grok-imagine-2",
-    settings: SELFIE_SETTINGS,
-    photo: SELFIE,
-    prompt: () =>
-      `${KEEP_FACE} Same Dominican neighborhood street as the photo, but the person now leans proudly on a brand-new glossy black luxury German sedan, wearing a sharp designer outfit, clean sneakers and a watch, golden afternoon light, realistic phone photo, no visible logos or license plate text.`,
   },
 ]
 
@@ -401,6 +403,11 @@ const TODAS: Trend[] = [
 /** Solo las que ya tienen muestra. */
 export const TRENDS: Trend[] = [...BULTO, ...TODAS].filter((t) => t.cover)
 
+/** Las trends con foto de referencia permiten cambiar el lugar de fondo. */
+export function aceptaLugar(trend: Trend): boolean {
+  return trend.kind === "image" && trend.photo?.role === "reference"
+}
+
 export function getTrend(id: string): Trend | undefined {
   return TRENDS.find((t) => t.id === id)
 }
@@ -408,8 +415,14 @@ export function getTrend(id: string): Trend | undefined {
 /** Lo que va al modelo: descripción con el texto de la persona y su foto. */
 export function trendPlane(
   trend: Trend,
-  input: { text?: string; photo?: { url: string; name?: string } | null }
+  input: {
+    text?: string
+    photo?: { url: string; name?: string } | null
+    /** Lugar de fondo que la persona escribió (opcional). */
+    lugar?: string
+  }
 ): GenerationPlane {
+  const lugar = (input.lugar ?? "").trim().replace(/\s+/g, " ").slice(0, 100).replace(/"/g, "'")
   const raw = (input.text ?? "").trim().replace(/\s+/g, " ")
   const text = trend.text
     ? (raw.slice(0, trend.text.max) || trend.text.fallback).replace(/"/g, "'")
@@ -431,7 +444,11 @@ export function trendPlane(
     ...(trend.photo?.role === "start" && media.length
       ? { inputMode: "frames" }
       : {}),
-    prompt: { text: trend.prompt(text) },
+    prompt: {
+      text: lugar && aceptaLugar(trend)
+        ? `${trend.prompt(text)} Replace the entire background and environment with: ${lugar}. Keep the person, pose, clothing details and lighting coherent with the new place.`
+        : trend.prompt(text),
+    },
     media: media.length ? { [trend.photo!.role]: media } : {},
     settings: { ...trend.settings },
   }
