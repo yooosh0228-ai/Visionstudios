@@ -20,6 +20,8 @@ export interface UserGenerationsProps {
   loadingMore?: boolean
   onLoadMore?: () => void | Promise<unknown>
   onDelete?: (item: GalleryItem) => void
+  /** «Dale vida»: convierte una imagen terminada en video. */
+  onAnimate?: (item: GalleryItem) => void
 }
 
 export function UserGenerations(props: UserGenerationsProps) {

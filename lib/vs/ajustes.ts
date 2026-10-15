@@ -6,6 +6,8 @@
 
 export type CuentaPago = { banco: string; titular: string; numero: string; tipo: string }
 export type PaqueteCreditos = { precio: number; creditos: number }
+/** Regalo al registrarse en el Estudio: cuántos créditos y hasta cuántas personas. */
+export type Bienvenida = { activo: boolean; creditos: number; tope: number }
 
 export type Ajustes = {
   nombre: string
@@ -23,6 +25,7 @@ export type Ajustes = {
   reglasCobro: [string, string][]
   cuentasPago: CuentaPago[]
   paquetesCreditos: PaqueteCreditos[]
+  bienvenida: Bienvenida
 }
 
 export const AJUSTES_BASE: Ajustes = {
@@ -72,6 +75,9 @@ export const AJUSTES_BASE: Ajustes = {
     { precio: 600, creditos: 1100 },
     { precio: 1500, creditos: 2900 },
   ],
+  // 50 créditos = 1 video de 5 s o 10 imágenes; a Vision Studios le cuesta
+  // ≈US$0.10 por persona. 100 personas ≈ US$10 como máximo.
+  bienvenida: { activo: true, creditos: 50, tope: 100 },
 }
 
 const isObj = (v: unknown): v is Record<string, unknown> =>
@@ -132,6 +138,16 @@ export function normalizarAjustes(raw: unknown): Ajustes {
           .map((p) => ({ precio: num(p.precio, 0), creditos: num(p.creditos, 0) }))
           .filter((p) => p.precio > 0 && p.creditos > 0)
       : b.paquetesCreditos,
+    bienvenida: isObj(d.bienvenida)
+      ? {
+          activo:
+            typeof d.bienvenida.activo === "boolean"
+              ? d.bienvenida.activo
+              : b.bienvenida.activo,
+          creditos: Math.min(num(d.bienvenida.creditos, b.bienvenida.creditos), 1000),
+          tope: Math.round(num(d.bienvenida.tope, b.bienvenida.tope)),
+        }
+      : b.bienvenida,
   }
 }
 
