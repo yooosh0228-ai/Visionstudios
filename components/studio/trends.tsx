@@ -138,9 +138,7 @@ export function TrendGallery({
   className?: string
 }) {
   const [filtro, setFiltro] = useState<"todo" | TrendCategory>("todo")
-  const lista =
-    filtro === "todo" ? TRENDS : TRENDS.filter((t) => t.category === filtro)
-  return (
+    return (
     <section className={cn("flex w-full flex-col gap-4", className)}>
       <div
         role="tablist"
@@ -165,11 +163,30 @@ export function TrendGallery({
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-        {lista.map((t) => (
-          <TrendCard key={t.id} trend={t} price={priceOf(t)} onOpen={onOpen} />
-        ))}
-      </div>
+      {(filtro === "todo"
+        ? TREND_CATEGORIES.filter((c) => c.id !== "todo")
+        : TREND_CATEGORIES.filter((c) => c.id === filtro)
+      ).map((c) => {
+        const fila = TRENDS.filter((t) => t.category === c.id)
+        if (!fila.length) return null
+        return (
+          <div key={c.id} className="flex flex-col gap-2">
+            {filtro === "todo" ? (
+              <h3 className="text-base font-bold">{c.label}</h3>
+            ) : null}
+            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:px-0">
+              {fila.map((t) => (
+                <div
+                  key={t.id}
+                  className="w-[72vw] max-w-[300px] shrink-0 snap-start sm:w-[280px]"
+                >
+                  <TrendCard trend={t} price={priceOf(t)} onOpen={onOpen} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      })}
     </section>
   )
 }

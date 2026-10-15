@@ -11,7 +11,8 @@ import { FormularioContacto } from "./contacto"
 import { Ficha } from "./ficha"
 import { Icono, LogoVertical } from "./iconos"
 import type { NombreIcono } from "./iconos"
-import { Barra, Pulgar, Visor } from "./interactivos"
+import { Barra, Pulgar } from "./interactivos"
+import { OfertaEmergente } from "./oferta"
 import { Pedir } from "./pedir"
 import { Vitrina } from "./vitrina"
 
@@ -95,6 +96,9 @@ export function Sitio({
       </a>
       <Barra />
 
+      <OfertaEmergente
+        regalo={ajustes.bienvenida.activo ? ajustes.bienvenida.creditos : 0}
+      />
       <main id="inicio">
         {/* PORTADA: mostrar primero. */}
         <section
@@ -130,7 +134,6 @@ export function Sitio({
                 </p>
               ) : null}
             </div>
-            <Visor trabajos={trabajos} portada={ajustes.portada} />
           </div>
         </section>
 

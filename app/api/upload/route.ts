@@ -4,9 +4,35 @@ import { createPlatformClient, PlatformError } from "@/generation/platform"
 import { getSession } from "@/generation/session"
 import { requireUploadContentType } from "@/generation/upload-contract"
 
+/**
+ * Detrás de Netlify, request.url trae el host interno, no el dominio que ve la
+ * persona. Se acepta el origen si coincide con el host público de la petición
+ * (x-forwarded-host / host) o con la dirección oficial del sitio.
+ */
+function mismoOrigen(request: Request, origin: string): boolean {
+  let host: string
+  try {
+    host = new URL(origin).host
+  } catch {
+    return false
+  }
+  const permitidos = new Set<string>([new URL(request.url).host])
+  for (const h of [
+    request.headers.get("x-forwarded-host"),
+    request.headers.get("host"),
+  ])
+    for (const parte of (h ?? "").split(","))
+      if (parte.trim()) permitidos.add(parte.trim())
+  try {
+    if (process.env.NEXT_PUBLIC_SITE_URL)
+      permitidos.add(new URL(process.env.NEXT_PUBLIC_SITE_URL).host)
+  } catch {}
+  return permitidos.has(host)
+}
+
 export async function POST(request: Request): Promise<NextResponse> {
   const origin = request.headers.get("origin")
-  if (origin && origin !== new URL(request.url).origin)
+  if (origin && !mismoOrigen(request, origin))
     return failure(403, "No se permiten subidas desde otro origen.")
 
   let contentType: string
