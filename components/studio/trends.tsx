@@ -66,12 +66,25 @@ function TrendCard({
         decoding="async"
         className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none"
       />
+      {trend.coverVideo ? (
+        <video
+          src={trend.coverVideo}
+          poster={trend.cover}
+          muted
+          loop
+          autoPlay
+          playsInline
+          preload="metadata"
+          aria-hidden
+          className="absolute inset-0 size-full object-cover motion-reduce:hidden"
+        />
+      ) : null}
       <span
         aria-hidden
         className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"
       />
       {trend.before ? (
-        <span className="absolute top-12 left-2.5 flex w-[34%] flex-col overflow-hidden rounded-xl border-2 border-white/80 shadow-[0_6px_16px_rgba(0,0,0,0.5)]">
+        <span className="absolute top-12 left-2.5 flex w-[46%] flex-col overflow-hidden rounded-xl border-2 border-white/80 shadow-[0_6px_16px_rgba(0,0,0,0.5)]">
           <img
             src={trend.before}
             alt=""
@@ -250,16 +263,28 @@ export function TrendSheet({
           <div className="flex flex-col gap-5">
             <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] items-start gap-3">
               <figure className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
-                <img
-                  src={trend.cover}
-                  alt={`Ejemplo de ${trend.title}`}
-                  className="size-full object-cover"
-                />
+                {trend.coverVideo ? (
+                  <video
+                    src={trend.coverVideo}
+                    poster={trend.cover}
+                    controls
+                    loop
+                    playsInline
+                    className="size-full object-cover"
+                    aria-label={`Video de ejemplo de ${trend.title}, con sonido`}
+                  />
+                ) : (
+                  <img
+                    src={trend.cover}
+                    alt={`Ejemplo de ${trend.title}`}
+                    className="size-full object-cover"
+                  />
+                )}
                 {trend.before ? (
                   <img
                     src={trend.before}
                     alt="Foto de antes"
-                    className="absolute top-2 left-2 w-[38%] rounded-lg border-2 border-white/80 object-cover shadow-lg"
+                    className="pointer-events-none absolute top-2 left-2 w-[46%] rounded-lg border-2 border-white/80 object-cover shadow-lg"
                   />
                 ) : null}
                 <figcaption className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2 py-0.5 text-[11px] text-white">

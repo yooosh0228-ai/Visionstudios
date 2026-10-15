@@ -134,24 +134,6 @@ export function Sitio({
           </div>
         </section>
 
-        {/* VITRINA: el catálogo de lo que ya está hecho. */}
-        <section
-          className="seccion vitrina"
-          id="trabajo"
-          aria-labelledby="t-trabajo"
-        >
-          <div className="envoltura">
-            <div className="cabeza">
-              <h2 id="t-trabajo">Lo que ya está hecho.</h2>
-              <p>
-                Trabajo real, en uso. Toca cualquier pieza para ver qué hicimos
-                y cómo funciona.
-              </p>
-            </div>
-            <Vitrina trabajos={trabajos} espacioLibre={ajustes.espacioLibre} />
-          </div>
-        </section>
-
         {/* PRUÉBALO: la puerta al Estudio con los trends del momento. */}
         <section
           className="seccion pruebalo"
@@ -170,10 +152,14 @@ export function Sitio({
               </p>
             </div>
             <ul className="trends" role="list">
-              {TRENDS.slice(0, 8).map((t) => (
+              {TRENDS.filter((t) => t.before).slice(0, 8).map((t) => (
                 <li key={t.id}>
                   <Link href="/estudio" className="trend">
-                    <img src={t.cover} alt="" loading="lazy" decoding="async" />
+                    {t.coverVideo ? (
+                      <video src={t.coverVideo} poster={t.cover} muted loop autoPlay playsInline preload="metadata" aria-hidden />
+                    ) : (
+                      <img src={t.cover} alt="" loading="lazy" decoding="async" />
+                    )}
                     {t.before ? (
                       <img
                         className="antes"
@@ -194,8 +180,26 @@ export function Sitio({
             <Link className="boton claro grande" href="/estudio">
               {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
                 ? "Pruébalo gratis"
-                : "Entrar al Estudio"}
+                : "Entrar a Visiopus"}
             </Link>
+          </div>
+        </section>
+
+        {/* VITRINA: el catálogo de lo que ya está hecho. */}
+        <section
+          className="seccion vitrina"
+          id="trabajo"
+          aria-labelledby="t-trabajo"
+        >
+          <div className="envoltura">
+            <div className="cabeza">
+              <h2 id="t-trabajo">Lo que ya está hecho.</h2>
+              <p>
+                Trabajo real, en uso. Toca cualquier pieza para ver qué hicimos
+                y cómo funciona.
+              </p>
+            </div>
+            <Vitrina trabajos={trabajos} espacioLibre={ajustes.espacioLibre} />
           </div>
         </section>
 
@@ -267,7 +271,7 @@ export function Sitio({
             </div>
             <div className="nota-estudio">
               <p>
-                <b>¿Prefieres crear tú mismo?</b> En el Estudio Vision haces
+                <b>¿Prefieres crear tú mismo?</b> En Visiopus haces
                 fotos y videos para tu negocio desde el celular, con trends de
                 un toque, y pagas solo lo que usas.
               </p>

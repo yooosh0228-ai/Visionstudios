@@ -308,12 +308,12 @@ html[data-dispositivo="telefono"] .vs footer{padding-bottom:calc(110px + env(saf
 .vs .pruebalo .trends{margin-top:24px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,42%);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin-left:calc(var(--lado) * -1);margin-right:calc(var(--lado-d) * -1);padding-left:var(--lado);padding-right:var(--lado-d);scrollbar-width:none}
 @media (min-width:700px){.vs .pruebalo .trends{grid-auto-flow:row;grid-template-columns:repeat(4,1fr);overflow:visible;margin-left:0;margin-right:0;padding-left:0;padding-right:0}}
 .vs .pruebalo .trend{position:relative;display:block;aspect-ratio:3/4;border-radius:20px;overflow:hidden;scroll-snap-align:start;background:var(--tinta-2);text-decoration:none;color:var(--luz)}
-.vs .pruebalo .trend img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.vs .pruebalo .trend img,.vs .pruebalo .trend video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .vs .pruebalo .trend:hover img{transform:scale(1.04)}
 .vs .pruebalo .trend span{position:absolute;inset:auto 0 0;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:40px 14px 14px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent)}
 .vs .pruebalo .trend b{font:600 var(--f0)/1.2 var(--x)}
 .vs .pruebalo .trend em{font:600 11px/1 var(--x);font-style:normal;text-transform:uppercase;letter-spacing:.06em;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.18)}
 .vs .pruebalo .boton.grande{margin-top:24px;min-height:56px;padding:0 32px;font-size:var(--f1)}
-@media (prefers-reduced-motion:reduce){.vs .pruebalo .trend img{transition:none}}
-.vs .pruebalo .trend img.antes{inset:10px auto auto 10px;width:36%;height:auto;aspect-ratio:3/4;border-radius:10px;border:2px solid rgba(255,255,255,.85);box-shadow:0 6px 16px rgba(0,0,0,.5);z-index:1}
+@media (prefers-reduced-motion:reduce){.vs .pruebalo .trend img,.vs .pruebalo .trend video{transition:none}}
+.vs .pruebalo .trend img.antes{inset:10px auto auto 10px;width:46%;height:auto;aspect-ratio:3/4;border-radius:10px;border:2px solid rgba(255,255,255,.85);box-shadow:0 6px 16px rgba(0,0,0,.5);z-index:1}
 .vs .pruebalo .trend:hover img.antes{transform:none}
