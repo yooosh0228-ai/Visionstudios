@@ -24,6 +24,7 @@ import {
 import {
   TREND_CATEGORIES,
   TRENDS,
+  aceptaLugar,
   type Trend,
   type TrendCategory,
 } from "@/lib/studio/trends"
@@ -216,13 +217,19 @@ export function TrendSheet({
   recent: AssetSelection[]
   initialPhoto?: TrendPhotoValue | null
   busy: boolean
-  onGenerate: (input: { text: string; photo: TrendPhotoValue | null }) => void
+  onGenerate: (input: {
+    text: string
+    photo: TrendPhotoValue | null
+    lugar: string
+  }) => void
   onTopUp: () => void
 }) {
   const [photo, setPhoto] = useState<TrendPhotoValue | null>(
     initialPhoto ?? null
   )
   const [text, setText] = useState("")
+  const [lugar, setLugar] = useState("")
+  const lugarId = useId()
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const input = useRef<HTMLInputElement>(null)
@@ -236,6 +243,7 @@ export function TrendSheet({
     if (clave) {
       setPhoto(initialPhoto ?? null)
       setText("")
+      setLugar("")
       setError(null)
     }
   }
@@ -431,6 +439,22 @@ export function TrendSheet({
               </label>
             ) : null}
 
+            {aceptaLugar(trend) ? (
+              <label htmlFor={lugarId} className="flex flex-col gap-1.5">
+                <span className="text-sm font-semibold">
+                  ¿Dónde quieres salir? <span className="font-normal text-muted-foreground">(opcional)</span>
+                </span>
+                <input
+                  id={lugarId}
+                  value={lugar}
+                  maxLength={100}
+                  onChange={(e) => setLugar(e.target.value)}
+                  placeholder="Ej.: frente al Monumento de Santiago, en París, en Miami…"
+                  className="h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-base outline-none placeholder:text-muted-foreground focus-visible:border-primary"
+                />
+              </label>
+            ) : null}
+
             {error ? (
               <p role="alert" className="text-sm text-destructive">
                 {error}
@@ -454,7 +478,7 @@ export function TrendSheet({
                   disabled={
                     faltaFoto || uploading || busy || price.state === "unpriced"
                   }
-                  onClick={() => onGenerate({ text, photo })}
+                  onClick={() => onGenerate({ text, photo, lugar })}
                 >
                   {busy ? (
                     <Loader2 className="size-5 animate-spin" />
