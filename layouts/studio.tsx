@@ -168,8 +168,7 @@ function HomeState({
               {title}
             </h1>
             <p className="max-w-[520px] text-center text-sm text-muted-foreground sm:text-base">
-              Fotos y videos en el trend del momento, en segundos y desde tu
-              celular.
+              Genera tus imágenes y compártelas con tus amigos.
             </p>
             {gift !== null && gift > 0 ? (
               <p className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium">

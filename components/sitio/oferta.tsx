@@ -66,7 +66,7 @@ export function OfertaEmergente({
           ×
         </button>
         <p className="oferta-etiqueta">Nuevo · VS Studio</p>
-        <h2 id="oferta-titulo">Tu foto en el trend del momento, sin mensualidad.</h2>
+        <h2 id="oferta-titulo">Genera tus imágenes y compártelas con tus amigos.</h2>
         <div className="oferta-cuerpo">
           <ul className="oferta-cifras">
             <li>
