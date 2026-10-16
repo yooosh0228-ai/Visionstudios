@@ -1,16 +1,27 @@
 "use client"
 
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
+import { OctoMark } from "@/components/studio/octo-mark"
+
 /**
- * Ventana de noticias y oferta que sale al entrar a la portada (una vez por
- * visita). Rojo: lo que la persona deja de pagar. Verde: lo que se lleva.
- * Los textos están aquí para cambiarlos sin tocar el diseño.
+ * Ventana de noticias y oferta (una vez por visita). Rojo: lo que la persona
+ * deja de pagar. Verde: lo que se lleva. El regalo es el gancho; para seguir
+ * creando se recargan créditos.
  */
 const CLAVE = "vs-oferta-vista"
 
-export function OfertaEmergente({ regalo }: { regalo: number }) {
+export function OfertaEmergente({
+  regalo,
+  recarga,
+  fotos,
+}: {
+  regalo: number
+  recarga: number
+  fotos: string[]
+}) {
   const [abierta, setAbierta] = useState(false)
   const boton = useRef<HTMLAnchorElement>(null)
 
@@ -40,6 +51,7 @@ export function OfertaEmergente({ regalo }: { regalo: number }) {
   }
 
   if (!abierta) return null
+  const cinta = [...fotos, ...fotos]
   return (
     <div className="oferta-fondo" onClick={cerrar}>
       <div
@@ -49,33 +61,47 @@ export function OfertaEmergente({ regalo }: { regalo: number }) {
         aria-labelledby="oferta-titulo"
         onClick={(e) => e.stopPropagation()}
       >
+        <OctoMark className="oferta-logo" />
         <button type="button" className="oferta-cerrar" aria-label="Cerrar" onClick={cerrar}>
           ×
         </button>
-        <p className="oferta-etiqueta">Nuevo en Vision Studios</p>
+        <p className="oferta-etiqueta">Nuevo · VS Studio</p>
         <h2 id="oferta-titulo">Tu foto en el trend del momento, sin mensualidad.</h2>
-        <ul className="oferta-cifras">
-          <li>
-            <span className="rojo"><s>US$10/mes</s></span>
-            <span>Lo que dejas de pagar en suscripciones de otras apps</span>
-          </li>
-          <li>
-            <span className="verde">RD$0</span>
-            <span>de mensualidad: pagas solo lo que creas</span>
-          </li>
-          {regalo > 0 ? (
+        <div className="oferta-cuerpo">
+          <ul className="oferta-cifras">
             <li>
-              <span className="verde">{regalo} créditos</span>
-              <span>gratis al entrar con Google, para probar</span>
+              <b className="rojo"><s>US$10/mes</s></b>
+              <span>en suscripciones que dejas de pagar</span>
             </li>
+            {regalo > 0 ? (
+              <li>
+                <b className="verde">{regalo} créditos gratis</b>
+                <span>al entrar con Google</span>
+              </li>
+            ) : null}
+            <li>
+              <b className="verde">RD$0</b>
+              <span>de mensualidad</span>
+            </li>
+            {recarga > 0 ? (
+              <li>
+                <b className="verde">Desde RD${recarga}</b>
+                <span>recargas para seguir creando</span>
+              </li>
+            ) : null}
+          </ul>
+          {fotos.length ? (
+            <div className="oferta-cinta" aria-hidden>
+              <div className="oferta-cinta-pista">
+                {cinta.map((src, i) => (
+                  <img key={i} src={src} alt="" loading="lazy" />
+                ))}
+              </div>
+            </div>
           ) : null}
-          <li>
-            <span className="verde">5 créditos</span>
-            <span>por foto, desde</span>
-          </li>
-        </ul>
-        <p className="oferta-aviso">Más barato que pagar una suscripción mensual que no usas.</p>
-        <Link ref={boton} className="boton vivo grande" href="/estudio" onClick={cerrar}>
+        </div>
+        <p className="oferta-aviso">Más barato que una suscripción mensual que no usas.</p>
+        <Link ref={boton} className="oferta-boton" href="/estudio" onClick={cerrar}>
           Pruébalo gratis
         </Link>
       </div>

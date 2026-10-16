@@ -98,6 +98,8 @@ export function Sitio({
 
       <OfertaEmergente
         regalo={ajustes.bienvenida.activo ? ajustes.bienvenida.creditos : 0}
+        recarga={ajustes.paquetesCreditos[0]?.precio ?? 0}
+        fotos={TRENDS.slice(0, 10).map((t) => t.cover)}
       />
       <main id="inicio">
         {/* PORTADA: mostrar primero. */}
