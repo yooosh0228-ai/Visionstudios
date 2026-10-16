@@ -147,7 +147,7 @@ export function Sitio({
         >
           <div className="envoltura">
             <div className="cabeza">
-              <h2 id="t-pruebalo">Tu foto, en el trend del momento.</h2>
+              <h2 id="t-pruebalo">Genera tus imágenes y compártelas con tus amigos.</h2>
               <p>
                 Sube una selfie, escoge el estilo y en segundos la tienes lista
                 para tus estados. También le das vida en video.
