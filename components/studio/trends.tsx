@@ -29,6 +29,7 @@ import {
   type TrendCategory,
 } from "@/lib/studio/trends"
 import { uploadAsset, type AssetSelection } from "@/lib/studio/uploads"
+import { Deslizador } from "@/components/ui/deslizador"
 import { cn } from "@/lib/utils"
 
 /** Cuánto cuesta una trend para esta persona, ya calculado por el Estudio. */
@@ -175,7 +176,11 @@ export function TrendGallery({
             {filtro === "todo" ? (
               <h3 className="text-base font-bold">{c.label}</h3>
             ) : null}
-            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:px-0">
+            <Deslizador
+              etiqueta={c.label}
+              className="-mx-4 sm:mx-0"
+              pistaClassName="scroll-px-4 px-4 sm:scroll-px-0 sm:px-0"
+            >
               {fila.map((t) => (
                 <div
                   key={t.id}
@@ -184,7 +189,7 @@ export function TrendGallery({
                   <TrendCard trend={t} price={priceOf(t)} onOpen={onOpen} />
                 </div>
               ))}
-            </div>
+            </Deslizador>
           </div>
         )
       })}
