@@ -3,6 +3,7 @@ import Link from "next/link"
 
 import type { Ajustes } from "@/lib/vs/ajustes"
 import { enlaceChat } from "@/lib/vs/ajustes"
+import { Deslizador } from "@/components/ui/deslizador"
 import { TRENDS } from "@/lib/studio/trends"
 import { formatoRD } from "@/lib/vs/cuentas"
 import type { Oferta, Trabajo } from "@/lib/vs/types"
@@ -156,9 +157,9 @@ export function Sitio({
                   : ""}
               </p>
             </div>
-            <ul className="trends" role="list">
+            <Deslizador etiqueta="Generaciones" pistaClassName="trends">
               {TRENDS.filter((t) => t.before).slice(0, 8).map((t) => (
-                <li key={t.id}>
+                <div key={t.id} className="trend-celda">
                   <Link href="/estudio" className="trend">
                     {t.coverVideo ? (
                       <video src={t.coverVideo} poster={t.cover} muted loop autoPlay playsInline preload="metadata" aria-hidden />
@@ -179,9 +180,9 @@ export function Sitio({
                       {t.kind === "video" ? <em>Video</em> : null}
                     </span>
                   </Link>
-                </li>
+                </div>
               ))}
-            </ul>
+            </Deslizador>
             <Link className="boton claro grande" href="/estudio">
               {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
                 ? "Pruébalo gratis"

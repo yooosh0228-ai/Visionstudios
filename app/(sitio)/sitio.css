@@ -305,9 +305,9 @@ html[data-dispositivo="telefono"] .vs footer{padding-bottom:calc(110px + env(saf
 .vs .sonido{position:absolute;z-index:3;right:12px;bottom:14px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(20,24,25,.82);color:var(--luz);display:grid;place-items:center;cursor:pointer}
 .vs .ficha .medio .telefono{position:relative}
 /* Pruébalo: los trends del Estudio, en una tira que se desliza con el pulgar. */
-.vs .pruebalo .trends{margin-top:24px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,42%);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin-left:calc(var(--lado) * -1);margin-right:calc(var(--lado-d) * -1);padding-left:var(--lado);padding-right:var(--lado-d);scrollbar-width:none}
-@media (min-width:700px){.vs .pruebalo .trends{grid-auto-flow:row;grid-template-columns:repeat(4,1fr);overflow:visible;margin-left:0;margin-right:0;padding-left:0;padding-right:0}}
-.vs .pruebalo .trend{position:relative;display:block;aspect-ratio:3/4;border-radius:20px;overflow:hidden;scroll-snap-align:start;background:var(--tinta-2);text-decoration:none;color:var(--luz)}
+.vs .pruebalo .trends{margin-top:24px}
+.vs .pruebalo .trend-celda{flex:0 0 min(72vw,280px);scroll-snap-align:start}
+.vs .pruebalo .trend{position:relative;display:block;aspect-ratio:3/4;border-radius:20px;overflow:hidden;background:var(--tinta-2);text-decoration:none;color:var(--luz)}
 .vs .pruebalo .trend img,.vs .pruebalo .trend video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .vs .pruebalo .trend:hover img{transform:scale(1.04)}
 .vs .pruebalo .trend span{position:absolute;inset:auto 0 0;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:40px 14px 14px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent)}
