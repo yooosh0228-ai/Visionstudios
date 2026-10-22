@@ -3,18 +3,18 @@ import Link from "next/link"
 
 import type { Ajustes } from "@/lib/vs/ajustes"
 import { enlaceChat } from "@/lib/vs/ajustes"
-import { Deslizador } from "@/components/ui/deslizador"
 import { TRENDS } from "@/lib/studio/trends"
-import { formatoRD } from "@/lib/vs/cuentas"
+import { PILARES, PROMOS } from "@/lib/vs/pilares"
+import { Deslizador } from "@/components/ui/deslizador"
 import type { Oferta, Trabajo } from "@/lib/vs/types"
 
 import { FormularioContacto } from "./contacto"
 import { Ficha } from "./ficha"
-import { Icono, LogoVertical } from "./iconos"
-import type { NombreIcono } from "./iconos"
+import { LogoVertical } from "./iconos"
 import { Barra, Pulgar } from "./interactivos"
 import { OfertaEmergente } from "./oferta"
 import { Pedir } from "./pedir"
+import { VideoTelefono } from "./promos"
 import { Vitrina } from "./vitrina"
 
 /**
@@ -33,12 +33,12 @@ export function Sitio({
   trabajos: Trabajo[]
   ofertas: Oferta[]
 }) {
-  const radiografia = ofertas.find((o) => o.id === ajustes.radiografia.oferta)
-  const servicios = ofertas.filter((o) => o.id !== ajustes.radiografia.oferta)
+  const enPilares = new Set(PILARES.map((p) => p.servicio))
+  const otros = ofertas.filter((o) => !enPilares.has(o.nombre))
   const chat = enlaceChat(ajustes)
   const opciones = [
-    ...servicios.map((s) => s.nombre),
-    ...(radiografia ? [radiografia.nombre] : []),
+    ...PILARES.map((p) => p.servicio),
+    ...otros.map((s) => s.nombre),
     "No sé, ayúdame a decidir",
   ]
   const canales: [string, string, string][] = []
@@ -63,7 +63,7 @@ export function Sitio({
     url: "https://402visionstudios.com/",
     image: "https://402visionstudios.com/og.jpg",
     description:
-      "Estudio de diseño, software y video para negocios en Santiago de los Caballeros.",
+      "Videos promocionales, influencers para marcas, apps web y marca para negocios en Santiago de los Caballeros.",
     areaServed: { "@type": "City", name: "Santiago de los Caballeros" },
     address: {
       "@type": "PostalAddress",
@@ -71,16 +71,14 @@ export function Sitio({
       addressCountry: "DO",
     },
     sameAs: [`https://www.instagram.com/${ajustes.instagram}/`],
-    ...(radiografia?.precioPublico
-      ? {
-          makesOffer: {
-            "@type": "Offer",
-            name: radiografia.nombre,
-            price: String(radiografia.precioPublico),
-            priceCurrency: "DOP",
-          },
-        }
-      : {}),
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Servicios",
+      itemListElement: PILARES.map((p) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: p.nombre },
+      })),
+    },
   }
 
   return (
@@ -92,8 +90,8 @@ export function Sitio({
           __html: JSON.stringify(datosNegocio).replace(/</g, "\\u003c"),
         }}
       />
-      <a className="saltar" href="#trabajo">
-        Saltar al trabajo
+      <a className="saltar" href="#servicios">
+        Saltar a los servicios
       </a>
       <Barra />
 
@@ -103,29 +101,27 @@ export function Sitio({
         fotos={TRENDS.slice(0, 10).map((t) => t.cover)}
       />
       <main id="inicio">
-        {/* PORTADA: mostrar primero. */}
-        <section
-          className="portada"
-          id="inicio-portada"
-          aria-labelledby="titulo"
-        >
+        {/* PORTADA: qué hacemos y la prueba en video al lado. */}
+        <section className="portada" id="inicio-portada" aria-labelledby="titulo">
+          <div className="aurora" aria-hidden />
           <div className="envoltura">
             <div>
+              <p className="rotulo-portada">Estudio creativo · Santiago, RD</p>
               <h1 id="titulo">
-                Tu negocio,
+                Hacemos que tu negocio
                 <br />
-                en foco.
+                <em>se vea, se venda</em>
+                <br />y funcione.
               </h1>
               <p className="bajada">
-                Diseñamos y programamos apps, páginas, marcas y video para
-                negocios de Santiago.{" "}
-                <span>Todo hecho a la medida, desde cero.</span>
+                Videos promocionales, influencers para tu marca, apps web y
+                marca. <span>Todo a la medida, nada de plantillas.</span>
               </p>
               <div className="acciones">
-                <a className="boton claro" href="#trabajo">
-                  Ver el trabajo
+                <a className="boton vivo" href="#servicios">
+                  Ver servicios
                 </a>
-                <Pedir className="boton">Cuéntanos tu negocio</Pedir>
+                <Pedir className="boton">Pedir una cotización</Pedir>
               </div>
               {ajustes.pruebaSocial.length ? (
                 <p className="prueba-social">
@@ -137,211 +133,154 @@ export function Sitio({
                 </p>
               ) : null}
             </div>
+            <div className="abanico" aria-label="Videos que hicimos para negocios">
+              {PROMOS.map((p) => (
+                <VideoTelefono key={p.id} {...p} />
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* PRUÉBALO: la puerta al Estudio con los trends del momento. */}
-        <section
-          className="seccion pruebalo"
-          id="pruebalo"
-          aria-labelledby="t-pruebalo"
-        >
+        {/* SERVICIOS: los protagonistas. */}
+        <section className="seccion" id="servicios" aria-labelledby="t-servicios">
           <div className="envoltura">
             <div className="cabeza">
-              <h2 id="t-pruebalo">Genera tus imágenes y compártelas con tus amigos.</h2>
+              <span className="rotulo">Servicios</span>
+              <h2 id="t-servicios">Escoge por dónde empezamos.</h2>
               <p>
-                Sube una selfie, escoge el estilo y en segundos la tienes lista
-                para tus estados. También le das vida en video.
-                {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
-                  ? " Entra con tu cuenta de Google y te regalamos créditos para probar."
-                  : ""}
+                Pide el servicio aquí mismo. Te escribimos por WhatsApp, entendemos
+                tu negocio y te cotizamos sin compromiso.
               </p>
             </div>
-            <Deslizador etiqueta="Generaciones" pistaClassName="trends">
-              {TRENDS.filter((t) => t.before).slice(0, 8).map((t) => (
-                <div key={t.id} className="trend-celda">
-                  <Link href="/estudio" className="trend">
-                    {t.coverVideo ? (
-                      <video src={t.coverVideo} poster={t.cover} muted loop autoPlay playsInline preload="metadata" aria-hidden />
-                    ) : (
-                      <img src={t.cover} alt="" loading="lazy" decoding="async" />
-                    )}
-                    {t.before ? (
-                      <img
-                        className="antes"
-                        src={t.before}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                      />
+            <div className="pilares">
+              {PILARES.map((p) => (
+                <article className={`pilar pilar-${p.id}`} key={p.id}>
+                  <span className="rotulo">{p.rotulo}</span>
+                  <h3>{p.nombre}</h3>
+                  <p>{p.gancho}</p>
+                  <ul>
+                    {p.puntos.map((x) => (
+                      <li key={x}>{x}</li>
+                    ))}
+                  </ul>
+                  <div className="pilar-acciones">
+                    <Pedir className="boton vivo" servicio={p.servicio}>
+                      {p.accion}
+                    </Pedir>
+                    {p.ancla !== "servicios" ? (
+                      <a className="enlace" href={`#${p.ancla}`}>
+                        Ver ejemplos
+                      </a>
                     ) : null}
-                    <span>
-                      <b>{t.title}</b>
-                      {t.kind === "video" ? <em>Video</em> : null}
-                    </span>
-                  </Link>
-                </div>
+                  </div>
+                </article>
               ))}
-            </Deslizador>
-            <Link className="boton claro grande" href="/estudio">
-              {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
-                ? "Pruébalo gratis"
-                : "Entrar a VS Studio"}
-            </Link>
+            </div>
+
+            <details className="mas-servicios">
+              <summary>Ver todos los servicios ({otros.length + 1})</summary>
+              <div className="servicios">
+                <article className="servicio">
+                  <h3>Agentes para tu negocio</h3>
+                  <p className="que">
+                    Un asistente que atiende tu WhatsApp, un mes de contenido
+                    planificado, CV y documentos. Lo activas desde tu cuenta.
+                  </p>
+                  <Link className="enlace" href="/servicios">
+                    Ver agentes
+                  </Link>
+                </article>
+                {otros.map((s) => (
+                  <article className="servicio" key={s.id}>
+                    <h3>{s.nombre}</h3>
+                    <p className="que">{s.resumen}</p>
+                    <Pedir className="enlace" servicio={s.nombre}>
+                      Pedir este
+                    </Pedir>
+                  </article>
+                ))}
+              </div>
+            </details>
           </div>
         </section>
 
-        {/* VITRINA: el catálogo de lo que ya está hecho. */}
-        <section
-          className="seccion vitrina"
-          id="trabajo"
-          aria-labelledby="t-trabajo"
-        >
+        {/* VIDEOS: la prueba para el servicio de video. */}
+        <section className="seccion videos" id="videos" aria-labelledby="t-videos">
           <div className="envoltura">
             <div className="cabeza">
-              <h2 id="t-trabajo">Lo que ya está hecho.</h2>
+              <span className="rotulo">Videos promocionales</span>
+              <h2 id="t-videos">Un colmado, un car wash y una repostería.</h2>
               <p>
-                Trabajo real, en uso. Toca cualquier pieza para ver qué hicimos
-                y cómo funciona.
+                Tres negocios, tres historias contadas como habla la gente de
+                aquí. Toca cualquier video para oírlo. El tuyo puede ser el
+                próximo.
+              </p>
+            </div>
+            <Deslizador etiqueta="Videos promocionales" pistaClassName="tira-videos">
+              {PROMOS.map((p) => (
+                <VideoTelefono key={p.id} {...p} />
+              ))}
+            </Deslizador>
+            <Pedir className="boton vivo grande" servicio="Video y foto publicitaria">
+              Quiero un video para mi negocio
+            </Pedir>
+          </div>
+        </section>
+
+        {/* VISION INFLUENCER */}
+        <section className="seccion influencer" id="influencer" aria-labelledby="t-influencer">
+          <div className="envoltura">
+            <VideoTelefono
+              src="/videos/promos/yoshira.mp4"
+              poster="/videos/promos/yoshira.jpg"
+              negocio="Yoshira"
+              titulo="La cara de Vision Studios"
+            />
+            <div>
+              <span className="rotulo">Vision Influencer</span>
+              <h2 id="t-influencer">Ella es Yoshira. Tu negocio puede tener la suya.</h2>
+              <p className="lead">
+                Diseñamos un personaje solo para tu marca: su cara, su voz, su
+                forma de hablar. Explica tus servicios, presenta tus ofertas y
+                sale en tus redes cada semana, siempre igualita.
+              </p>
+              <ol className="mini-pasos">
+                <li><b>Lo creamos.</b> Rostro, estilo y personalidad según tu marca.</li>
+                <li><b>Le damos voz.</b> Habla como tus clientes, en dominicano.</li>
+                <li><b>Lo ponemos a trabajar.</b> Videos para feed, historias y TikTok.</li>
+              </ol>
+              <Pedir className="boton vivo" servicio="Vision Influencer">
+                Quiero mi influencer
+              </Pedir>
+            </div>
+          </div>
+        </section>
+
+        {/* APPS: el catálogo de lo que ya está hecho. */}
+        <section className="seccion vitrina" id="trabajo" aria-labelledby="t-trabajo">
+          <div className="envoltura">
+            <div className="cabeza">
+              <span className="rotulo">Apps web a la medida</span>
+              <h2 id="t-trabajo">Apps que ya están trabajando.</h2>
+              <p>
+                Mientras otros revenden la misma plantilla con otro logo,
+                nosotros empezamos por tu negocio. Toca cualquier pieza para ver
+                qué hicimos y cómo funciona.
               </p>
             </div>
             <Vitrina trabajos={trabajos} espacioLibre={ajustes.espacioLibre} />
           </div>
         </section>
 
-        {/* HECHO A LA MEDIDA */}
-        <section
-          className="seccion medida"
-          id="medida"
-          aria-labelledby="t-medida"
-        >
-          <div className="envoltura">
-            <div>
-              <h2 id="t-medida">Hecho para tu negocio. No para cualquiera.</h2>
-              <p className="lead">
-                La mayoría de las páginas y apps que se venden por aquí son
-                maquetas compradas y revendidas con otro logo encima.{" "}
-                <b>Aquí no.</b> Empezamos por tu negocio: cómo vendes, cómo
-                atiendes y qué te está costando clientes. De ahí diseñamos y
-                programamos todo desde cero. <b>Trabajo 100% personalizado.</b>
-              </p>
-            </div>
-            <div className="compromisos">
-              {ajustes.compromisos.map(([k, t, d]) => {
-                const I = Icono[k as NombreIcono] ?? Icono.check
-                return (
-                  <div className="compromiso" key={k + t}>
-                    <I />
-                    <div>
-                      <h3>{t}</h3>
-                      <p>{d}</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* SERVICIOS: sin precios; cada uno se cotiza a la medida. */}
-        <section
-          className="seccion"
-          id="servicios"
-          aria-labelledby="t-servicios"
-        >
-          <div className="envoltura">
-            <div className="cabeza">
-              <h2 id="t-servicios">Lo que hacemos.</h2>
-              <p>
-                Cada trabajo se cotiza según tu negocio, después de entenderlo.
-                Si no sabes por dónde empezar, empieza por la radiografía.
-              </p>
-            </div>
-            <div className="servicios">
-              {servicios.map((s) => (
-                <article className="servicio" key={s.id}>
-                  <h3>{s.nombre}</h3>
-                  <p className="que">{s.resumen}</p>
-                  {s.incluye.length ? (
-                    <ul>
-                      {s.incluye.map((i) => (
-                        <li key={i}>{i}</li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  <Pedir className="enlace" servicio={s.nombre}>
-                    Me interesa
-                  </Pedir>
-                </article>
-              ))}
-            </div>
-            <div className="nota-estudio">
-              <p>
-                <b>¿Prefieres crear tú mismo?</b> En VS Studio haces
-                fotos y videos para tu negocio desde el celular, con trends de
-                un toque, y pagas solo lo que usas.
-              </p>
-              <Link className="boton" href="/estudio">
-                <Icono.afuera />
-                Entrar al Estudio
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* RADIOGRAFÍA: la única tarifa publicada. */}
-        {radiografia ? (
-          <section
-            className="seccion radiografia"
-            id="radiografia"
-            aria-labelledby="t-radio"
-          >
-            <div className="envoltura">
-              <div className="placa">
-                <div>
-                  <span className="etiqueta">
-                    <i />
-                    <span>{ajustes.radiografia.etiqueta}</span>
-                  </span>
-                  <h2 id="t-radio">{radiografia.nombre}.</h2>
-                  <p className="lead">{ajustes.radiografia.lead}</p>
-                  <ul>
-                    {radiografia.incluye.map((i) => (
-                      <li key={i}>
-                        <Icono.check />
-                        <span>{i}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="precio">
-                  {radiografia.precioPublico ? (
-                    <p className="cifra">
-                      <small>RD$</small>
-                      {formatoRD(radiografia.precioPublico).replace("RD$", "")}
-                    </p>
-                  ) : null}
-                  <p className="condicion">{ajustes.radiografia.condicion}</p>
-                  <Pedir className="boton vivo" servicio={radiografia.nombre}>
-                    Pedir mi radiografía
-                  </Pedir>
-                </div>
-              </div>
-            </div>
-          </section>
-        ) : null}
-
         {/* PROCESO */}
         <section className="seccion" id="proceso" aria-labelledby="t-proceso">
           <div className="envoltura">
             <div className="cabeza">
-              <h2 id="t-proceso">
-                Como una foto: enfocar, encuadrar, disparar, revelar.
-              </h2>
+              <span className="rotulo">Cómo trabajamos</span>
+              <h2 id="t-proceso">Enfocar, encuadrar, disparar, revelar.</h2>
               <p>
                 Trabajamos con depósito y a fecha. Cada cliente tiene su área
-                privada donde ve en qué va su proyecto, aprueba las entregas y
-                lleva sus pagos al día.
+                privada donde ve en qué va su proyecto y aprueba las entregas.
               </p>
             </div>
             <ol className="pasos">
@@ -356,28 +295,55 @@ export function Sitio({
           </div>
         </section>
 
+        {/* SEGUNDO PLANO: VS Studio y los juegos. */}
+        <section className="seccion extras" id="extras" aria-labelledby="t-extras">
+          <div className="envoltura">
+            <div className="cabeza">
+              <span className="rotulo">También tenemos</span>
+              <h2 id="t-extras">Pa&apos; que te entretengas.</h2>
+            </div>
+            <div className="extras-rejilla">
+              <Link href="/estudio" className="extra extra-estudio">
+                <div className="extra-fotos" aria-hidden>
+                  {TRENDS.filter((t) => t.before).slice(0, 3).map((t) => (
+                    <img key={t.id} src={t.cover} alt="" loading="lazy" decoding="async" />
+                  ))}
+                </div>
+                <b>VS Studio</b>
+                <span>
+                  Genera tus imágenes y compártelas con tus amigos.
+                  {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
+                    ? " Entra con Google y te regalamos créditos."
+                    : ""}
+                </span>
+                <em>Entrar →</em>
+              </Link>
+              <Link href="/juegos" className="extra extra-juegos">
+                <div className="extra-emojis" aria-hidden>🧠 🛵 🗣️</div>
+                <b>Juegos dominicanos</b>
+                <span>
+                  Trivia en línea con tus panas, «Dilo sin decirlo» y la
+                  carrera de motoconchos. Gratis, desde el celular.
+                </span>
+                <em>Jugar →</em>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* CONTACTO: llega al panel como prospecto nuevo. */}
-        <section
-          className="seccion contacto"
-          id="contacto"
-          aria-labelledby="t-contacto"
-        >
+        <section className="seccion contacto" id="contacto" aria-labelledby="t-contacto">
           <div className="envoltura">
             <div>
+              <span className="rotulo">Pedir un servicio</span>
               <h2 id="t-contacto">Cuéntanos tu negocio.</h2>
               <p className="lead">
-                Un minuto y nos llega todo. Te contestamos por WhatsApp. Primero
-                entendemos, después cotizamos, sin compromiso.
+                Escoge el servicio, déjanos tu WhatsApp y en un minuto nos llega
+                todo. Primero entendemos, después cotizamos, sin compromiso.
               </p>
               <div className="canales">
                 {canales.map(([h, t, s]) => (
-                  <a
-                    className="canal"
-                    href={h}
-                    key={t}
-                    target="_blank"
-                    rel="noopener"
-                  >
+                  <a className="canal" href={h} key={t} target="_blank" rel="noopener">
                     <b>{t}</b>
                     <span>{s}</span>
                   </a>
@@ -404,9 +370,11 @@ export function Sitio({
           <div style={{ display: "grid", gap: 24 }}>
             <LogoVertical className="vertical" />
             <nav aria-label="Pie">
-              <a href="#trabajo">Trabajo</a>
               <a href="#servicios">Servicios</a>
-              <a href="#radiografia">Radiografía</a>
+              <a href="#videos">Videos</a>
+              <a href="#influencer">Influencer</a>
+              <a href="#trabajo">Apps</a>
+              <Link href="/juegos">Juegos</Link>
               <a href="#contacto">Contacto</a>
               <Link href="/estudio">Estudio</Link>
               <Link href="/entrar">Mi cuenta</Link>
