@@ -28,7 +28,7 @@ export function OfertaEmergente({
   useEffect(() => {
     let vista = false
     try {
-      vista = sessionStorage.getItem(CLAVE) === "1"
+      vista = localStorage.getItem(CLAVE) === new Date().toDateString()
     } catch {}
     if (vista) return
     const t = setTimeout(() => setAbierta(true), 1200)
@@ -46,7 +46,7 @@ export function OfertaEmergente({
   function cerrar() {
     setAbierta(false)
     try {
-      sessionStorage.setItem(CLAVE, "1")
+      localStorage.setItem(CLAVE, new Date().toDateString())
     } catch {}
   }
 

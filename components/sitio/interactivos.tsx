@@ -24,7 +24,7 @@ export function Barra() {
       (es) => es.forEach((e) => e.isIntersecting && setActual(e.target.id)),
       { rootMargin: "-45% 0px -50% 0px" }
     )
-    for (const id of ["trabajo", "servicios", "radiografia", "contacto"]) {
+    for (const id of ["servicios", "videos", "influencer", "trabajo", "contacto"]) {
       const el = document.getElementById(id)
       if (el) ioSeccion.observe(el)
     }
@@ -35,9 +35,10 @@ export function Barra() {
   }, [])
 
   const secciones = [
-    ["trabajo", "Trabajo"],
     ["servicios", "Servicios"],
-    ["radiografia", "Radiografía"],
+    ["videos", "Videos"],
+    ["influencer", "Influencer"],
+    ["trabajo", "Apps"],
     ["contacto", "Contacto"],
   ] as const
 

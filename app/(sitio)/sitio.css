@@ -305,9 +305,9 @@ html[data-dispositivo="telefono"] .vs footer{padding-bottom:calc(110px + env(saf
 .vs .sonido{position:absolute;z-index:3;right:12px;bottom:14px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(20,24,25,.82);color:var(--luz);display:grid;place-items:center;cursor:pointer}
 .vs .ficha .medio .telefono{position:relative}
 /* Pruébalo: los trends del Estudio, en una tira que se desliza con el pulgar. */
-.vs .pruebalo .trends{margin-top:24px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,42%);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin-left:calc(var(--lado) * -1);margin-right:calc(var(--lado-d) * -1);padding-left:var(--lado);padding-right:var(--lado-d);scrollbar-width:none}
-@media (min-width:700px){.vs .pruebalo .trends{grid-auto-flow:row;grid-template-columns:repeat(4,1fr);overflow:visible;margin-left:0;margin-right:0;padding-left:0;padding-right:0}}
-.vs .pruebalo .trend{position:relative;display:block;aspect-ratio:3/4;border-radius:20px;overflow:hidden;scroll-snap-align:start;background:var(--tinta-2);text-decoration:none;color:var(--luz)}
+.vs .pruebalo .trends{margin-top:24px}
+.vs .pruebalo .trend-celda{flex:0 0 min(72vw,280px);scroll-snap-align:start}
+.vs .pruebalo .trend{position:relative;display:block;aspect-ratio:3/4;border-radius:20px;overflow:hidden;background:var(--tinta-2);text-decoration:none;color:var(--luz)}
 .vs .pruebalo .trend img,.vs .pruebalo .trend video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .vs .pruebalo .trend:hover img{transform:scale(1.04)}
 .vs .pruebalo .trend span{position:absolute;inset:auto 0 0;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:40px 14px 14px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent)}
@@ -340,3 +340,87 @@ html[data-dispositivo="telefono"] .vs footer{padding-bottom:calc(110px + env(saf
 @keyframes of-in{from{opacity:0}to{opacity:1}}
 @keyframes of-cinta{from{transform:translateY(0)}to{transform:translateY(-50%)}}
 @media (prefers-reduced-motion:reduce){.vs .oferta-fondo{animation:none}.vs .oferta-cinta-pista{animation:none}}
+
+/* ===== Portada v3: servicios al frente ===== */
+.vs .rotulo,.vs .rotulo-portada{display:inline-block;color:var(--senal);font:600 var(--f-1)/1.3 var(--x);letter-spacing:.08em;text-transform:uppercase}
+.vs .portada{position:relative;isolation:isolate;overflow:hidden}
+.vs .aurora{position:absolute;inset:-20% -10% auto;height:120%;z-index:-1;pointer-events:none;filter:blur(70px);opacity:.55;
+  background:radial-gradient(40% 35% at 20% 30%,rgba(53,179,126,.55),transparent 70%),radial-gradient(35% 30% at 80% 20%,rgba(150,120,255,.35),transparent 70%),radial-gradient(30% 30% at 60% 75%,rgba(216,163,60,.25),transparent 70%);
+  animation:vs-aurora 18s ease-in-out infinite alternate}
+@keyframes vs-aurora{to{transform:translate3d(-4%,6%,0) rotate(6deg) scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.vs .aurora{animation:none}}
+.vs .portada h1 em{font-style:normal;color:var(--senal)}
+.vs .portada .rotulo-portada{margin-bottom:18px}
+@media (min-width:1000px){.vs .portada .envoltura{grid-template-columns:1.05fr .95fr}}
+.vs .abanico{display:flex;justify-content:center;align-items:flex-end;gap:0;min-height:300px}
+.vs .abanico .telefono{width:min(36vw,210px);flex:none;transition:transform .3s}
+.vs .abanico .telefono:nth-child(1){transform:rotate(-7deg) translate(18%,6%)}
+.vs .abanico .telefono:nth-child(2){z-index:2;transform:translateY(-4%)}
+.vs .abanico .telefono:nth-child(3){transform:rotate(7deg) translate(-18%,6%)}
+.vs .abanico .telefono figcaption{display:none}
+@media (max-width:599px){.vs .abanico .telefono{width:40vw}}
+
+/* Teléfono con video */
+.vs .telefono{display:grid;gap:12px}
+.vs .telefono .pantalla{position:relative;display:block;width:100%;aspect-ratio:9/19;padding:6px;border:1px solid #3a4344;border-radius:34px;background:#050707;cursor:pointer;box-shadow:0 30px 60px -25px rgba(0,0,0,.7),inset 0 0 0 2px #111}
+.vs .telefono .pantalla::before{content:"";position:absolute;top:12px;left:50%;width:30%;height:16px;transform:translateX(-50%);border-radius:99px;background:#000;z-index:2}
+.vs .telefono video{width:100%;height:100%;object-fit:cover;border-radius:28px;background:#111}
+.vs .telefono .sonido{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:6px 12px;border-radius:99px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);font:600 12px/1 var(--x);white-space:nowrap}
+.vs .telefono .sonido.encendido{background:var(--senal);color:var(--tinta)}
+.vs .telefono figcaption{display:grid;gap:2px;padding:0 4px}
+.vs .telefono figcaption b{font:600 var(--f0)/1.3 var(--t)}
+.vs .telefono figcaption span{color:var(--humo);font-size:var(--f-1)}
+
+/* Pilares */
+.vs .pilares{display:grid;gap:16px}
+@media (min-width:760px){.vs .pilares{grid-template-columns:1fr 1fr}}
+.vs .pilar{position:relative;display:grid;gap:14px;align-content:start;padding:28px 24px;border:1px solid var(--linea);border-radius:24px;background:linear-gradient(160deg,var(--tinta-2),var(--tinta));overflow:hidden;transition:border-color .25s,transform .25s}
+.vs .pilar:hover{border-color:#3d4a4b;transform:translateY(-2px)}
+.vs .pilar::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;filter:blur(50px);opacity:.35;pointer-events:none}
+.vs .pilar-videos::after{background:#35B37E}.vs .pilar-influencer::after{background:#9b7bff}.vs .pilar-apps::after{background:#3aa0ff}.vs .pilar-marca::after{background:#D8A33C}
+.vs .pilar h3{font-size:var(--f3)}
+.vs .pilar p{color:var(--humo)}
+.vs .pilar ul{display:flex;flex-wrap:wrap;gap:8px}
+.vs .pilar li{font-size:var(--f-1);padding:6px 12px;border-radius:999px;background:var(--tinta-3)}
+.vs .pilar-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:6px}
+.vs .mas-servicios{margin-top:28px;border:1px solid var(--linea);border-radius:20px;padding:0 20px}
+.vs .mas-servicios summary{cursor:pointer;min-height:56px;display:flex;align-items:center;font:600 var(--f1)/1 var(--t)}
+.vs .mas-servicios .servicios{border-top:1px solid var(--linea)}
+.vs .mas-servicios .servicio:last-child{border-bottom:0}
+@media (min-width:760px){.vs .mas-servicios .servicios{grid-template-columns:1fr 1fr;column-gap:32px}}
+
+/* Videos y Vision Influencer */
+.vs .tira-videos{gap:20px}
+.vs .tira-videos .telefono{flex:0 0 min(62vw,250px);scroll-snap-align:start}
+.vs .videos .boton.grande{margin-top:28px}
+.vs .influencer .envoltura{display:grid;gap:36px;align-items:center}
+.vs .influencer .telefono{width:min(70vw,280px);justify-self:center}
+@media (min-width:900px){.vs .influencer .envoltura{grid-template-columns:300px 1fr;gap:64px}}
+.vs .influencer h2{margin:12px 0 16px}
+.vs .influencer .lead{color:var(--humo);max-width:52ch}
+.vs .mini-pasos{display:grid;gap:12px;margin:24px 0 28px;padding:0;list-style:none;counter-reset:p}
+.vs .mini-pasos li{counter-increment:p;display:grid;grid-template-columns:32px 1fr;gap:10px;color:var(--humo)}
+.vs .mini-pasos li::before{content:counter(p);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--tinta-3);color:var(--senal);font:600 13px/1 var(--x)}
+.vs .mini-pasos b{color:var(--luz)}
+
+/* Extras: VS Studio y juegos en segundo plano */
+.vs .extras-rejilla{display:grid;gap:16px}
+@media (min-width:760px){.vs .extras-rejilla{grid-template-columns:1fr 1fr}}
+.vs .extra{display:grid;gap:8px;padding:22px;border:1px solid var(--linea);border-radius:20px;text-decoration:none;background:var(--tinta-2);transition:border-color .2s}
+.vs .extra:hover{border-color:var(--senal)}
+.vs .extra b{font:700 var(--f2)/1.2 var(--t)}
+.vs .extra span{color:var(--humo);font-size:var(--f0)}
+.vs .extra em{font-style:normal;color:var(--senal);font-weight:600}
+.vs .extra-fotos{display:flex;gap:6px;margin-bottom:8px}
+.vs .extra-fotos img{width:64px;height:84px;object-fit:cover;border-radius:12px}
+.vs .extra-emojis{font-size:40px;letter-spacing:6px;margin-bottom:8px}
+.vs .contacto .rotulo{margin-bottom:12px}
+.vs .portada .envoltura{grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){.vs .portada .envoltura{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}}
+.vs .portada .envoltura>*{min-width:0}
+.vs .abanico{overflow:visible;max-width:100%}
+.vs .mini-pasos li{display:block;position:relative;padding-left:42px;min-height:28px;line-height:1.5}
+.vs .mini-pasos li::before{position:absolute;left:0;top:-1px}
+.vs .influencer .envoltura>*{min-width:0}
+.vs footer .envoltura>*{min-width:0}
+.vs footer .vertical{max-width:100%}
