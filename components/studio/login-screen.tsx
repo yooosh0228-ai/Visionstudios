@@ -13,7 +13,7 @@ import { OctoMark } from "./octo-mark"
 export function LoginScreen({
   error,
   next = "/estudio",
-  titulo = "VS Studio",
+  titulo = "Estudio IA",
   texto = "Crea imágenes y video para tu negocio. Entra con un toque y paga solo lo que generas, con créditos que recargas con nosotros.",
   volver = true,
 }: {
@@ -57,7 +57,7 @@ export function LoginScreen({
         }}
       />
       <div className="relative flex w-full max-w-sm flex-col items-center gap-6 text-center">
-        <OctoMark className="w-32" title="VS Studio, de Vision Studios" />
+        <OctoMark className="w-32" title="Estudio IA, de Vision Studios" />
         <div className="flex flex-col gap-2">
           <h1 className="text-q-headline-md-semi-bold">{titulo}</h1>
           <p className="text-sm text-muted-foreground">{texto}</p>

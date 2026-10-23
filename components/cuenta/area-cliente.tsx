@@ -4,11 +4,9 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
-  Bot,
   Check,
   CircleDot,
   ExternalLink,
-  Image as ImageIcon,
   LogOut,
   MessageCircle,
   ShieldCheck,
@@ -813,47 +811,7 @@ export function AreaCliente({
                 </ul>
               ) : null}
             </Tarjeta>
-            <Tarjeta className="flex flex-col gap-2">
-              <h2 className="font-semibold">Herramientas</h2>
-              <Link
-                href="/estudio"
-                className="flex min-h-14 items-center gap-3 rounded-xl border border-border px-3 hover:bg-muted/40"
-              >
-                <ImageIcon className="size-5 text-primary" />
-                <span className="flex flex-col">
-                  <span className="font-medium">Estudio</span>
-                  <span className="text-xs text-muted-foreground">
-                    Imágenes y video para tu negocio
-                  </span>
-                </span>
-              </Link>
-              <Link
-                href="/servicios"
-                className="flex min-h-14 items-center gap-3 rounded-xl border border-border px-3 hover:bg-muted/40"
-              >
-                <Bot className="size-5 text-primary" />
-                <span className="flex flex-col">
-                  <span className="font-medium">Agentes</span>
-                  <span className="text-xs text-muted-foreground">
-                    Contenido, radiografía, documentos y asistente
-                  </span>
-                </span>
-              </Link>
-              <a
-                href={chat}
-                target="_blank"
-                rel="noopener"
-                className="flex min-h-14 items-center gap-3 rounded-xl border border-border px-3 hover:bg-muted/40"
-              >
-                <MessageCircle className="size-5 text-primary" />
-                <span className="flex flex-col">
-                  <span className="font-medium">Hablar con nosotros</span>
-                  <span className="text-xs text-muted-foreground">
-                    Te contesta una persona
-                  </span>
-                </span>
-              </a>
-            </Tarjeta>
+            {/* Estudio IA y Agentes IA: ocultos hasta que salgan (Próximamente). */}
             {cliente && reglas.length ? (
               <Tarjeta className="flex flex-col gap-2">
                 <h2 className="font-semibold">Cómo cobramos</h2>

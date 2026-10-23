@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react"
 import Link from "next/link"
 
+import { OJO_PATHS } from "@/components/sitio/marca-paths"
 import { enviarContacto } from "@/lib/vs/acciones-publicas"
 
 /*
@@ -14,14 +15,22 @@ import { enviarContacto } from "@/lib/vs/acciones-publicas"
 
 type Tipo = "barberia" | "comida" | "tienda" | "carwash" | "salon" | "otro"
 
-const TIPOS: Record<Tipo, { nombre: string; accion: string; items: [string, string][]; lema: string }> = {
-  barberia: { nombre: "Barbería", accion: "Apartar turno", lema: "Tu corte, a tu hora.", items: [["💈", "Corte"], ["🧔", "Corte + barba"], ["✨", "Cejas"], ["👦", "Corte de niño"]] },
-  comida: { nombre: "Comida", accion: "Hacer pedido", lema: "Pide sin llamar.", items: [["🍗", "Pica pollo"], ["🍛", "La Bandera"], ["🍔", "Chimi"], ["🥤", "Jugos"]] },
-  tienda: { nombre: "Tienda", accion: "Ver catálogo", lema: "Lo nuevo, primero aquí.", items: [["👕", "Camisetas"], ["👖", "Pantalones"], ["👟", "Tenis"], ["🧢", "Gorras"]] },
-  carwash: { nombre: "Car wash", accion: "Reservar lavado", lema: "Tu carro, como nuevo.", items: [["🚿", "Lavado"], ["🧽", "Interior"], ["✨", "Brillado"], ["🛞", "Gomas"]] },
-  salon: { nombre: "Salón de belleza", accion: "Reservar cita", lema: "Llega y te atendemos.", items: [["💇‍♀️", "Pelo"], ["💅", "Uñas"], ["👁️", "Pestañas"], ["💆‍♀️", "Tratamiento"]] },
-  otro: { nombre: "Otro negocio", accion: "Escribirnos", lema: "Todo lo que ofrecemos.", items: [["⭐", "Servicio 1"], ["⭐", "Servicio 2"], ["⭐", "Servicio 3"], ["⭐", "Servicio 4"]] },
+type Item = { n: string; d: string; p: string }
+const TIPOS: Record<Tipo, { nombre: string; accion: string; lema: string; seccion: string; items: Item[]; extra: string }> = {
+  barberia: { nombre: "Barbería", accion: "Apartar turno", lema: "Tu corte, a tu hora.", seccion: "Servicios", extra: "Herramientas siempre limpias",
+    items: [{ n: "Corte", d: "40 min", p: "RD$400" }, { n: "Corte + barba", d: "60 min", p: "RD$600" }, { n: "Cejas", d: "15 min", p: "RD$150" }, { n: "Corte de niño", d: "30 min", p: "RD$300" }] },
+  comida: { nombre: "Comida", accion: "Hacer pedido", lema: "Pide sin llamar.", seccion: "Lo más pedido", extra: "Sancocho los domingos",
+    items: [{ n: "Pica pollo con tostones", d: "4 piezas", p: "RD$350" }, { n: "La Bandera", d: "Arroz, habichuela y carne", p: "RD$300" }, { n: "Chimi de res", d: "Con salsa rosada", p: "RD$200" }, { n: "Jugo natural", d: "Vaso foam grande", p: "RD$100" }] },
+  tienda: { nombre: "Tienda", accion: "Ver catálogo", lema: "Lo nuevo, primero aquí.", seccion: "Nuevos", extra: "Hoodies de temporada",
+    items: [{ n: "Tenis", d: "Del 7 al 12", p: "RD$3,500" }, { n: "Gorras", d: "Ajustables", p: "RD$900" }, { n: "Pantalones", d: "Jeans y cargo", p: "RD$1,800" }, { n: "Camisetas", d: "Oversize", p: "RD$800" }] },
+  carwash: { nombre: "Car wash", accion: "Reservar lavado", lema: "Tu carro, como nuevo.", seccion: "Paquetes", extra: "Productos premium",
+    items: [{ n: "Lavado completo", d: "Espuma y secado", p: "RD$500" }, { n: "Interior", d: "Aspirado y asientos", p: "RD$700" }, { n: "Brillado", d: "Cera y pulido", p: "RD$1,500" }, { n: "Gomas", d: "Limpieza y brillo", p: "RD$300" }] },
+  salon: { nombre: "Salón de belleza", accion: "Reservar cita", lema: "Llega y te atendemos.", seccion: "Servicios", extra: "Productos profesionales",
+    items: [{ n: "Secado y blower", d: "Pelo largo", p: "RD$800" }, { n: "Uñas en gel", d: "Manos", p: "RD$900" }, { n: "Pestañas", d: "Extensiones", p: "RD$1,500" }, { n: "Tratamiento", d: "Lavado y masaje", p: "RD$1,200" }] },
+  otro: { nombre: "Otro negocio", accion: "Escribirnos", lema: "Todo lo que ofrecemos.", seccion: "Cómo trabajamos", extra: "Atención rápida",
+    items: [{ n: "Atención en tienda", d: "De lunes a sábado", p: "" }, { n: "Local", d: "Fácil de llegar", p: "" }, { n: "Pagos fáciles", d: "Transferencia o QR", p: "" }, { n: "Entregas", d: "A domicilio", p: "" }] },
 }
+const foto = (t: Tipo, n: number) => `/demo/${t}-${n}.webp`
 const COLORES = ["#35B37E", "#e8452c", "#2f6bff", "#d8a33c", "#9b5cff", "#ff4f9a", "#111111", "#0fb5c9"]
 const ESTILOS = { oscuro: "Oscuro", claro: "Claro", vivo: "Vibrante" } as const
 const LETRAS = { moderna: "Moderna", elegante: "Elegante", redonda: "Redonda" } as const
@@ -86,8 +95,9 @@ export function Demo() {
   const t = TIPOS[tipo]
   const nombre = negocio.trim() || "Tu negocio"
   const marca = useMemo(() => {
-    const txt = `DEMO · VISION STUDIOS · ${nombre.toUpperCase().slice(0, 24)} · ${new Date().toLocaleDateString("es-DO")}`
-    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'><text x='0' y='80' transform='rotate(-24 150 75)' font-family='sans-serif' font-size='11' font-weight='700' fill='rgba(128,128,128,0.32)'>${txt.replace(/[<&>']/g, "")}</text></svg>`
+    const txt = `DEMO · ${nombre.toUpperCase().slice(0, 22)} · ${new Date().toLocaleDateString("es-DO")}`.replace(/[<&>']/g, "")
+    const ojo = OJO_PATHS.map((d) => `<path d='${d}'/>`).join("")
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='170'><g transform='rotate(-24 130 85)'><text x='-10' y='60' font-family='sans-serif' font-size='13' font-weight='800' fill='rgba(255,255,255,0.55)' stroke='rgba(0,0,0,0.35)' stroke-width='0.6'>${txt}</text><g transform='translate(20 92) scale(0.07)' fill='rgba(255,255,255,0.5)' stroke='rgba(0,0,0,0.3)' stroke-width='8'>${ojo}</g><text x='54' y='106' font-family='sans-serif' font-size='12' font-weight='800' letter-spacing='2' fill='rgba(255,255,255,0.5)' stroke='rgba(0,0,0,0.3)' stroke-width='0.5'>VISION STUDIOS</text></g></svg>`
     return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`
   }, [nombre])
 
@@ -199,38 +209,41 @@ export function Demo() {
               onCopy={(e) => e.preventDefault()}
             >
               <div className="dm-pantalla">
-                <div className="dm-app">
-                  <div className="dm-cabeza">
-                    {logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={logo} alt="" draggable={false} />
-                    ) : (
-                      <span className="dm-inicial">{nombre.slice(0, 1).toUpperCase()}</span>
-                    )}
-                    <div>
-                      <b>{nombre}</b>
-                      <small>Abierto ahora</small>
+                <div className={`dm-app t-${tipo}`}>
+                  <div className="dm-portada" style={{ backgroundImage: `url(${foto(tipo, 5)})` }}>
+                    <div className="dm-cabeza">
+                      {logo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={logo} alt="" draggable={false} />
+                      ) : (
+                        <span className="dm-inicial">{nombre.slice(0, 1).toUpperCase()}</span>
+                      )}
+                      <div>
+                        <b>{nombre}</b>
+                        <small>● Abierto ahora</small>
+                      </div>
                     </div>
-                  </div>
-                  <div className="dm-hero">
-                    <p>{lema.trim() || t.lema}</p>
+                    <p className="dm-lema">{lema.trim() || t.lema}</p>
                     <span className="dm-cta">{t.accion}</span>
                   </div>
+                  <p className="dm-seccion">{t.seccion}</p>
                   <div className="dm-items">
-                    {t.items.map(([e, n]) => (
-                      <div key={n}>
-                        <span>{e}</span>
-                        <b>{n}</b>
-                        <i />
+                    {t.items.map((it, i) => (
+                      <div key={it.n} className="dm-item">
+                        <span className="dm-foto" style={{ backgroundImage: `url(${foto(tipo, i + 1)})` }} />
+                        <span className="dm-texto">
+                          <b>{it.n}</b>
+                          <small>{it.d}</small>
+                          {it.p ? <em>{it.p}</em> : null}
+                        </span>
+                        <span className="dm-mas">+</span>
                       </div>
                     ))}
                   </div>
+                  <div className="dm-extra" style={{ backgroundImage: `url(${foto(tipo, 6)})` }}>
+                    <span>{t.extra}</span>
+                  </div>
                   <div className="dm-bloqueado">🔒 Las demás pantallas se diseñan con tu negocio</div>
-                  <nav className="dm-tabs" aria-hidden>
-                    <span className="on">●</span>
-                    <span>●</span>
-                    <span>●</span>
-                  </nav>
                 </div>
                 <div className="dm-marca" style={{ backgroundImage: marca }} aria-hidden />
                 <div className="dm-isla" aria-hidden />
