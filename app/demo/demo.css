@@ -39,31 +39,58 @@
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),inset 0 0 0 2.5px #0b0c0c,0 40px 60px -28px rgba(0,0,0,.85)}
 .dm-pantalla{position:relative;width:100%;height:100%;overflow:hidden;border-radius:12.5%/5.9%;background:#000}
 .dm-isla{position:absolute;top:2.2%;left:50%;width:31%;height:3.6%;transform:translateX(-50%);border-radius:99px;background:#000;z-index:4}
-.dm-marca{position:absolute;inset:0;z-index:3;pointer-events:none;background-repeat:repeat;background-size:200px 100px}
-.dm-app{position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;padding:16% 7% 6%;font-size:12px;transition:filter .2s}
+.dm-marca{position:absolute;inset:0;z-index:3;pointer-events:none;background-repeat:repeat;background-size:170px 111px;mix-blend-mode:normal}
+.dm-app{position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;gap:10px;padding:0 0 12px;font-size:12px;transition:filter .2s;scrollbar-width:none}
 .dm-telefono.tapado .dm-app{filter:blur(18px) saturate(.4)}
-.e-oscuro .dm-app{background:#101213;color:#f2f2f2}
+.e-oscuro .dm-app{background:#0f1112;color:#f2f2f2}
 .e-claro .dm-app{background:#f7f6f3;color:#141414}
-.e-vivo .dm-app{background:linear-gradient(160deg,var(--c),#111 75%);color:#fff}
+.e-vivo .dm-app{background:linear-gradient(180deg,var(--c) 0,#111 60%);color:#fff}
 .l-moderna .dm-app{font-family:var(--font-poppins),system-ui}
 .l-elegante .dm-app{font-family:Georgia,"Times New Roman",serif}
-.l-redonda .dm-app{font-family:ui-rounded,"SF Pro Rounded","Nunito","Varela Round",system-ui}
+.l-redonda .dm-app{font-family:ui-rounded,"SF Pro Rounded","Nunito",system-ui}
+.dm-portada{position:relative;display:grid;align-content:end;gap:8px;min-height:44%;padding:52px 14px 14px;background-size:cover;background-position:center;color:#fff}
+.dm-portada::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0,transparent 30%,rgba(0,0,0,.78) 100%)}
+.dm-portada>*{position:relative}
 .dm-cabeza{display:flex;align-items:center;gap:8px}
-.dm-cabeza img,.dm-inicial{width:38px;height:38px;border-radius:calc(var(--r) * .6);object-fit:contain;background:rgba(255,255,255,.08);flex:none;pointer-events:none}
-.dm-inicial{display:grid;place-items:center;background:var(--c);color:#fff;font-weight:700;font-size:18px}
+.dm-cabeza img,.dm-inicial{width:36px;height:36px;border-radius:calc(var(--r) * .6);object-fit:contain;background:rgba(255,255,255,.9);flex:none;pointer-events:none;padding:3px}
+.dm-inicial{display:grid;place-items:center;background:var(--c);color:#fff;font-weight:700;font-size:17px}
 .dm-cabeza b{display:block;font-size:14px;line-height:1.1}
-.dm-cabeza small{opacity:.6;font-size:10px}
-.dm-hero{display:grid;gap:10px;padding:16px;border-radius:var(--r);background:color-mix(in srgb,var(--c) 22%,transparent);border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
-.dm-hero p{font-size:18px;font-weight:700;line-height:1.15}
-.dm-cta{justify-self:start;padding:8px 14px;border-radius:var(--r);background:var(--c);color:#fff;font-weight:700;font-size:11px}
-.dm-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.dm-items div{display:grid;gap:4px;padding:10px;border-radius:var(--r);background:rgba(127,127,127,.12)}
-.dm-items span{font-size:20px}
-.dm-items b{font-size:11px}
-.dm-items i{height:5px;width:60%;border-radius:9px;background:rgba(127,127,127,.3)}
-.dm-bloqueado{margin-top:auto;padding:8px;border-radius:10px;background:rgba(127,127,127,.14);font-size:9.5px;text-align:center;opacity:.8}
-.dm-tabs{display:flex;justify-content:space-around;font-size:10px;opacity:.4}
-.dm-tabs .on{color:var(--c);opacity:1}
+.dm-cabeza small{color:#7dffb0;font-size:9.5px}
+.dm-lema{font-size:19px;font-weight:800;line-height:1.1;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.dm-cta{justify-self:start;padding:9px 16px;border-radius:var(--r);background:var(--c);color:#fff;font-weight:700;font-size:11px;box-shadow:0 6px 18px -6px var(--c)}
+.dm-seccion{padding:0 14px;font-weight:800;font-size:13px}
+.dm-items{display:grid;gap:8px;padding:0 12px}
+.dm-item{display:flex;align-items:center;gap:10px;padding:7px;border-radius:var(--r);background:rgba(127,127,127,.12)}
+.dm-foto{width:52px;height:52px;flex:none;border-radius:calc(var(--r) * .7);background-size:cover;background-position:center}
+.dm-texto{flex:1;display:grid;gap:1px;min-width:0}
+.dm-texto b{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dm-texto small{font-size:9.5px;opacity:.65}
+.dm-texto em{font-style:normal;font-weight:800;font-size:11px;color:var(--c)}
+.e-vivo .dm-texto em{color:#fff}
+.dm-mas{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;font-weight:800;flex:none}
+.dm-extra{position:relative;margin:0 12px;min-height:74px;border-radius:var(--r);background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:8px 10px;color:#fff;font-weight:700;font-size:11px;overflow:hidden}
+.dm-extra::before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(0,0,0,.7))}
+.dm-extra span{position:relative}
+.dm-bloqueado{margin:0 12px;padding:8px;border-radius:10px;background:rgba(127,127,127,.16);font-size:9.5px;text-align:center}
+/* Variaciones por negocio */
+.t-tienda .dm-items{grid-template-columns:1fr 1fr}
+.t-tienda .dm-item{flex-direction:column;align-items:stretch;padding:6px}
+.t-tienda .dm-foto{width:100%;height:auto;aspect-ratio:1}
+.t-tienda .dm-mas{position:absolute;opacity:0}
+.t-tienda .dm-item{position:relative}
+.t-salon .dm-items{grid-template-columns:1fr 1fr}
+.t-salon .dm-item{flex-direction:column;align-items:stretch;padding:0;overflow:hidden;position:relative}
+.t-salon .dm-foto{width:100%;height:auto;aspect-ratio:4/5;border-radius:0}
+.t-salon .dm-texto{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff}
+.t-salon .dm-mas{display:none}
+.t-carwash .dm-items{display:flex;overflow-x:auto;scrollbar-width:none}
+.t-carwash .dm-item{flex:0 0 62%;flex-direction:column;align-items:stretch;position:relative}
+.t-carwash .dm-foto{width:100%;height:90px}
+.t-carwash .dm-mas{position:absolute;right:12px;top:12px}
+.t-barberia .dm-foto{border-radius:50%}
+.t-barberia .dm-mas{border-radius:6px;width:auto;padding:0 9px;font-size:0;height:24px}
+.t-barberia .dm-mas::after{content:"Apartar";font-size:10px}
+.t-comida .dm-portada{min-height:40%}
 .dm-tapa{position:absolute;inset:3.2%;z-index:6;display:grid;place-content:center;gap:4px;border:0;border-radius:12.5%/5.9%;background:rgba(10,12,12,.55);color:#fff;text-align:center}
 .dm-tapa span{font-size:13px;opacity:.8}
 .dm-nota{color:var(--humo);font-size:13px;text-align:center;max-width:32ch}

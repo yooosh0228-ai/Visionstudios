@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation"
+import { PaginaProximamente } from "@/components/sitio/proximamente"
+import { TRENDS } from "@/lib/studio/trends"
 
 import { ServiciosApp } from "@/components/servicios/servicios-app"
 import { getSession } from "@/generation/session"
@@ -10,7 +11,7 @@ import { SERVICE_PRICE_IDS } from "@/servicios/catalog"
 
 export const dynamic = "force-dynamic"
 export const metadata = {
-  title: "Agentes y servicios · Vision Studios",
+  title: "Agentes IA · Vision Studios",
   description:
     "Agentes especialistas para tu negocio, mes de contenido, radiografía de negocio, CV y documentos, y un asistente que atiende tu WhatsApp.",
 }
@@ -22,7 +23,8 @@ export default async function ServiciosPage() {
   } catch {
     session = null
   }
-  if (!session) redirect("/entrar?a=/servicios")
+  // Agentes IA aún no está abierto al público: solo el dueño entra.
+  if (!session?.isOwner) return <PaginaProximamente fotos={TRENDS.slice(0, 6).map((t) => t.cover)} inicio={1} />
 
   const admin = createSupabaseAdmin()
   const [account, priceRows, jobs, assistants, chats] = await Promise.all([

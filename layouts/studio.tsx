@@ -321,7 +321,7 @@ export interface StudioTemplateProps {
 }
 
 export function StudioTemplate({
-  title = "VS Studio",
+  title = "Estudio IA",
   headline = "Escoge. Sube tu foto. Listo.",
 }: StudioTemplateProps) {
   const [view, setView] = useState<StudioView>({ kind: "home" })

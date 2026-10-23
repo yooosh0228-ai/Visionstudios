@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+ 
 import Link from "next/link"
 
 import type { Ajustes } from "@/lib/vs/ajustes"
@@ -11,7 +11,7 @@ import { FormularioContacto } from "./contacto"
 import { Ficha } from "./ficha"
 import { LogoVertical } from "./iconos"
 import { Barra, Pulgar } from "./interactivos"
-import { OfertaEmergente } from "./oferta"
+import { ProximamenteEmergente } from "./proximamente"
 import { Pedir } from "./pedir"
 import { Monumento } from "./escribenos"
 import { CatalogoVivo, VideoTelefono } from "./promos"
@@ -94,10 +94,11 @@ export function Sitio({
       </a>
       <Barra instagram={ajustes.instagram} whatsapp={ajustes.whatsapp} />
 
-      <OfertaEmergente
-        regalo={ajustes.bienvenida.activo ? ajustes.bienvenida.creditos : 0}
-        recarga={ajustes.paquetesCreditos[0]?.precio ?? 0}
-        fotos={TRENDS.slice(0, 10).map((t) => t.cover)}
+      {/* Ventana de oferta guardada para más adelante (no se muestra):
+      <OfertaEmergente regalo={…} recarga={…} fotos={…} /> */}
+      <ProximamenteEmergente
+        fotos={TRENDS.slice(0, 6).map((t) => t.cover)}
+        instagram={ajustes.instagram}
       />
       <main id="inicio">
         {/* PORTADA: qué hacemos y la prueba en video al lado. */}
@@ -206,18 +207,8 @@ export function Sitio({
             </div>
 
             <details className="mas-servicios">
-              <summary>Ver todos los servicios ({otros.length + 1})</summary>
+              <summary>Ver todos los servicios ({otros.length})</summary>
               <div className="servicios">
-                <article className="servicio">
-                  <h3>Agentes para tu negocio</h3>
-                  <p className="que">
-                    Un asistente que atiende tu WhatsApp, un mes de contenido
-                    planificado, CV y documentos. Lo activas desde tu cuenta.
-                  </p>
-                  <Link className="enlace" href="/servicios">
-                    Ver agentes
-                  </Link>
-                </article>
                 {otros.map((s) => (
                   <article className="servicio" key={s.id}>
                     <h3>{s.nombre}</h3>
@@ -323,29 +314,14 @@ export function Sitio({
           </div>
         </section>
 
-        {/* SEGUNDO PLANO: VS Studio y los juegos. */}
+        {/* SEGUNDO PLANO: los juegos. */}
         <section className="seccion extras" id="extras" aria-labelledby="t-extras">
           <div className="envoltura">
             <div className="cabeza">
-              <span className="rotulo">También tenemos</span>
+              <span className="rotulo">Pa&apos; la junta</span>
               <h2 id="t-extras">Pa&apos; que te entretengas.</h2>
             </div>
             <div className="extras-rejilla">
-              <Link href="/estudio" className="extra extra-estudio">
-                <div className="extra-fotos" aria-hidden>
-                  {TRENDS.filter((t) => t.before).slice(0, 3).map((t) => (
-                    <img key={t.id} src={t.cover} alt="" loading="lazy" decoding="async" />
-                  ))}
-                </div>
-                <b>VS Studio</b>
-                <span>
-                  Genera tus imágenes y compártelas con tus amigos.
-                  {ajustes.bienvenida.activo && ajustes.bienvenida.creditos > 0
-                    ? " Entra con Google y te regalamos créditos."
-                    : ""}
-                </span>
-                <em>Entrar →</em>
-              </Link>
               <Link href="/juegos" className="extra extra-juegos">
                 <div className="extra-emojis" aria-hidden>🧠 🛵 🗣️</div>
                 <b>Juegos dominicanos</b>
@@ -404,7 +380,6 @@ export function Sitio({
               <a href="#trabajo">Apps</a>
               <Link href="/juegos">Juegos</Link>
               <a href="#contacto">Contacto</a>
-              <Link href="/estudio">Estudio</Link>
               <Link href="/entrar">Mi cuenta</Link>
             </nav>
           </div>

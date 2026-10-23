@@ -8,9 +8,11 @@ import { createSupabaseServer } from "@/lib/supabase/server"
 import { AccountGate } from "@/components/studio/account-gate"
 import { LoginScreen } from "@/components/studio/login-screen"
 import { NoModels } from "@/components/studio/no-models"
+import { PaginaProximamente } from "@/components/sitio/proximamente"
+import { TRENDS } from "@/lib/studio/trends"
 
 export const metadata: Metadata = {
-  title: "VS Studio · genera tus imágenes y compártelas con tus amigos",
+  title: "Estudio IA · Próximamente · Vision Studios",
   description: "Crea imágenes y video para tu negocio desde el navegador. Entra con Google y paga solo lo que generas.",
   appleWebApp: { capable: true, title: "Estudio", statusBarStyle: "black" },
   formatDetection: { telephone: false },
@@ -45,6 +47,9 @@ export default async function Page({
       </main>
     )
   }
+
+  // Estudio IA aún no está abierto al público: solo el dueño entra.
+  if (!session?.isOwner) return <PaginaProximamente fotos={TRENDS.slice(0, 6).map((t) => t.cover)} />
 
   if (!session) {
     const { error } = await searchParams

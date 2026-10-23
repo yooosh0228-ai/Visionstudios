@@ -104,10 +104,10 @@ export function Ficha({ trabajos }: { trabajos: Trabajo[] }) {
               <Pedir className="boton vivo" algoAsi={t.obra}>
                 Quiero algo así
               </Pedir>
-              {t.vivo ? (
+              {t.vivo && t.lienzo !== "estudio" ? (
                 <a className="boton" href={t.vivo} target={t.vivo.startsWith("/") ? undefined : "_blank"} rel="noopener">
                   <Icono.afuera />
-                  {t.lienzo === "estudio" ? "Entrar al Estudio" : "Abrir la app real"}
+                  Abrir la app real
                 </a>
               ) : null}
             </div>
