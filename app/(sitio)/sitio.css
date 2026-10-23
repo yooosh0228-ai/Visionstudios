@@ -534,3 +534,19 @@ html[data-dispositivo="telefono"] .vs footer{padding-bottom:calc(110px + env(saf
 .vs .cat-carrito{font-size:5cqw;padding:4.8cqw 5.6cqw;border-radius:6.5cqw}
 .vs .movil .sonido{font-size:clamp(9px,5.2cqw,12px)}
 @media (min-width:1000px){.vs .abanico{max-width:620px}}
+/* Catálogo con fotos reales */
+.vs .cat-foto{background-size:cover;background-position:center;background-color:#fbe3c8}
+.vs .catalogo{padding-top:13%}
+/* Celular: los teléfonos primero, como imagen principal */
+@media (max-width:699px){
+  .vs .portada{padding:8px 0 28px}
+  .vs .portada .envoltura{gap:14px}
+  .vs .portada .abanico{order:-1;max-width:340px;padding:0 4px 8px}
+  .vs .portada h1{font-size:clamp(28px,8.4vw,34px)}
+  .vs .portada .bajada{margin-top:10px;font-size:15px;line-height:1.4}
+  .vs .portada .acciones{margin-top:16px}
+  .vs .portada .acciones .boton{min-height:44px;padding:0 18px;font-size:14px}
+  .vs .acciones-demo{margin-top:8px}
+  .vs .acciones-demo .boton{min-height:42px;font-size:14px}
+  .vs .prueba-social{margin-top:14px;font-size:13px}
+}

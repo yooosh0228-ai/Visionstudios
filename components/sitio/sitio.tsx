@@ -106,7 +106,6 @@ export function Sitio({
           <div className="aurora" aria-hidden />
           <div className="envoltura">
             <div>
-              <p className="rotulo-portada">Estudio creativo · Santiago, RD</p>
               <h1 id="titulo">
                 Hacemos que tu negocio
                 <br />

@@ -120,12 +120,12 @@ export function VideoTelefono({
 }
 
 const PRODUCTOS = [
-  { n: "Pica pollo + tostones", p: 350, e: "🍗" },
-  { n: "La Bandera", p: 300, e: "🍛" },
-  { n: "Chimi de res", p: 200, e: "🍔" },
-  { n: "Yaroa de pollo", p: 280, e: "🍟" },
-  { n: "Morir soñando", p: 120, e: "🥤" },
-  { n: "Habichuela con dulce", p: 150, e: "🍮" },
+  { n: "Pica pollo + tostones", p: 350, f: "/demo/comida-1.webp" },
+  { n: "La Bandera", p: 300, f: "/demo/comida-2.webp" },
+  { n: "Chimi de res", p: 200, f: "/demo/comida-3.webp" },
+  { n: "Jugo natural", p: 100, f: "/demo/comida-4.webp" },
+  { n: "Yaroa de pollo", p: 280, f: "/demo/comida-5.webp" },
+  { n: "Sancocho", p: 250, f: "/demo/comida-6.webp" },
 ]
 
 /** Catálogo de comida que se usa solo: baja, agrega al carrito y envía el pedido. */
@@ -137,7 +137,7 @@ export function CatalogoVivo() {
     return () => clearInterval(t)
   }, [])
   const enCarrito = paso >= 7 ? 3 : Math.min(3, Math.floor(paso / 2))
-  const total = [350, 280, 120].slice(0, enCarrito).reduce((a, b) => a + b, 0)
+  const total = [350, 100, 280].slice(0, enCarrito).reduce((a, b) => a + b, 0)
   const tocando = paso < 6 ? [0, 0, 3, 3, 4, 4][paso] : -1
   return (
     <Telefono pie={<><b>Fritura La Esquina</b><span>Catálogo y pedidos por enlace</span></>}>
@@ -157,7 +157,7 @@ export function CatalogoVivo() {
         <ul className="cat-lista" style={{ transform: `translateY(-${paso >= 3 && paso < 7 ? 22 : 0}%)` }}>
           {PRODUCTOS.map((x, i) => (
             <li key={x.n} className={tocando === i && paso % 2 === 1 ? "toque" : ""}>
-              <span className="cat-foto">{x.e}</span>
+              <span className="cat-foto" style={{ backgroundImage: `url(${x.f})` }} />
               <span className="cat-nombre">
                 {x.n}
                 <small>RD${x.p}</small>
