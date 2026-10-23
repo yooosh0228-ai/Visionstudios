@@ -93,6 +93,22 @@ export default async function Prospectos({
               : ""}
           </p>
         ) : null}
+        {(() => {
+          const d = (x.datos as unknown as { demo?: { logo?: string | null; color?: string; tipo?: string; estilo?: string } }).demo
+          if (!d) return null
+          return (
+            <div className="flex items-center gap-3 rounded-lg border p-2 text-sm">
+              {d.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={d.logo} alt="Logo que subió" className="size-12 rounded object-contain bg-muted" />
+              ) : null}
+              <span className="size-6 rounded-full border" style={{ background: d.color || "transparent" }} />
+              <span className="text-muted-foreground">
+                Armó un demo · {d.tipo} · {d.estilo}
+              </span>
+            </div>
+          )
+        })()}
         <div className="flex flex-wrap items-center gap-2">
           <EstadoProspecto id={x.id} estado={x.estado} />
           {!cerrados ? <Posponer id={x.id} hoy={hoy} /> : null}

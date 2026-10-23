@@ -1,6 +1,6 @@
 "use client"
 /* Juegos en tiempo real: el reloj y las referencias se leen a propósito durante el render. */
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
 
 import { useEffect, useState } from "react"
 import Link from "next/link"

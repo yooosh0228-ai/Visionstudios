@@ -8,10 +8,10 @@ import type { Trabajo } from "@/lib/vs/types"
 import { useSitio } from "./estado"
 import { Icono, LogoHorizontal, Ojo } from "./iconos"
 import { VideoVigilado } from "./medios"
-import { Pedir } from "./pedir"
+import { Escribenos } from "./escribenos"
 
 /** La barra de arriba: logo, secciones, «Mi cuenta» y el botón de contacto. */
-export function Barra() {
+export function Barra({ instagram, whatsapp }: { instagram: string; whatsapp: string }) {
   const [conBorde, setConBorde] = useState(false)
   const [actual, setActual] = useState<string | null>(null)
 
@@ -60,10 +60,10 @@ export function Barra() {
             <Icono.persona />
             <span className="largo">Mi cuenta</span>
           </Link>
-          <Pedir className="boton vivo">
+          <Escribenos instagram={instagram} whatsapp={whatsapp}>
             <span className="largo">Cuéntanos tu negocio</span>
             <span className="corto">Escríbenos</span>
-          </Pedir>
+          </Escribenos>
         </div>
       </div>
     </header>
@@ -149,7 +149,7 @@ export function Visor({ trabajos, portada }: { trabajos: Trabajo[]; portada: str
 }
 
 /** Barra para el pulgar: solo en el teléfono, después de la portada y fuera del formulario. */
-export function Pulgar({ chat }: { chat: string }) {
+export function Pulgar({ instagram, whatsapp }: { instagram: string; whatsapp: string }) {
   const [paso, setPaso] = useState(false)
   const [enContacto, setEnContacto] = useState(false)
   useEffect(() => {
@@ -168,10 +168,10 @@ export function Pulgar({ chat }: { chat: string }) {
   const ver = paso && !enContacto
   return (
     <div className={`pulgar${ver ? " visible" : ""}`} aria-hidden={!ver} inert={!ver}>
-      <Pedir className="boton vivo">Cuéntanos tu negocio</Pedir>
-      <a className="boton icono" href={chat} target="_blank" rel="noopener" aria-label="Escríbenos">
+      <Escribenos instagram={instagram} whatsapp={whatsapp}>
         <Icono.chat />
-      </a>
+        Escríbenos
+      </Escribenos>
     </div>
   )
 }
