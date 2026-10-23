@@ -2,7 +2,6 @@
 import Link from "next/link"
 
 import type { Ajustes } from "@/lib/vs/ajustes"
-import { enlaceChat } from "@/lib/vs/ajustes"
 import { TRENDS } from "@/lib/studio/trends"
 import { PILARES, PROMOS } from "@/lib/vs/pilares"
 import { Deslizador } from "@/components/ui/deslizador"
@@ -14,7 +13,8 @@ import { LogoVertical } from "./iconos"
 import { Barra, Pulgar } from "./interactivos"
 import { OfertaEmergente } from "./oferta"
 import { Pedir } from "./pedir"
-import { VideoTelefono } from "./promos"
+import { Monumento } from "./escribenos"
+import { CatalogoVivo, VideoTelefono } from "./promos"
 import { Vitrina } from "./vitrina"
 
 /**
@@ -35,7 +35,6 @@ export function Sitio({
 }) {
   const enPilares = new Set(PILARES.map((p) => p.servicio))
   const otros = ofertas.filter((o) => !enPilares.has(o.nombre))
-  const chat = enlaceChat(ajustes)
   const opciones = [
     ...PILARES.map((p) => p.servicio),
     ...otros.map((s) => s.nombre),
@@ -93,7 +92,7 @@ export function Sitio({
       <a className="saltar" href="#servicios">
         Saltar a los servicios
       </a>
-      <Barra />
+      <Barra instagram={ajustes.instagram} whatsapp={ajustes.whatsapp} />
 
       <OfertaEmergente
         regalo={ajustes.bienvenida.activo ? ajustes.bienvenida.creditos : 0}
@@ -123,20 +122,49 @@ export function Sitio({
                 </a>
                 <Pedir className="boton">Pedir una cotización</Pedir>
               </div>
+              <div className="acciones-demo">
+                <Link className="boton demo" href="/demo">
+                  <span aria-hidden>✨</span> Arma el demo de tu app
+                </Link>
+              </div>
               {ajustes.pruebaSocial.length ? (
                 <p className="prueba-social">
-                  {ajustes.pruebaSocial.map(([a, b]) => (
-                    <span key={a + b}>
-                      <b>{a}</b> {b}
-                    </span>
-                  ))}
+                  {ajustes.pruebaSocial
+                    .filter(([a]) => a !== "Cero")
+                    .map(([a, b]) =>
+                      /santiago/i.test(a + b) ? (
+                        <span key="santiago" className="lugar">
+                          <Monumento className="monumento" />
+                          <b>Santiago, RD</b>
+                        </span>
+                      ) : (
+                        <span key={a + b}>
+                          <b>{a}</b> {b}
+                        </span>
+                      )
+                    )}
                 </p>
               ) : null}
             </div>
-            <div className="abanico" aria-label="Videos que hicimos para negocios">
-              {PROMOS.map((p) => (
-                <VideoTelefono key={p.id} {...p} />
-              ))}
+            <div className="abanico" aria-label="Lo que hacemos, en tres teléfonos">
+              <VideoTelefono
+                className="t-izq"
+                src="/videos/promos/gallery-reserva.mp4"
+                poster="/videos/promos/gallery-reserva.jpg"
+                negocio="Gallery Barber Studio"
+                titulo="Reservando un turno"
+                sinSonido
+              />
+              <VideoTelefono
+                className="t-centro"
+                src="/videos/promos/yoshira-apps.mp4"
+                poster="/videos/promos/yoshira-apps.jpg"
+                negocio="Yoshira"
+                titulo="Apps web para negocios de Santiago"
+              />
+              <div className="t-der">
+                <CatalogoVivo />
+              </div>
             </div>
           </div>
         </section>
@@ -403,7 +431,7 @@ export function Sitio({
         </div>
       </footer>
 
-      <Pulgar chat={chat} />
+      <Pulgar instagram={ajustes.instagram} whatsapp={ajustes.whatsapp} />
       <Ficha trabajos={trabajos} />
     </div>
   )

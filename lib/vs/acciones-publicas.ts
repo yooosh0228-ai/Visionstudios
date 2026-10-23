@@ -72,6 +72,26 @@ export async function enviarContacto(
       ? String(form.get("detalle")).trim().slice(0, 2000)
       : ""
   const dispositivo = texto(form.get("dispositivo"), 40)
+  // Demo armado en /demo: la configuración y el logo (ya reducido en el navegador).
+  let demo: Record<string, unknown> | null = null
+  const demoBruto = form.get("demo")
+  if (typeof demoBruto === "string" && demoBruto.length < 300_000) {
+    try {
+      const d = JSON.parse(demoBruto) as Record<string, unknown>
+      const logo = typeof d.logo === "string" && /^data:image\/(png|jpeg|webp);base64,/.test(d.logo) ? d.logo : null
+      demo = {
+        tipo: String(d.tipo ?? "").slice(0, 40),
+        color: /^#[0-9a-f]{6}$/i.test(String(d.color)) ? d.color : "",
+        estilo: String(d.estilo ?? "").slice(0, 20),
+        letra: String(d.letra ?? "").slice(0, 20),
+        forma: String(d.forma ?? "").slice(0, 20),
+        lema: String(d.lema ?? "").slice(0, 80),
+        logo,
+      }
+    } catch {
+      demo = null
+    }
+  }
 
   try {
     const db = createSupabaseAdmin()
@@ -121,7 +141,7 @@ export async function enviarContacto(
       instagram,
       estado: "nuevo",
       fuente: "web",
-      proxima_accion: "Responder por WhatsApp",
+      proxima_accion: demo ? "Ver su demo y responder por WhatsApp" : "Responder por WhatsApp",
       fecha_proxima: hoyRD(),
       nota: detalle,
       datos: {
@@ -130,6 +150,7 @@ export async function enviarContacto(
         detalle,
         dispositivo,
         origen,
+        ...(demo ? { demo } : {}),
       },
     })
     if (error) throw error
