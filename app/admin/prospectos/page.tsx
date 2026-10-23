@@ -1,4 +1,6 @@
 import Link from "next/link"
+
+import { createSupabaseAdmin } from "@/lib/supabase/admin"
 import { AtSign, MessageCircle } from "lucide-react"
 
 import { EditarRegistro } from "@/components/panel/registro"
@@ -30,6 +32,11 @@ export default async function Prospectos({
 }) {
   const { ver } = await searchParams
   const p = await panelDelDueno()
+  const { data: suscriptores } = await createSupabaseAdmin()
+    .from("vs_suscriptores")
+    .select("email, fuente, created_at")
+    .order("created_at", { ascending: false })
+    .limit(500)
   const hoy = hoyRD()
   const opciones = opcionesDe(p)
   const oferta = new Map(p.ofertas.map((o) => [o.id, o.nombre]))
@@ -173,6 +180,16 @@ export default async function Prospectos({
           </EditarRegistro>
         }
       />
+      {suscriptores?.length ? (
+        <details className="mb-4 rounded-xl border p-3 text-sm">
+          <summary className="cursor-pointer font-medium">
+            Lista de espera de «Próximamente» ({suscriptores.length})
+          </summary>
+          <p className="mt-2 text-muted-foreground">
+            Para copiar y escribirles cuando salga algo: {suscriptores.map((x) => x.email).join(", ")}
+          </p>
+        </details>
+      ) : null}
       <div className="flex flex-wrap items-center gap-2">
         <Link
           href="/admin/prospectos"

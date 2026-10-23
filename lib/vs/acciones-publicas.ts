@@ -164,3 +164,35 @@ export async function enviarContacto(
     }
   }
 }
+
+/** «Avísame cuando salga»: guarda el correo en la lista de espera. */
+export async function suscribir(
+  form: FormData
+): Promise<{ ok: true } | { ok: false; mensaje: string }> {
+  if (texto(form.get("sitio-web"), 200)) return { ok: true }
+  const email = texto(form.get("email"), 200).toLowerCase()
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+    return { ok: false, mensaje: "Escribe un correo válido." }
+  try {
+    const db = createSupabaseAdmin()
+    const h = await headers()
+    const ip = (h.get("x-nf-client-connection-ip") ?? h.get("x-forwarded-for")?.split(",")[0] ?? "").trim()
+    const origen = ip ? createHash("sha256").update(`vs:${ip}`).digest("hex").slice(0, 24) : ""
+    if (origen) {
+      const { count } = await db
+        .from("vs_suscriptores")
+        .select("email", { count: "exact", head: true })
+        .eq("origen", origen)
+        .gte("created_at", new Date(Date.now() - 3600_000).toISOString())
+      if ((count ?? 0) >= 5) return { ok: true }
+    }
+    const { error } = await db
+      .from("vs_suscriptores")
+      .upsert({ email, fuente: texto(form.get("fuente"), 40) || "proximamente", origen }, { onConflict: "email", ignoreDuplicates: true })
+    if (error) throw error
+    return { ok: true }
+  } catch (caught) {
+    console.error("[suscribir]", caught)
+    return { ok: false, mensaje: "No pudimos guardar tu correo. Intenta de nuevo." }
+  }
+}

@@ -313,26 +313,6 @@ export function Sitio({
           </div>
         </section>
 
-        {/* SEGUNDO PLANO: los juegos. */}
-        <section className="seccion extras" id="extras" aria-labelledby="t-extras">
-          <div className="envoltura">
-            <div className="cabeza">
-              <span className="rotulo">Pa&apos; la junta</span>
-              <h2 id="t-extras">Pa&apos; que te entretengas.</h2>
-            </div>
-            <div className="extras-rejilla">
-              <Link href="/juegos" className="extra extra-juegos">
-                <div className="extra-emojis" aria-hidden>🧠 🛵 🗣️</div>
-                <b>Juegos dominicanos</b>
-                <span>
-                  Trivia en línea con tus panas, «Dilo sin decirlo» y la
-                  carrera de motoconchos. Gratis, desde el celular.
-                </span>
-                <em>Jugar →</em>
-              </Link>
-            </div>
-          </div>
-        </section>
 
         {/* CONTACTO: llega al panel como prospecto nuevo. */}
         <section className="seccion contacto" id="contacto" aria-labelledby="t-contacto">
@@ -377,7 +357,6 @@ export function Sitio({
               <a href="#videos">Videos</a>
               <a href="#influencer">Influencer</a>
               <a href="#trabajo">Apps</a>
-              <Link href="/juegos">Juegos</Link>
               <a href="#contacto">Contacto</a>
               <Link href="/entrar">Mi cuenta</Link>
             </nav>
