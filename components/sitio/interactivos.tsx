@@ -1,13 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 
-import type { Trabajo } from "@/lib/vs/types"
-
-import { useSitio } from "./estado"
-import { Icono, LogoHorizontal, Ojo } from "./iconos"
-import { VideoVigilado } from "./medios"
+import { Icono, LogoHorizontal } from "./iconos"
 import { Escribenos } from "./escribenos"
 
 /** La barra de arriba: logo, secciones, «Mi cuenta» y el botón de contacto. */
@@ -67,84 +63,6 @@ export function Barra({ instagram, whatsapp, correo }: { instagram: string; what
         </div>
       </div>
     </header>
-  )
-}
-
-/** El visor de cámara de la portada. Si un video no carga, corre el siguiente que sí esté en el sitio. */
-export function Visor({ trabajos, portada }: { trabajos: Trabajo[]; portada: string }) {
-  const abrir = useSitio((s) => s.abrirFicha)
-  const cola = useMemo(() => {
-    const primero = trabajos.find((t) => t.id === portada && t.video)
-    const resto = trabajos.filter((t) => t.video && t.id !== portada && t.video.local)
-    return [primero, ...resto].filter((t): t is Trabajo => !!t)
-  }, [trabajos, portada])
-  const [indice, setIndice] = useState(0)
-  const [corriendo, setCorriendo] = useState(false)
-  const [hora, setHora] = useState("--:--")
-  const actual = cola[indice]
-
-  useEffect(() => {
-    const poner = () => {
-      try {
-        setHora(
-          new Intl.DateTimeFormat("es-DO", {
-            timeZone: "America/Santo_Domingo",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          }).format(new Date())
-        )
-      } catch {
-        setHora("")
-      }
-    }
-    poner()
-    const t = setInterval(poner, 30000)
-    return () => clearInterval(t)
-  }, [])
-
-  return (
-    <figure className="visor">
-      <span className="esq a" />
-      <span className="esq b" />
-      <span className="esq c" />
-      <span className="esq d" />
-      <div className="hud" aria-hidden="true">
-        <span>
-          <span className="rec" />
-          REC
-        </span>
-        <span>{hora}</span>
-      </div>
-      {!corriendo ? (
-        <div className="cubierta" aria-hidden="true">
-          <Ojo />
-        </div>
-      ) : null}
-      {actual?.video ? (
-        <VideoVigilado
-          key={actual.id}
-          fuente={actual.video}
-          poster={actual.poster}
-          aria-label={`${actual.obra}, ${actual.cliente}`}
-          onCorriendo={() => setCorriendo(true)}
-          onFallo={() => {
-            if (indice < cola.length - 1) setIndice(indice + 1)
-          }}
-        />
-      ) : null}
-      {actual ? (
-        <figcaption className="pie-visor">
-          <p>
-            <b>{actual.obra}</b>
-            {actual.cliente}
-          </p>
-          <button className="boton-redondo" type="button" aria-label="Ver con sonido" onClick={() => abrir(actual.id)}>
-            <Icono.play />
-          </button>
-        </figcaption>
-      ) : null}
-    </figure>
   )
 }
 

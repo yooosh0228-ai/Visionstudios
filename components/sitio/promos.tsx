@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import type { ReactNode } from "react"
 
 /** Cuerpo de teléfono realista: marco de titanio, botones, isla y reflejo del vidrio. */
-export function Telefono({
+function Telefono({
   children,
   pie,
   className = "",
@@ -55,7 +55,7 @@ function matrizPerspectiva(w: number, h: number, p: readonly (readonly [number, 
 }
 
 /** Laptop fotorrealista: la pantalla del video se acomoda en perspectiva dentro de la foto. */
-export function Laptop({ children, className = "" }: { children: ReactNode; className?: string }) {
+function Laptop({ children, className = "" }: { children: ReactNode; className?: string }) {
   const escena = useRef<HTMLDivElement>(null)
   const [matriz, setMatriz] = useState<string>("")
   useEffect(() => {
