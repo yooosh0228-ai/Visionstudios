@@ -58,7 +58,11 @@ export default function PrivacyPage() {
         >
           @visionstudios.rd
         </a>{" "}
-        en Instagram.
+        en Instagram o al correo{" "}
+        <a className="underline" href="mailto:yosh@402visionstudios.com">
+          yosh@402visionstudios.com
+        </a>
+        .
       </p>
     </LegalPage>
   )

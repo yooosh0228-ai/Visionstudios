@@ -11,7 +11,7 @@ import { VideoVigilado } from "./medios"
 import { Escribenos } from "./escribenos"
 
 /** La barra de arriba: logo, secciones, «Mi cuenta» y el botón de contacto. */
-export function Barra({ instagram, whatsapp }: { instagram: string; whatsapp: string }) {
+export function Barra({ instagram, whatsapp, correo }: { instagram: string; whatsapp: string; correo?: string }) {
   const [conBorde, setConBorde] = useState(false)
   const [actual, setActual] = useState<string | null>(null)
 
@@ -60,7 +60,7 @@ export function Barra({ instagram, whatsapp }: { instagram: string; whatsapp: st
             <Icono.persona />
             <span className="largo">Mi cuenta</span>
           </Link>
-          <Escribenos instagram={instagram} whatsapp={whatsapp}>
+          <Escribenos instagram={instagram} whatsapp={whatsapp} correo={correo}>
             <span className="largo">Cuéntanos tu negocio</span>
             <span className="corto">Escríbenos</span>
           </Escribenos>
@@ -149,7 +149,7 @@ export function Visor({ trabajos, portada }: { trabajos: Trabajo[]; portada: str
 }
 
 /** Barra para el pulgar: solo en el teléfono, después de la portada y fuera del formulario. */
-export function Pulgar({ instagram, whatsapp }: { instagram: string; whatsapp: string }) {
+export function Pulgar({ instagram, whatsapp, correo }: { instagram: string; whatsapp: string; correo?: string }) {
   const [paso, setPaso] = useState(false)
   const [enContacto, setEnContacto] = useState(false)
   useEffect(() => {
@@ -168,7 +168,7 @@ export function Pulgar({ instagram, whatsapp }: { instagram: string; whatsapp: s
   const ver = paso && !enContacto
   return (
     <div className={`pulgar${ver ? " visible" : ""}`} aria-hidden={!ver} inert={!ver}>
-      <Escribenos instagram={instagram} whatsapp={whatsapp}>
+      <Escribenos instagram={instagram} whatsapp={whatsapp} correo={correo}>
         <Icono.chat />
         Escríbenos
       </Escribenos>
