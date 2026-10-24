@@ -31,6 +31,24 @@ export function Telefono({
   )
 }
 
+/** Laptop realista: tapa de aluminio, borde negro, cámara, reflejo y base con muesca. */
+export function Laptop({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <figure className={`laptop ${className}`}>
+      <div className="laptop-tapa">
+        <div className="laptop-pantalla">
+          {children}
+          <i className="laptop-camara" aria-hidden />
+          <i className="vidrio" aria-hidden />
+        </div>
+      </div>
+      <div className="laptop-base" aria-hidden>
+        <i />
+      </div>
+    </figure>
+  )
+}
+
 /**
  * Video vertical dentro de un teléfono. Arranca mudo cuando entra en pantalla,
  * se pausa al salir, y con un toque se oye (y se apagan los demás).
@@ -42,8 +60,10 @@ export function VideoTelefono({
   negocio,
   sinSonido = false,
   sinPie = false,
+  marco = "telefono",
   className,
 }: {
+  marco?: "telefono" | "laptop"
   src: string
   poster: string
   titulo: string
@@ -92,18 +112,9 @@ export function VideoTelefono({
     setSonido(oir)
   }
 
-  return (
-    <Telefono
-      className={className}
-      pie={
-        sinPie ? undefined : (
-          <>
-            <b>{negocio}</b>
-            <span>{titulo}</span>
-          </>
-        )
-      }
-    >
+  const contenido = (
+    <>
+      {marco === "laptop" ? <i className="laptop-fondo" style={{ backgroundImage: `url(${poster})` }} aria-hidden /> : null}
       <video ref={ref} src={src} poster={poster} muted loop playsInline preload="none" aria-label={`${negocio}: ${titulo}`} />
       {!sinSonido ? (
         <button
@@ -127,6 +138,22 @@ export function VideoTelefono({
           </span>
         </button>
       ) : null}
+    </>
+  )
+  if (marco === "laptop") return <Laptop className={className}>{contenido}</Laptop>
+  return (
+    <Telefono
+      className={className}
+      pie={
+        sinPie ? undefined : (
+          <>
+            <b>{negocio}</b>
+            <span>{titulo}</span>
+          </>
+        )
+      }
+    >
+      {contenido}
     </Telefono>
   )
 }
