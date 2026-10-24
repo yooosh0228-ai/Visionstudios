@@ -35,15 +35,18 @@ export function Telefono({
 export function Laptop({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <figure className={`laptop ${className}`}>
-      <div className="laptop-tapa">
-        <div className="laptop-pantalla">
-          {children}
-          <i className="laptop-camara" aria-hidden />
-          <i className="vidrio" aria-hidden />
+      <div className="laptop-cuerpo">
+        <div className="laptop-tapa">
+          <div className="laptop-pantalla">
+            {children}
+            <i className="laptop-muesca" aria-hidden />
+            <i className="vidrio" aria-hidden />
+          </div>
         </div>
-      </div>
-      <div className="laptop-base" aria-hidden>
-        <i />
+        <div className="laptop-teclado" aria-hidden>
+          <i className="laptop-teclas" />
+          <i className="laptop-trackpad" />
+        </div>
       </div>
     </figure>
   )
