@@ -416,7 +416,7 @@ html[data-dispositivo="telefono"] .vs footer{padding-bottom:calc(110px + env(saf
 .vs .movil .accion{left:-1.6%;top:15%;height:4.5%}
 .vs .movil .vol-mas{left:-1.6%;top:23%;height:8%}
 .vs .movil .vol-menos{left:-1.6%;top:33%;height:8%}
-.vs .movil .encendido{right:-1.6%;top:25%;height:12%}
+.vs .movil .poder{right:-1.6%;top:25%;height:12%}
 .vs .movil .pantalla{position:relative;width:100%;height:100%;overflow:hidden;border-radius:12.5%/5.9%;background:#000;box-shadow:0 0 0 2px #000,inset 0 0 0 1px rgba(255,255,255,.04);isolation:isolate}
 .vs .movil video{width:100%;height:100%;object-fit:cover;display:block}
 .vs .movil .isla{position:absolute;z-index:3;top:2.2%;left:50%;width:31%;height:3.6%;transform:translateX(-50%);border-radius:99px;background:#000;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
@@ -550,3 +550,8 @@ html[data-dispositivo="telefono"] .vs footer{padding-bottom:calc(110px + env(saf
   .vs .acciones-demo .boton{min-height:42px;font-size:14px}
   .vs .prueba-social{margin-top:14px;font-size:13px}
 }
+/* Botón de sonido: solo el ícono, siempre en el mismo sitio */
+.vs .movil .tocar{display:block;padding:0}
+.vs .movil .sonido{position:absolute;right:8%;bottom:5.5%;display:grid;place-items:center;width:34px;height:34px;padding:0;border-radius:50%;font-size:0}
+.vs .movil .sonido svg{width:17px;height:17px}
+@media (max-width:699px){.vs .abanico .movil .sonido{width:26px;height:26px}.vs .abanico .movil .sonido svg{width:13px;height:13px}}

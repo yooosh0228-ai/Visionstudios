@@ -19,7 +19,7 @@ export function Telefono({
         <i className="boton-lado accion" aria-hidden />
         <i className="boton-lado vol-mas" aria-hidden />
         <i className="boton-lado vol-menos" aria-hidden />
-        <i className="boton-lado encendido" aria-hidden />
+        <i className="boton-lado poder" aria-hidden />
         <div className="pantalla">
           {children}
           <i className="isla" aria-hidden />
@@ -112,7 +112,19 @@ export function VideoTelefono({
           onClick={alternar}
           aria-label={sonido ? `Silenciar: ${titulo}` : `Oír con sonido: ${titulo}`}
         >
-          <span className={`sonido${sonido ? " encendido" : ""}`}>{sonido ? "🔊 Sonando" : "🔇 Toca para oír"}</span>
+          <span className={`sonido${sonido ? " encendido" : ""}`} aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 5 6 9H2v6h4l5 4V5Z" fill="currentColor" />
+              {sonido ? (
+                <>
+                  <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                  <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+                </>
+              ) : (
+                <path d="m16 9 6 6m0-6-6 6" />
+              )}
+            </svg>
+          </span>
         </button>
       ) : null}
     </Telefono>
