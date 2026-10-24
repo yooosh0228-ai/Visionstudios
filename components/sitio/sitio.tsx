@@ -70,6 +70,7 @@ export function Sitio({
       addressCountry: "DO",
     },
     sameAs: [`https://www.instagram.com/${ajustes.instagram}/`],
+    ...(ajustes.correo ? { email: ajustes.correo } : {}),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Servicios",
@@ -92,7 +93,7 @@ export function Sitio({
       <a className="saltar" href="#servicios">
         Saltar a los servicios
       </a>
-      <Barra instagram={ajustes.instagram} whatsapp={ajustes.whatsapp} />
+      <Barra instagram={ajustes.instagram} whatsapp={ajustes.whatsapp} correo={ajustes.correo} />
 
       {/* Ventana de oferta guardada para más adelante (no se muestra):
       <OfertaEmergente regalo={…} recarga={…} fotos={…} /> */}
@@ -384,7 +385,7 @@ export function Sitio({
         </div>
       </footer>
 
-      <Pulgar instagram={ajustes.instagram} whatsapp={ajustes.whatsapp} />
+      <Pulgar instagram={ajustes.instagram} whatsapp={ajustes.whatsapp} correo={ajustes.correo} />
       <Ficha trabajos={trabajos} />
     </div>
   )

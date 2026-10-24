@@ -11,11 +11,13 @@ import { Pedir } from "./pedir"
 export function Escribenos({
   instagram,
   whatsapp,
+  correo = "",
   className = "boton vivo",
   children,
 }: {
   instagram: string
   whatsapp: string
+  correo?: string
   className?: string
   children: React.ReactNode
 }) {
@@ -65,6 +67,15 @@ export function Escribenos({
                 <span>
                   <b>WhatsApp</b>
                   <small>Directo, con un mensaje listo</small>
+                </span>
+              </a>
+            ) : null}
+            {correo ? (
+              <a className="hoja-op" href={`mailto:${correo}`} onClick={() => setAbierto(false)}>
+                <span className="hoja-ico" aria-hidden>✉️</span>
+                <span>
+                  <b>Correo</b>
+                  <small>{correo}</small>
                 </span>
               </a>
             ) : null}
