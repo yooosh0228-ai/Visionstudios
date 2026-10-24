@@ -157,7 +157,15 @@ export function Sitio({
                 sinSonido
               />
               <VideoTelefono
-                className="t-centro"
+                className="t-centro solo-movil"
+                src="/videos/promos/yoshira-apps.mp4"
+                poster="/videos/promos/yoshira-apps.jpg"
+                negocio="Yoshira"
+                titulo="Apps web para negocios de Santiago"
+              />
+              <VideoTelefono
+                marco="laptop"
+                className="t-centro t-laptop solo-escritorio"
                 src="/videos/promos/yoshira-apps.mp4"
                 poster="/videos/promos/yoshira-apps.jpg"
                 negocio="Yoshira"
