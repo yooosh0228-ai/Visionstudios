@@ -12,9 +12,20 @@ export type Pilar = {
 
 export const PILARES: Pilar[] = [
   {
+    id: "apps",
+    ancla: "trabajo",
+    rotulo: "01 · Apps web",
+    nombre: "Apps y páginas a la medida",
+    gancho:
+      "Turnos, pedidos, catálogos y reservas en el teléfono de tus clientes. Primero entendemos cómo funciona tu negocio; después la programamos desde cero. Nada de plantillas.",
+    puntos: ["Reservas y turnos", "Pedidos por enlace", "Panel para el dueño", "Mantenimiento"],
+    servicio: "Apps y páginas",
+    accion: "Quiero mi app",
+  },
+  {
     id: "videos",
     ancla: "videos",
-    rotulo: "01 · Video",
+    rotulo: "02 · Video",
     nombre: "Videos promocionales",
     gancho:
       "Tu negocio contado por gente que habla como tus clientes. Videos verticales listos para Instagram, TikTok y estados de WhatsApp.",
@@ -25,24 +36,13 @@ export const PILARES: Pilar[] = [
   {
     id: "influencer",
     ancla: "influencer",
-    rotulo: "02 · Vision Influencer",
+    rotulo: "03 · Vision Influencer",
     nombre: "Una influencer para tu marca",
     gancho:
       "Creamos el personaje de tu negocio: la misma cara siempre, su voz, su estilo y contenido cada semana. Sin depender de nadie ni de su agenda.",
     puntos: ["Personaje propio", "Mismo rostro siempre", "Contenido semanal", "Cuenta lista para crecer"],
     servicio: "Vision Influencer",
     accion: "Quiero mi influencer",
-  },
-  {
-    id: "apps",
-    ancla: "trabajo",
-    rotulo: "03 · Apps web",
-    nombre: "Apps y páginas a la medida",
-    gancho:
-      "Turnos, pedidos, catálogos y reservas en el teléfono de tus clientes. Primero entendemos cómo funciona tu negocio; después la programamos desde cero. Nada de plantillas.",
-    puntos: ["Reservas y turnos", "Pedidos por enlace", "Panel para el dueño", "Mantenimiento"],
-    servicio: "Apps y páginas",
-    accion: "Quiero mi app",
   },
   {
     id: "marca",
