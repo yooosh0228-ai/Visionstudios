@@ -31,22 +31,56 @@ export function Telefono({
   )
 }
 
-/** Laptop realista: tapa de aluminio, borde negro, cámara, reflejo y base con muesca. */
+/* Esquinas de la pantalla dentro de /mockups/laptop.webp, en % del ancho y alto de la imagen. */
+const PANTALLA = [
+  [2.6, 16.5],
+  [61.6, 3.45],
+  [68.75, 47.45],
+  [11.05, 66.25],
+] as const
+
+/** Matriz que lleva un rectángulo w×h a cuatro esquinas (perspectiva real). */
+function matrizPerspectiva(w: number, h: number, p: readonly (readonly [number, number])[]) {
+  const [x0, y0] = p[0]!, [x1, y1] = p[1]!, [x2, y2] = p[2]!, [x3, y3] = p[3]!
+  const dx1 = x1 - x2, dx2 = x3 - x2, dx3 = x0 - x1 + x2 - x3
+  const dy1 = y1 - y2, dy2 = y3 - y2, dy3 = y0 - y1 + y2 - y3
+  const den = dx1 * dy2 - dx2 * dy1
+  const g = (dx3 * dy2 - dx2 * dy3) / den
+  const hh = (dx1 * dy3 - dx3 * dy1) / den
+  const a = x1 - x0 + g * x1, b = x3 - x0 + hh * x3, c = x0
+  const d = y1 - y0 + g * y1, e = y3 - y0 + hh * y3, f = y0
+  // De cuadrado unitario a las esquinas; se divide entre w y h para el rectángulo.
+  const m = [a / w, d / w, 0, g / w, b / h, e / h, 0, hh / h, 0, 0, 1, 0, c, f, 0, 1]
+  return `matrix3d(${m.map((n) => +n.toFixed(9)).join(",")})`
+}
+
+/** Laptop fotorrealista: la pantalla del video se acomoda en perspectiva dentro de la foto. */
 export function Laptop({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const escena = useRef<HTMLDivElement>(null)
+  const [matriz, setMatriz] = useState<string>("")
+  useEffect(() => {
+    const el = escena.current
+    if (!el) return
+    const medir = () => {
+      const W = el.clientWidth
+      const H = el.clientHeight
+      if (!W || !H) return
+      setMatriz(matrizPerspectiva(1600, 1000, PANTALLA.map(([x, y]) => [(x / 100) * W, (y / 100) * H] as const)))
+    }
+    medir()
+    const ro = new ResizeObserver(medir)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   return (
     <figure className={`laptop ${className}`}>
-      <div className="laptop-cuerpo">
-        <div className="laptop-tapa">
-          <div className="laptop-pantalla">
-            {children}
-            <i className="laptop-muesca" aria-hidden />
-            <i className="vidrio" aria-hidden />
-          </div>
+      <div className="laptop-escena" ref={escena}>
+        <div className="laptop-pantalla" style={{ transform: matriz || undefined, visibility: matriz ? "visible" : "hidden" }}>
+          {children}
+          <i className="vidrio" aria-hidden />
         </div>
-        <div className="laptop-teclado" aria-hidden>
-          <i className="laptop-teclas" />
-          <i className="laptop-trackpad" />
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="laptop-marco" src="/mockups/laptop.webp" alt="" aria-hidden decoding="async" />
       </div>
     </figure>
   )
