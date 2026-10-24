@@ -249,8 +249,8 @@ export function Sitio({
         <section className="seccion influencer" id="influencer" aria-labelledby="t-influencer">
           <div className="envoltura">
             <VideoTelefono
-              src="/videos/promos/yoshira.mp4"
-              poster="/videos/promos/yoshira.jpg"
+              src="/videos/promos/yoshira-presenta.mp4"
+              poster="/videos/promos/yoshira-presenta.jpg"
               negocio="Yoshira"
               titulo="La cara de Vision Studios"
             />
